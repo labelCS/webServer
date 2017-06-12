@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.PetLocationDao">
+
+    <select id="getAllData" resultType="PetLocationModel">
+        SELECT * FROM petlocation
+    </select>
+    
+    <select id="getDataByPet" resultType="PetLocationModel">
+        SELECT * FROM petlocation WHERE z = #{floorNo} and petTypes = #{petName}
+    </select>
+    
+    <select id="getPetDataByPosition" resultType="PetLocationModel">
+        SELECT a.*,a.id petId,b.probability probability,b.viewRange viewRange,b.captureRange captureRange 
+        FROM 
+            petlocation a 
+            left join petsproperties b on b.petName = a.petTypes
+        WHERE  
+            a.z = #{value} 
+            and a.status=0
+    </select>
+    
+    <select id="getMaxPetTime" resultType="Long">
+        SELECT IFNULL(max(petRefreshTime),0) petRefreshTime FROM petlocation
+    </select>
+</mapper>

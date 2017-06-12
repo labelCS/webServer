@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.StoreDao">
+
+    <select id="doquery" resultType="StoreModel">
+        SELECT * FROM store WHERE id = #{value} 
+    </select>
+    
+    <select id="doStores" resultType="StoreModel">
+        SELECT * FROM store
+    </select>
+    
+    <select id="getStoreNameBySva" resultType="String">
+        SELECT b.name 
+        FROM svastoremap a left join store b on a.storeId = b.id 
+        WHERE a.svaId = #{value}
+    </select>
+    
+    <insert id="saveInfo">
+        INSERT INTO 
+            store(name,updateTime,createTime) 
+        VALUES(#{name},#{updateTime},#{createTime})
+    </insert>
+    
+    <select id="selectStoreid" resultType="Integer">
+        SELECT id FROM store WHERE name = #{value}
+    </select>
+    
+    <select id="selectStoreSame" resultType="int">
+        SELECT COUNT(*) 
+        FROM store 
+        WHERE name = #{name} and id != #{id}
+    </select>
+    
+    <select id="selectStoreSame1" resultType="int">
+        SELECT COUNT(*) FROM store WHERE name = #{value}
+    </select>
+    
+    <update id="updateInfo">
+        UPDATE store 
+        SET name = #{name}, updateTime = #{updateTime} WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM store WHERE id = #{value}
+    </delete>
+    
+    <select id="placeByPlaceId" resultType="String">
+        SELECT name FROM store WHERE id = #{value}
+    </select>
+</mapper>

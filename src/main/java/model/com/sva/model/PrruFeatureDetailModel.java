@@ -1,0 +1,113 @@
+/**   
+ * @Title: PrruFeatureDetailModel.java 
+ * @Package com.sva.model 
+ * @Description: PrruFeatureDetailModel实体类  
+ * @author labelCS   
+ * @date 2016年9月27日 上午10:44:54 
+ * @version V1.0   
+ */
+package com.sva.model;
+
+import java.math.BigDecimal;
+
+/**
+ * @ClassName: PrruFeatureDetailModel
+ * @Description: PrruFeatureDetailModel实体类
+ * @author labelCS
+ * @date 2016年9月27日 上午10:44:54
+ * 
+ */
+public class PrruFeatureDetailModel {
+	private int id;
+	private int featureId;
+	private String gpp;
+	private BigDecimal featureValue;
+	private String type;
+
+	// prru对应特征点（featureid）距离
+	private double distance;
+
+	/**
+	 * @return the id
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the featureId
+	 */
+	public int getFeatureId() {
+		return featureId;
+	}
+
+	/**
+	 * @param featureId
+	 *            the featureId to set
+	 */
+	public void setFeatureId(int featureId) {
+		this.featureId = featureId;
+	}
+
+	/**
+	 * @return the gpp
+	 */
+	public String getGpp() {
+		return gpp;
+	}
+
+	/**
+	 * @param gpp
+	 *            the gpp to set
+	 */
+	public void setGpp(String gpp) {
+		this.gpp = gpp;
+	}
+
+	/**
+	 * @return the featureValue
+	 */
+	public BigDecimal getFeatureValue() {
+		return featureValue;
+	}
+
+	/**
+	 * @param featureValue
+	 *            the featureValue to set
+	 */
+	public void setFeatureValue(BigDecimal featureValue) {
+		this.featureValue = featureValue;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+
+}

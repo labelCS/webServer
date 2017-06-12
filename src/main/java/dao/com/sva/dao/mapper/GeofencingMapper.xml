@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.GeofencingDao">
+
+    <select id="getGeofencing" resultType="GeofencingModel">
+        SELECT * FROM geofencing 
+        where zoneid = #{zoneid} and userid = #{userid} order by timestamp asc
+    </select>
+
+    <select id="getGeofencingByZoneId" resultType="GeofencingModel">
+        SELECT * FROM geofencing 
+        where zoneid = #{value} 
+        order by timestamp asc
+    </select>
+</mapper>

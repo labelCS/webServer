@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sva.dao.RegisterDao">
+    <insert id="saveRegister" >
+        replace into register
+            (role,userId,userName,password,status,phoneNumber,timestamp)
+        values(#{role},#{userId},#{userName},#{passWord},#{status},#{phoneNumber},#{times})
+    </insert>
+    
+    <update id="refreshRegister" >
+        update register set userId=#{userId} where phoneNumber = #{phoneNumber}
+    </update>
+    
+    <select id="getDataByUserName" resultType="RegisterModel">
+        select * from register where userName=#{value} and status=1
+    </select>
+    
+    <select id="getDataByPhoneNumber" resultType="RegisterModel">
+        select * from register where phoneNumber=#{value}
+    </select> 
+    
+    <select id="getDataByIsTrue" resultType="RegisterModel">
+      select * from register where phoneNumber=#{phoneNumber} and isTrue=#{isTrue}
+    </select>
+    
+    <select id="getDataByStatus" resultType="RegisterModel">
+      select * from register where phoneNumber=#{phoneNumber} and status=#{stataus}
+    </select>    
+    
+    <update id="updateIsTrue" >
+       update register set isTrue=#{isTrue} where phoneNumber = #{phoneNumber}
+    </update>    
+    
+    <update id="updataStatus" >
+       update register set status=1,otherPhone=#{otherPhone},isTrue=0 where phoneNumber = #{phoneNumber}
+    </update>        
+ 
+     <update id="updateStatusByPhoneNumber" >
+       update register set status=#{status} where phoneNumber = #{phoneNumber}
+    </update>   
+    
+    <select id="getIpByUserName" resultType="String">
+       select userId from register where phoneNumber=#{value}
+    </select>       
+    
+    <select id="getStatusByphoneNumber2" resultType="String">
+       select userId from register where phoneNumber=#{value} and status=2
+    </select>        
+
+
+
+
+    <select id="getStatusByIsTrue" resultType="String">
+       select userId from register where  isTrue=#{isTrue}  and phoneNumber=#{phoneNumber} 
+    </select> 
+    
+    <select id="checkLogin1" resultType="int">
+       SELECT count(*) res FROM register where phoneNumber = #{phoneNumber} and password=#{passWord} 
+    </select>   
+    
+     <update id="setLoginStatus" >
+       update register set loginStatus=#{loginStatus} where phoneNumber = #{phoneNumber} 
+    </update>                      
+</mapper>

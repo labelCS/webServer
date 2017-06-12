@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.MessageDao">
+
+    <select id="doquery" resultMap="messageResult">
+        SELECT a.*,b.floor,c.name place,d.areaName  
+        FROM message a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join area d on a.shopId = d.id
+    </select>
+
+    <resultMap id="messageResult" type="MessageModel">
+        <id property="id" column="id" />
+        <result property="xSpot" column="xSpot"/>
+        <result property="ySpot" column="ySpot"/>
+        <result property="rangeSpot" column="rangeSpot"/>
+        <result property="timeInterval" column="timeInterval"/>
+        <result property="message" column="message"/>
+        <result property="isEnable" column="isEnable"/>
+        <result property="pictruePath" column="pictruePath"/>
+        <result property="moviePath" column="moviePath"/>
+        <result property="x1Spot" column="x1Spot"/>
+        <result property="y1Spot" column="y1Spot"/>
+        <result property="ticketPath" column="ticketPath"/>
+        <result property="shopName" column="shopName"/>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+        <association property="maps" javaType="MapsModel">
+            <result property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <association property="area" javaType="areaModel">
+            <id property="id" column="shopId"/>
+            <result property="areaName" column="areaName"/>
+        </association>
+    </resultMap>
+    
+    <select id="doqueryByStoreid" resultMap="messageResult">
+        SELECT a.*,b.floor,c.name place,d.areaName  
+        FROM message a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join area d on a.shopId=d.id 
+        WHERE a.placeId = #{storeId}
+    </select>
+
+    <select id="queryByLocation" resultMap="messageResult">
+        SELECT t.*,m.floor 
+        FROM message t 
+            join maps m on t.floorNo = m.floorNo 
+        WHERE 
+            m.floorNo = #{z}
+            and (t.xSpot-t.rangeSpot) &lt; #{x}/10 
+            and (t.xSpot+t.rangeSpot) &gt; #{x}/10
+            and (t.ySpot-t.rangeSpot) &lt; #{y}/10
+            and (t.ySpot+t.rangeSpot) &gt; #{y}/10
+            and t.isEnable = '开启'
+    </select>
+    
+    <select id="queryByLocation1" resultMap="messageResult">
+        SELECT t.*,m.floor 
+        FROM message t 
+            join maps m on t.floorNo = m.floorNo 
+        WHERE 
+            m.floorNo = #{z}
+            and t.xSpot &lt; #{x}/10
+            and t.x1Spot &gt; #{x}/10
+            and t.ySpot &lt; #{y}/10
+            and t.y1Spot &gt; #{y}/10
+            and t.isEnable = '开启'
+    </select>
+    
+    <select id="queryByLocation3" resultMap="messageResult">
+        SELECT t.*,m.floor 
+        FROM message t 
+            join maps m on t.floorNo = m.floorNo 
+        WHERE 
+            m.floorNo = #{z}
+            and t.xSpot &lt; #{x}/10
+            and t.x1Spot &gt; #{x}/10
+            and t.ySpot &lt; #{y}/10
+            and t.y1Spot &gt; #{y}/10
+            and t.ticketPath is not null
+    </select>
+    
+    <insert id="saveMsgInfo">
+        INSERT INTO message(
+            shopId,
+            x1Spot,
+            y1Spot,
+            placeId,
+            shopName,
+            xSpot,
+            ySpot,
+            floorNo,
+            rangeSpot,
+            message,
+            timeInterval,
+            isEnable,
+            pictruePath,
+            moviePath,
+            ticketPath
+        ) VALUES(
+            #{area.id},
+            #{x1Spot},
+            #{y1Spot},
+            #{store.id},
+            #{shopName},
+            #{xSpot},
+            #{ySpot},
+            #{maps.floorNo},
+            #{rangeSpot},
+            #{message},
+            #{timeInterval},
+            #{isEnable},
+            #{pictruePath},
+            #{moviePath},
+            #{ticketPath}
+        )
+    </insert>
+    
+    <delete id="deleteMessage">
+        DELETE FROM message 
+        WHERE xSpot = #{xSpot} and ySpot = #{ySpot} and floorNo = #{floorNo}
+    </delete>
+    
+    <update id="updateMsgInfo">
+        UPDATE message 
+        <set>
+            shopId = #{area.id},
+            x1Spot = #{x1Spot},
+            y1Spot = #{y1Spot},
+            placeId = #{store.id},
+            shopName = #{shopName},
+            xSpot = #{xSpot},
+            ySpot = #{ySpot},
+            rangeSpot = #{rangeSpot},
+            message = #{message},
+            timeInterval = #{timeInterval},
+            isEnable = #{isEnable},
+            floorNo = #{maps.floorNo}, 
+            <if test="ticketPath != null">ticketPath = #{ticketPath},</if>
+            <if test="moviePath != null">moviePath = #{moviePath},</if>
+            <if test="pictruePath != null">pictruePath = #{pictruePath},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    <select id="getNumberByArea" resultType="int">
+        SELECT count(*) 
+        FROM ${tableName} la 
+            join (
+                SELECT a.userID, max(a.timestamp) timestamp, max(a.z) z 
+                FROM (
+                    SELECT lb.* 
+                    FROM ${tableName} lb 
+                        join (
+                            SELECT distinct(timestamp) 
+                            FROM ${tableName}
+                            WHERE z = #{maps.floorNo} 
+                            ORDER BY timestamp desc limit 4
+                        ) t on lb.timestamp = t.timestamp 
+                    WHERE z = #{maps.floorNo} ) a 
+                GROUP BY a.userID
+            ) b "
+        WHERE 
+            la.timestamp= b.timestamp 
+            and la.userID = b.userID 
+            and la.z = b.z "
+            and la.x &gt; #{x}/10 - #{rangeSpot}/10
+            and la.x &lt; #{x}/10 + #{rangeSpot}/10 
+            and la.y &gt; #{y}/10 - #{rangeSpot}/10 
+            and la.y &lt; #{y}/10 + #{rangeSpot}/10
+    </select>
+    
+    <select id="getAllMessageData" resultMap="messageResult">
+        SELECT a.*,b.floor,c.name place 
+        FROM message a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+        WHERE a.isEnable='开启'
+    </select>
+    
+    <select id="getAllMessageDataByAreaId" resultMap="messageResult">
+        SELECT a.*,b.floor,c.name place 
+        FROM message a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+        WHERE a.isEnable='开启' and a.shopId = #{value}
+    </select>
+    
+    <select id="getAllMessageDataByAreaIdNew" resultMap="messageResult2">
+        SELECT a.*,b.floor,d.ticketPath ticketPaths,c.name place 
+        FROM message a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join ticket d on a.id = d.msgId 
+        WHERE a.isEnable='开启' and a.shopId=#{value} group by a.id
+    </select>
+    
+    <resultMap id="messageResult2" type="MessageModel">
+        <id property="id" column="id" />
+        <id property="messageId" column="id" />
+        <result property="xSpot" column="xSpot"/>
+        <result property="ySpot" column="ySpot"/>
+        <result property="rangeSpot" column="rangeSpot"/>
+        <result property="timeInterval" column="timeInterval"/>
+        <result property="message" column="message"/>
+        <result property="isEnable" column="isEnable"/>
+        <result property="pictruePath" column="pictruePath"/>
+        <result property="moviePath" column="moviePath"/>
+        <result property="x1Spot" column="x1Spot"/>
+        <result property="y1Spot" column="y1Spot"/>
+        <result property="ticketPath" column="ticketPaths"/>
+        <result property="shopName" column="shopName"/>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+        <association property="maps" javaType="MapsModel">
+            <result property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <collection property="tickets" ofType="TicketModel">
+            <result property="msgId" column="id"/>
+            <result property="ticketPath" column="ticketPaths"/>
+        </collection>
+    </resultMap>
+    
+    <select id="getAreaIdByMessage" resultType="String">
+        SELECT shopId FROM message WHERE id = #{value}
+    </select>
+    
+    <select id="getTiketPathByAreaId" resultType="String">
+        SELECT ticketPath FROM message WHERE shopId = #{value}
+    </select>
+    
+    <select id="getMsgId" resultType="String">
+        SELECT id FROM message WHERE shopId = #{value}
+    </select>
+    
+</mapper>
