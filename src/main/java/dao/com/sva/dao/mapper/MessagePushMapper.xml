@@ -8,7 +8,7 @@
         SELECT 
             a.*,b.floor, d.name place 
         FROM messagepush a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store d on a.placeId = d.id 
         WHERE 
             a.placeId = #{placeId} 
@@ -26,7 +26,7 @@
         <result property="isRigth" column="isRigth"/>
         <result property="updateTime" column="updateTime"/>
         <association property="map" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <association property="store" javaType="StoreModel">
@@ -39,7 +39,7 @@
         SELECT 
             a.*,b.floor, d.name place 
         FROM messagepush a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store d on a.placeId = d.id 
         WHERE 
             a.updateTime &gt; #{startTime} 
@@ -51,7 +51,7 @@
             a.*,b.name place,d.floor 
         FROM messagepush a 
             left join store b on a.placeId = b.id 
-            left join maps d on a.floorNo = d.floorNo
+            left join maps d on a.mapId = d.mapId
     </select>
     
     <select id="getAllDataByStoreId" resultMap="MsgPushResult">
@@ -59,16 +59,17 @@
             a.*,b.name place,d.floor 
         from messagepush a 
             left join store b on a.placeId = b.id 
-            left join maps d on a.floorNo = d.floorNo 
+            left join maps d on a.mapId = d.mapId 
         where a.placeId = #{value}
     </select>
     
     <insert id="savaMessagePush">
         INSERT INTO 
-            messagepush(placeId,floorNo,pushRight,pushWrong,notPush,centerRadius,centerReality,isRigth,updateTime) 
+            messagepush(placeId,floorNo,mapId,pushRight,pushWrong,notPush,centerRadius,centerReality,isRigth,updateTime) 
         VALUES(
             #{store.id},
             #{map.floorNo},
+            #{map.mapId},            
             #{pushRight},
             #{pushWrong},
             #{notPush},

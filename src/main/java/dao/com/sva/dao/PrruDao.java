@@ -23,19 +23,15 @@ import com.sva.model.PrruModel;
  *  
  */
 public interface PrruDao {
-    public List<PrruModel> getPrruInfoByflooNo(String floorNo);
+    public List<PrruModel> getPrruInfoByflooNo(String mapId);
 
     public int saveInfo(PrruModel bm);
 
-    public int deleteInfo(@Param("floorNo")String floorNo, @Param("eNodeBid")String eNodeBid);
+    public int deleteInfo(int mapId);
 
-    public int checkByFloorNo(@Param("floorNo")String floorNo, @Param("id")String id);
+    public int checkByFloorNo(@Param("mapId")String mapId, @Param("id")String id);
 
-    public int updateInfo(@Param("floorNo")String floorNo, @Param("newfloorNo")String newfloorNo);
+    public int updateInfo(@Param("mapId")String mapId, @Param("newfloorNo")String newfloorNo);
 
     public List<Map<String, Object>> getSignal(@Param("userId")String userId,@Param("time")long time);
-    
-    public List<PrruModel> getPrruInfoByfloorNo(@Param("floorNo")String floorNo, @Param("eNodeBid")String eNodeBid, @Param("cellId")String cellId);
-    
-    public List<PrruModel> getPrruInfo(@Param("floorNo")String floorNo, @Param("eNodeBid")String eNodeBid);
 }

@@ -136,12 +136,12 @@ public interface RoleDao
     /** 
      * @Title: selectRoleSame 
      * @Description: 查询类别名称是否相同
-     * @param floorNo
+     * @param mapId
      * @param id
      * @return
      * @throws SQLException 
      */
-    public int selectRoleSame(@Param("name")String floorNo,@Param("id")int id) throws SQLException;
+    public int selectRoleSame(@Param("name")String mapId,@Param("id")int id) throws SQLException;
 
 
     /** 

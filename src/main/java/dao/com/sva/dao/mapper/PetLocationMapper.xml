@@ -9,7 +9,7 @@
     </select>
     
     <select id="getDataByPet" resultType="PetLocationModel">
-        SELECT * FROM petlocation WHERE z = #{floorNo} and petTypes = #{petName}
+        SELECT * FROM petlocation WHERE mapId = #{mapId} and petTypes = #{petName}
     </select>
     
     <select id="getPetDataByPosition" resultType="PetLocationModel">
@@ -18,7 +18,7 @@
             petlocation a 
             left join petsproperties b on b.petName = a.petTypes
         WHERE  
-            a.z = #{value} 
+            a.mapId = #{value} 
             and a.status=0
     </select>
     

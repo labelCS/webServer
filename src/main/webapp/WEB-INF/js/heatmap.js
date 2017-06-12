@@ -138,13 +138,13 @@ var Heatmap = function() {
 		var len = sortData.length;
 		var options = '';
 		for ( var i = 0; i < len; i++) {
-			if(sortData[i].floorNo == selectTxt){
+			if(sortData[i].mapId == selectTxt){
 				options += '<option class="addoption" selected value="'
-					+ sortData[i].floorNo + '">' + sortData[i].floor
+					+ sortData[i].mapId + '">' + sortData[i].floor
 					+ '</option>';
 			}else{
 				options += '<option class="addoption" value="'
-					+ sortData[i].floorNo + '">' + sortData[i].floor
+					+ sortData[i].mapId + '">' + sortData[i].floor
 					+ '</option>';
 			}
 		}

@@ -250,8 +250,8 @@ public class AreamapController
         TreeMap<String, Integer> result = new TreeMap<String, Integer>();
 
         Date start = ConvertUtil.dateStringFormat(timeBegin,
-                Params.YYYYMMDDHHMMSS);
-        Date end = ConvertUtil.dateStringFormat(timeEnd, Params.YYYYMMDDHHMMSS);
+                Params.YYMMDDHHMMSS1);
+        Date end = ConvertUtil.dateStringFormat(timeEnd, Params.YYMMDDHHMMSS1);
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(start);
@@ -262,7 +262,7 @@ public class AreamapController
         {
 
             keyTime = ConvertUtil.dateFormat(cal.getTime(),
-                    Params.YYYYMMDDHHMMSS);
+                    Params.YYMMDDHHMMSS1);
             result.put(keyTime, 0);
             cal.add(Calendar.HOUR, 1);
             tmpDate = cal.getTime();
@@ -280,9 +280,9 @@ public class AreamapController
         if ("1".equals(type))
         {
             Date start = ConvertUtil.dateStringFormat(timeBegin,
-                    Params.YYYYMMDDHHMMSS);
+                    Params.YYMMDDHHMMSS1);
             Date end = ConvertUtil.dateStringFormat(timeEnd,
-                    Params.YYYYMMDDHHMMSS);
+                    Params.YYMMDDHHMMSS1);
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(start);
@@ -293,7 +293,7 @@ public class AreamapController
             {
 
                 keyTime = ConvertUtil.dateFormat(cal.getTime(),
-                        Params.YYYYMMDDHHMMSS);
+                        Params.YYMMDDHHMMSS1);
                 result.put(keyTime, 0);
                 cal.add(Calendar.HOUR, 1);
                 tmpDate = cal.getTime();
@@ -331,9 +331,9 @@ public class AreamapController
         if ("1".equals(type))
         {
             Date start = ConvertUtil.dateStringFormat(timeBegin,
-                    Params.YYYYMMDDHHMMSS);
+                    Params.YYMMDDHHMMSS1);
             Date end = ConvertUtil.dateStringFormat(timeEnd,
-                    Params.YYYYMMDDHHMMSS);
+                    Params.YYMMDDHHMMSS1);
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(start);
@@ -344,7 +344,7 @@ public class AreamapController
             {
 
                 keyTime = ConvertUtil.dateFormat(cal.getTime(),
-                        Params.YYYYMMDDHHMMSS);
+                        Params.YYMMDDHHMMSS1);
                 lis.add(keyTime);
                 cal.add(Calendar.HOUR, 1);
                 tmpDate = cal.getTime();

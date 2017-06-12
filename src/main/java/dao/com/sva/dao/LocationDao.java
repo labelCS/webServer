@@ -22,15 +22,15 @@ import com.sva.model.LocationModel;
  */
 public interface LocationDao {
 
-    public List<LocationModel> doquery1(@Param("userId")String userId, @Param("floorNo")String flooNo);
+    public List<LocationModel> doquery1(@Param("userId")String userId, @Param("mapId")int mapId);
 
-    public List<LocationModel> queryHeatmap(@Param("floorNo")String floorNo, @Param("time")long time, 
+    public List<LocationModel> queryHeatmap(@Param("mapId")String mapId, @Param("time")long time, 
             @Param("tableName")String tableName);
     
-    public List<LocationModel> queryHeatmap5(@Param("floorNo")String floorNo, @Param("time")long time,
+    public List<LocationModel> queryHeatmap5(@Param("mapId")String mapId, @Param("time")long time,
             @Param("tableName")String tableName);
     
-    public List<LocationModel> queryHeatmap6(@Param("floorNo")String floorNo, @Param("tableName")String tableName);
+    public List<LocationModel> queryHeatmap6(@Param("mapId")String mapId, @Param("tableName")String tableName);
 
     /**
      * locationPhone为非匿名订阅，提高数据查询效率
@@ -40,13 +40,13 @@ public interface LocationDao {
      */
     public List<LocationModel> queryLocationByUseId(String userId);
 
-    public List<LocationModel> getUserId(@Param("floorNo")String floorid, @Param("time")String time,
+    public List<LocationModel> getUserId(@Param("mapId")String floorid, @Param("time")String time,
             @Param("tableName")String tableName);
 
     public List<LocationModel> getMark(@Param("userId")String userId, @Param("time")String time,
             @Param("tableName")String tableName);
 
-    public List<LocationModel> queryOverData(@Param("floorNo")int floorNo, @Param("time")String time, 
+    public List<LocationModel> queryOverData(@Param("mapId")int mapId, @Param("time")String time, 
             @Param("tableName")String tableName);
     
     /** 
@@ -56,18 +56,18 @@ public interface LocationDao {
      * @return Collection<LocationModel>   
      * @throws 
      */
-    public List<Map<String,Object>> queryLocationForPosition(@Param("floorNo")String floorNo, 
+    public List<Map<String,Object>> queryLocationForPosition(@Param("mapId")String mapId, 
             @Param("timeList")List<String> timeList);
     
     /** 
      * @Title: queryScatterMapData 
      * @Description: 获取散点图数据
-     * @param floorNo 楼层号
+     * @param mapId 楼层号
      * @param time 时间
      * @return Collection<LocationModel>   
      * @throws 
      */
-    public List<Map<String,Object>> queryScatterMapData(@Param("floorNo")String floorNo, @Param("time")long time,
+    public List<Map<String,Object>> queryScatterMapData(@Param("mapId")String mapId, @Param("time")long time,
             @Param("tableName")String tableName);
 
     public int getNumberByMinute(@Param("tableName")String tableName, @Param("placeId")String placeId);

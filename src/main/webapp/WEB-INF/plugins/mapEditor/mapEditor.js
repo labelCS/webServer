@@ -264,7 +264,7 @@
 						// 保存线条id
 						_this.tempLineData.push(_this.g_masterDrawingBox.id);
 						// 保存线条长度
-						_this.tempLineData.push(_this.g_masterDrawingBox.getTotalLength()*_this._opt.scale);
+						_this.tempLineData.push(_this.g_masterDrawingBox.getTotalLength());
 						// 将点线关系保存
 						_this.output.data.push(_this.tempLineData);
 						// 将两个点重画，以覆盖线
@@ -391,7 +391,7 @@
 				var lineObj = _this._paper.path(pathArray);
 				lineObj.attr({"stroke":_this._opt.lineColor,"stroke-width":"2","stroke-dasharray":"- "});
 				line[2] = lineObj.id;
-				line[3] = lineObj.getTotalLength()*_this._opt.scale;
+				line[3] = lineObj.getTotalLength();
 				// 设置线条的双击事件
 				lineObj.dblclick(function(e){
 						// 删除相连的线及数据

@@ -37,9 +37,8 @@ public class PrruDaoTest extends BasicDaoTest{
     
     @Test
     public void deleteInfoTest(){
-        String floorNo = "1";
-        String eNodeBid = "59804";
-        int result = dao.deleteInfo(floorNo,eNodeBid);
+        int mapId = 1;
+        int result = dao.deleteInfo(mapId);
         Assert.assertEquals("result 0",0,result);
     }
     

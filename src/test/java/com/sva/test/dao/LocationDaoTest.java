@@ -33,7 +33,7 @@ public class LocationDaoTest extends BasicDaoTest {
     @Test
     public void doquery1Test(){
         String userId = "11111";
-        String floorNo = "1";
+        int floorNo = 1;
         List<LocationModel> result = locationDao.doquery1(userId, floorNo);
         Assert.assertEquals("结果为0",0, result.size());
     }

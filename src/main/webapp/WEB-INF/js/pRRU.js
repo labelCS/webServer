@@ -36,9 +36,9 @@ var MsgMng = function () {
 	    for(var i=0;i<len;i++){
 	    	var info = sortData[i];
 	        if(selectTxt == sortData[i].floor){
-	    		options += '<option class="addoption"  selected=true value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption"  selected=true value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}else{
-	    		options += '<option class="addoption"  value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption"  value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}
 	    }
 	    removeOption(renderId);
@@ -162,12 +162,12 @@ var MsgMng = function () {
 	        	var data1 = oTable.fnGetData(row[0]);
 				$("#idid").val(data1.floorNo);
 				var floor = data1.floor;
-				var place = data1.store.name;
+				var place = data1.place;
 				var path = data1.path;
-				$("#placeSel").val(data1.store.id);
+				$("#placeSel").val(data1.placeId);
 				$("#textfield").val(place+"_"+floor+".xml");
 	           	//MapMng.deleteMap(xSpot, ySpot, zSpot, place);
-				$.post("/sva/heatmap/api/getFloorsByMarket",{placeId:data1.store.id},function(data){
+				$.post("/sva/heatmap/api/getFloorsByMarket",{placeId:data1.placeId},function(data){
 					if(!data.error){
 						updateFloorList("zSel",data.data,floor);
 					}
@@ -257,7 +257,7 @@ var MsgMng = function () {
         					{ 
         						"aTargets": [0],
 //        						"bVisible": false,
-        						"mData": "store.name",
+        						"mData": "place",
         						"mRender": function ( data, type, full ) {
     								if(data.length > 40){
     									var html = data.substring(0,40)+"...";
@@ -280,9 +280,9 @@ var MsgMng = function () {
         	                    },
         	                    "mRender": function ( data, type, full ) {
         	                    	var html = "" +
-        	                    		'<input type="button" data-type="edt" style="width: 54px;height:30px;font-size: 13px;font-family:inherit;" data-place="'+full.store.name+'"data-floor="'+full.floor+'" value="'+i18n_edit+'" data-floorId="'+full.floorId+' " data-id="'+full.floorNo+' " id="'+full.floorNo+' ">' +
-        	                    		'<input type="button" data-type="del" style="width: 54px;height:30px;font-size: 13px;font-family:inherit;" data-floor="'+full.floor+'" id="'+full.floorNo+'" data-id="'+full.floorNo+'" data-place="'+full.store.name+'"  value="'+i18n_delete+'">'+
-        	                    		'<a data-toggle="modal" data-type="point" href="#myModal1" data-type="preview"  role="button" class="btn"  style="font-size:13px;" data-width="'+full.imgWidth+'" data-x="'+full.xo+'" data-y="'+full.yo+'" data-coordinate="'+full.coordinate+'" data-height="'+full.imgHeight+'" data-path="'+full.path+'" data-floor="'+full.floor+'" data-place="'+full.store.name+'" data-scale="'+full.scale+'" data-id="'+full.floorNo+'" >'+i18n_Preview+'</a>';
+        	                    		'<input type="button" data-type="edt" style="width: 54px;height:30px;font-size: 13px;font-family:inherit;" data-place="'+full.place+'"data-floor="'+full.floor+'" value="'+i18n_edit+'" data-floorId="'+full.floorId+' " data-id="'+full.mapId+' " id="'+full.mapId+' ">' +
+        	                    		'<input type="button" data-type="del" style="width: 54px;height:30px;font-size: 13px;font-family:inherit;" data-floor="'+full.floor+'" id="'+full.mapId+'" data-id="'+full.mapId+'" data-place="'+full.place+'"  value="'+i18n_delete+'">'+
+        	                    		'<a data-toggle="modal" data-type="point" href="#myModal1" data-type="preview"  role="button" class="btn"  style="font-size:13px;" data-width="'+full.imgWidth+'" data-x="'+full.xo+'" data-y="'+full.yo+'" data-coordinate="'+full.coordinate+'" data-height="'+full.imgHeight+'" data-path="'+full.path+'" data-floor="'+full.floor+'" data-place="'+full.place+'" data-scale="'+full.scale+'" data-id="'+full.mapId+'" >'+i18n_Preview+'</a>';
         	                        return html;
         	                    }
         	                }
@@ -352,10 +352,6 @@ function clearinfo()
 {
 	$("#placeSel").val("");
 	$("#zSel").val("");
-	$("#kValue").val("200");
-	$("#defaultDistance").val("5");
-	$("#height").val("5");
-	$("#infiltration").val("20");
 	$("#idid").val("");
 	$("#textfield").val("");
 	$("#fileField").val("");

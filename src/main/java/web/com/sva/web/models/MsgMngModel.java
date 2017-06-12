@@ -33,8 +33,19 @@ public class MsgMngModel
     private String id;
 
     private String floorNo;
+    
+    private int mapId;
 
     private int shopId;
+    
+
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
 
     public String getTicketPath()
     {

@@ -28,13 +28,12 @@ import com.sva.dao.LinemapDao;
 import com.sva.dao.LocationDao;
 import com.sva.dao.MapsDao;
 import com.sva.dao.MessageDao;
-import com.sva.dao.PetLocationDao;
 import com.sva.dao.StoreDao;
 import com.sva.model.AreaInputModel;
 import com.sva.model.AreaModel;
 import com.sva.model.MessageModel;
 import com.sva.model.StoreModel;
-import com.sva.service.ValidateSVAService;
+import com.sva.service.SubscriptionService;
 
 public class QuartzJob {
 
@@ -63,13 +62,7 @@ public class QuartzJob {
     private LocationDao locDao;
     
     @Autowired
-    private ValidateSVAService validateSVAService;
-    
-    @Autowired
-    private PetLocationDao pet;
-    
-    @Value("${reflashTime}")
-    private String reflashTime;
+    private SubscriptionService service;
 
     @Value("${mysql.db}")
     private String db;
@@ -122,16 +115,16 @@ public class QuartzJob {
         String sqlHour = "insert into statistichour "
                 + "(SELECT b.placeId placeId,FROM_UNIXTIME(a.timestamp/1000,'%Y%m%d%H0000') time, "
                 + "COUNT(distinct a.userID) number FROM "
-                + tableName + " a join maps b on a.z = b.floorNo and a.timestamp> " + startTime
+                + tableName + " a join maps b on a.mapId = b.mapId and a.timestamp> " + startTime
                 + " GROUP BY b.placeId,time)";
 
         String sqlDay = "replace into statisticday " + "(SELECT b.placeId placeId,"
                 + ConvertUtil.dateFormat(cal.getTime(), Params.YYYYMMDD) + " time,COUNT(distinct a.userID) number FROM "
-                + tableName + " a join maps b on a.z = b.floorNo GROUP BY b.placeId)";
+                + tableName + " a join maps b on a.mapId = b.mapId GROUP BY b.placeId)";
 
         String sqlFloor = "replace into statisticfloor "
-                + "(SELECT userID, FROM_UNIXTIME(timestamp/1000,'%Y%m%d%H0000') time ,z FROM " + tableName
-                + " group by userID,time,z) ";
+                + "(SELECT userID, FROM_UNIXTIME(timestamp/1000,'%Y%m%d%H0000') time ,mapId FROM " + tableName
+                + " group by userID,time,mapId) ";
         try {
             int result = dao.doTest(sqlTest);
             LOG.info(result);
@@ -166,9 +159,9 @@ public class QuartzJob {
         String time = ConvertUtil.dateFormat(cal.getTime(), Params.YYYYMMDDHHMM) + "00";
         LOG.info(time);
         String tableName = Params.LOCATION + ConvertUtil.dateFormat(cal.getTime(), Params.YYYYMMDD);
-        String sqlInsert = "insert into locationtemp(x,y,z,idType,dataType,timestamp,userID)"
-                + "select a.x,a.y,a.z,a.idType,a.dataType,a.timestamp,a.userID from "
-                + "(SELECT x,y,z,idType,dataType,timestamp,userID,"
+        String sqlInsert = "insert into locationtemp(x,y,mapId,idType,dataType,timestamp,userID)"
+                + "select a.x,a.y,a.mapId,a.idType,a.dataType,a.timestamp,a.userID from "
+                + "(SELECT x,y,mapId,idType,dataType,timestamp,userID,"
                 + "FROM_UNIXTIME(timestamp/1000,'%Y%m%d%H%i00') time FROM " 
                 + tableName + " where FROM_UNIXTIME(timestamp/1000,'%Y%m%d%H%i00') = " + time
                 + " GROUP BY userID,time) a;";
@@ -205,15 +198,15 @@ public class QuartzJob {
         LOG.info("doStatisticDataPerHalfHour:" + ConvertUtil.dateFormat(System.currentTimeMillis(), "yyyyMMddHHmmSS"));
         // 获取最近一小時各个商场的人流量
         String selectSqlHour = "SELECT b.placeId placeId,'"+times+"' time,COUNT(distinct a.userID) number "
-                + "FROM " + tableName + " a join maps b on a.z = b.floorNo and a.timestamp> " + startTime
+                + "FROM " + tableName + " a join maps b on a.mapId = b.mapId and a.timestamp> " + startTime
                 + " GROUP BY b.placeId";
         // 获取当天各个商场的人流量
         String selectSqlDay = "SELECT b.placeId placeId,"
                 + time + " time,COUNT(distinct a.userID) number "
-                + "FROM " + tableName + " a join maps b on a.z = b.floorNo GROUP BY b.placeId";
+                + "FROM " + tableName + " a join maps b on a.mapId = b.mapId GROUP BY b.placeId";
         // 获取每个楼层、各个用户、每个小时的分布
-        String selectSqlFloor = "SELECT userID, FROM_UNIXTIME(timestamp/1000,'%Y%m%d%H0000') time ,z " + "FROM " 
-                + tableName + " group by userID,time,z";
+        String selectSqlFloor = "SELECT userID, FROM_UNIXTIME(timestamp/1000,'%Y%m%d%H0000') time ,mapId " + "FROM " 
+                + tableName + " group by userID,time,mapId";
 
         try {
             List<Map<String,Object>> selectSqlHourResult = dao.doTest1(selectSqlHour);
@@ -237,10 +230,10 @@ public class QuartzJob {
             }
             
             List<Map<String,Object>> selectSqlFloorResult = dao.doTest1(selectSqlFloor);
-            String sqlFloor = "replace into statisticfloor(userID,time,z) values";
+            String sqlFloor = "replace into statisticfloor(userID,time,mapId) values";
             if(!selectSqlFloorResult.isEmpty()){
                 for(Map<String,Object> m:selectSqlFloorResult){
-                    sqlFloor += "('"+m.get("userID")+ "','"+m.get("time")+"',"+m.get("z")+"),";
+                    sqlFloor += "('"+m.get("userID")+ "','"+m.get("time")+"',"+m.get("mapId")+"),";
                 }
                 sqlFloor = sqlFloor.substring(0, sqlFloor.length()-1);
                 dao.doUpdate(sqlFloor);
@@ -279,7 +272,7 @@ public class QuartzJob {
         String tableName = Params.LOCATION + ConvertUtil.dateFormat(cal.getTime(), Params.YYYYMMDD);
         String sqlInsert = "insert into statisticlinetemp(number,time,placeId) "
                 + "(select count(distinct a.userID) number," + time2 + " time,b.placeId from " + tableName
-                + " a join maps b on a.z = b.floorNo where timestamp > " + time + " group by b.placeId)";
+                + " a join maps b on a.mapId = b.mapId where timestamp > " + time + " group by b.placeId)";
         LOG.info("addLineStat:" + sqlInsert);
         try {
             dao.doUpdate(sqlInsert);
@@ -333,8 +326,8 @@ public class QuartzJob {
                 BigDecimal x1 = l.getX1Spot().multiply(beishu);
                 BigDecimal y = l.getySpot().multiply(beishu);
                 BigDecimal y1 = l.getY1Spot().multiply(beishu);
-                BigDecimal floorNo = l.getMaps().getFloorNo();
-                areaNumber = linemapDao.getAreaNumberByHour(floorNo,tableName, startTime,x,x1,y,y1);
+                int mapId = l.getMaps().getMapId();
+                areaNumber = linemapDao.getAreaNumberByHour(mapId,tableName, startTime,x,x1,y,y1);
                 sqlInsert = "insert into statisticarea(time,areaId,number) values ('" + time + "','" + areaName + "',"
                         + areaNumber + ')';
                 dao.doUpdate(sqlInsert);
@@ -365,8 +358,8 @@ public class QuartzJob {
                 BigDecimal x1 = l.getX1Spot().multiply(beishu);
                 BigDecimal y = l.getySpot().multiply(beishu);
                 BigDecimal y1 = l.getY1Spot().multiply(beishu);
-                BigDecimal floorNo = l.getMaps().getFloorNo();
-                areaNumber = String.valueOf(linemapDao.getAreaNumberByDay(floorNo,tableName,x,x1,y,y1));
+                int mapId = l.getMaps().getMapId();
+                areaNumber = String.valueOf(linemapDao.getAreaNumberByDay(mapId,tableName,x,x1,y,y1));
                 sqlInsert = "insert into statisticareaDay(time,areaId,number) values ('" + time2 + "','" + areaName
                         + "'," + areaNumber + ')';
                 dao.doUpdate(sqlInsert);
@@ -456,7 +449,7 @@ public class QuartzJob {
         for (int i = 0; i < allPeople.size(); i++) {
             int x = Integer.parseInt(allPeople.get(i).get("x").toString());
             int y = Integer.parseInt(allPeople.get(i).get("y").toString());
-            int z = Integer.parseInt(allPeople.get(i).get("z").toString());
+            int z = Integer.parseInt(allPeople.get(i).get("mapId").toString());
             String idType = (String) allPeople.get(i).get("idType");
             String dataType = (String) allPeople.get(i).get("dataType");
             String userID = (String) allPeople.get(i).get("userID");
@@ -595,10 +588,10 @@ public class QuartzJob {
     /** 
      * @Title: checkSvaIsEnabled 
      * @Description: 启动数据库中为启动状态的sva  
-     * @author gl
      */
     public void checkSvaIsEnabled(){
-        validateSVAService.validateActiveSVA();
+        // 批量订阅启动状态的sva（指定用户订阅除外）
+        service.subscribeSvaInBatch();
     }
 
     public void saveVisitiTime() {
@@ -623,9 +616,9 @@ public class QuartzJob {
             BigDecimal x1 = l.getX1Spot().multiply(beishu);
             BigDecimal y = l.getySpot().multiply(beishu);
             BigDecimal y1 = l.getY1Spot().multiply(beishu);
-            BigDecimal floorNo = l.getMaps().getFloorNo();
-            allAreaNumber = linemapDao.getAreaNumberByDay(floorNo,tableName,x,x1,y,y1);
-            allCount  = linemapDao.getAllAreaData(floorNo,tableName,x,x1,y,y1);
+            int mapId = l.getMaps().getMapId();
+            allAreaNumber = linemapDao.getAreaNumberByDay( mapId,tableName,x,x1,y,y1);
+            allCount  = linemapDao.getAllAreaData( mapId,tableName,x,x1,y,y1);
             visitime = allCount*2000L;
             String insetSql = "REPLACE INTO staticvisit(areaId,time,allTime,number,averageTime) VALUES(" + areaId + ",'"
                     + visitDay + "'," + visitime + "," + allAreaNumber + "," + visitime + ")";
@@ -665,13 +658,8 @@ public class QuartzJob {
             randNumberY = -randNumberY;
         }
         //获取系统时间
-        
         long petTime = System.currentTimeMillis();
-        long tempTiem = 60000*Long.valueOf(reflashTime);
-        long updataTime = pet.getMaxPetTime();
-        if (updataTime+tempTiem<=petTime) {
-            String sql = "update petlocation set status=0, actualPositionX = x+"+randNumberX+",actualPositionY=y+"+randNumberY+",petRefreshTime="+petTime+";";
-            dao.doUpdate(sql);
-        }
+        String sql = "update petlocation set status=0, actualPositionX = x+"+randNumberX+",actualPositionY=y+"+randNumberY+",petRefreshTime="+petTime+";";
+        dao.doUpdate(sql);
     }   
 }

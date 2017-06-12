@@ -625,4 +625,29 @@ public class Util
         return result;
     }
     
+    /** 
+     * @Title: getStr 
+     * @Description: 拼接字符串
+     * @param list
+     * @param size
+     * @return 
+     */
+    public static String getStr(List<String> list,int size)
+    {
+        String strs = null;
+        for (int i = 0; i < size; i++) 
+        {
+            if (size==1) {
+                strs = strs+ list.get(i);
+            }else
+            {
+                strs = strs+ list.get(i)+",";
+                if (i+1==size) {
+                    strs = strs+ list.get(i);
+              }
+            }
+        }
+        return strs;
+    }
+    
 }

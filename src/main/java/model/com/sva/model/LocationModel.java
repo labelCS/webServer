@@ -8,9 +8,7 @@ public class LocationModel
 
     private BigDecimal timestamp;
     
-    private BigDecimal timestampSva;
-    
-    private BigDecimal timestampPrru;
+    private BigDecimal timeLocal;
 
     private String dataType;
 
@@ -22,9 +20,17 @@ public class LocationModel
 
     private String userID;
     
-    private String svaId;
+    private int mapId;
 
     private MapsModel maps;
+    
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
 
     public String getIdType()
     {
@@ -44,22 +50,6 @@ public class LocationModel
     public void setTimestamp(BigDecimal timestamp)
     {
         this.timestamp = timestamp;
-    }
-
-    /**
-     * @return the timestampSva
-     */
-    public BigDecimal getTimestampSva()
-    {
-        return timestampSva;
-    }
-
-    /**
-     * @param timestampSva the timestampSva to set
-     */
-    public void setTimestampSva(BigDecimal timestampSva)
-    {
-        this.timestampSva = timestampSva;
     }
 
     public String getDataType()
@@ -113,22 +103,6 @@ public class LocationModel
     }
 
     /**
-     * @return the svaId
-     */
-    public String getSvaId()
-    {
-        return svaId;
-    }
-
-    /**
-     * @param svaId the svaId to set
-     */
-    public void setSvaId(String svaId)
-    {
-        this.svaId = svaId;
-    }
-
-    /**
      * @return the maps
      */
     public MapsModel getMaps() {
@@ -145,15 +119,15 @@ public class LocationModel
     /**
      * @return the timeLocal
      */
-    public BigDecimal getTimestampPrru() {
-        return timestampPrru;
+    public BigDecimal getTimeLocal() {
+        return timeLocal;
     }
 
     /**
      * @param timeLocal the timeLocal to set
      */
-    public void setTimestampPrru(BigDecimal timestampPrru) {
-        this.timestampPrru = timestampPrru;
+    public void setTimeLocal(BigDecimal timeLocal) {
+        this.timeLocal = timeLocal;
     }
 
 }

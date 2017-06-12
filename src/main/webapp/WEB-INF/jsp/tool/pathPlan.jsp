@@ -64,18 +64,8 @@
                         <input type="button" class="btn btn-primary" value="<spring:message code="common_confirm" />" id="confirm" style="vertical-align: top;">
                     </div>
                     <div class = "span3" >
-                        <!-- <button type = "button" class="btn btn-primary" id="exportButton"><spring:message code="sva_daochu" /></button> -->
+                        <button type = "button" class="btn btn-primary" id="exportButton"><spring:message code="sva_daochu" /></button>
                         <a download="" href="" target="blank" id="downloadLink" style="visibility: hidden">test</a>
-                        
-                        <div class="btn-group">
-	                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button" data-toggle="dropdown">
-	                            <spring:message code="sva_daochu" /><span class="caret"></span>
-	                        </button>
-	                        <ul class="dropdown-menu" role="menu">
-	                            <li><a href="#" id="exportButton">Simple</a></li>
-	                            <li><a href="#" id="exportStandard">Standard</a></li>
-	                        </ul>
-	                    </div>
                     </div>
                 </form>     
             </div>

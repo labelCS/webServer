@@ -35,9 +35,9 @@ var Estimate = function () {
 	    var options = '';
 	    for(var i=0;i<len;i++){
 	        if(selectTxt == sortData[i].floor){
-	    		options += '<option class="addoption" selected=true value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" selected=true value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}else{
-	    		options += '<option class="addoption" value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}
 	    }
 	    removeOption(renderId);
@@ -55,9 +55,9 @@ var Estimate = function () {
 	    var options = '<option value=""></option>';
 	    for(var i=0;i<len;i++){
 	        if(selectTxt == sortData[i].floor){
-	    		options += '<option class="addoption" selected=true value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" selected=true value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}else{
-	    		options += '<option class="addoption" value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}
 	    }
 	    removeOption(renderId);

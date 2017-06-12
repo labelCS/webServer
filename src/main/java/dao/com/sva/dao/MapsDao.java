@@ -39,15 +39,15 @@ public interface MapsDao {
      */ 
     public List<MapsModel> doqueryByStoreid(int storeId);
 
-    public List<MapsModel> getMapDetail(String floorNo);
+    public List<MapsModel> getMapDetail(String mapId);
 
-    public String getMapName(String floorNo);
+    public String getMapName(String mapId);
 
-    public String getFloorid(String floorNo);
+    public String getFloorid(String mapId);
 
     public int saveMapInfo(MapsModel mmm);
 
-    public int deleteMapByFloor(String floorNo);
+    public int deleteMapByFloor(String mapId);
 
     public List<MapsModel> getFloors(String placeId);
 
@@ -69,15 +69,15 @@ public interface MapsDao {
 
     public List<Map<String, Object>> getFloorNo();
 
-    public int chekByFloorNo1(@Param("floorNo")int floorNo, @Param("id")String id);
+    public int chekByFloorNo1(@Param("mapId")int mapId, @Param("id")String id);
 
     public int checkByPlace(@Param("placeId")String placeId, @Param("floor")String floor);
 
-    public int chekByFloorNo(int floorNo);
+    public int chekByFloorNo(int mapId);
 
     public int updateMap(MapsModel mmm);
 
-    public String getFloorByFloorNo(String floorNo);
+    public String getFloorByFloorNo(String mapId);
 
     public int saveAllPeople(@Param("placeId")int placeId, @Param("yesNumber")int yesNumber, @Param("number")int number,
             @Param("nowNumber")int nowNumber, @Param("visiday")String visiday);

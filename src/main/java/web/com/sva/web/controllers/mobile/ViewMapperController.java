@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import com.sva.web.controllers.HomeController;
 
 /** 
  * @ClassName: ViewMapperController 
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/mobile")
 public class ViewMapperController {
-    private static final Logger LOG = Logger.getLogger(ViewMapperController.class);
+    private static final Logger LOG = Logger.getLogger(HomeController.class);
 
     @RequestMapping(value = "/showMap", method = {RequestMethod.GET})
     public String showSvaMng(Model model)

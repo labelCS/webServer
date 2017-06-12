@@ -28,6 +28,16 @@ public class SellerMngModel
 
     private String floorNo;
 
+    private int mapId;
+    
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
+
     public int getPlaceId()
     {
         return placeId;

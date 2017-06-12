@@ -34,11 +34,11 @@ public class PetLocationController {
             @RequestParam("x[]") List<String> lisx,
             @RequestParam("y[]") List<String> lisy,
             @RequestParam("count") String count,
-            @RequestParam("floorNo") String floorNo,
+            @RequestParam("floorNo") String mapId,
             @RequestParam("petType") String petType
     		)
     {
-    	String deleteSql = "delete from petlocation where z ="+ floorNo+" and petTypes='"+petType+"'";
+    	String deleteSql = "delete from petlocation where mapId ="+ mapId+" and petTypes='"+petType+"'";
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         List<PetLocationModel> lisModel = new ArrayList<>();
         PetLocationModel pet = null;
@@ -47,7 +47,7 @@ public class PetLocationController {
         {
         	pet = new PetLocationModel();
         	pet.setCount(Integer.parseInt(count));
-        	pet.setZ(Integer.parseInt(floorNo));
+        	pet.setMapId(Integer.parseInt(mapId));
         	pet.setX(Double.parseDouble(lisx.get(i)));
         	pet.setY(Double.parseDouble(lisy.get(i)));
         	pet.setPetTypes(petType);
@@ -55,33 +55,33 @@ public class PetLocationController {
         	pet.setActualPositionY(Double.parseDouble(lisy.get(i)));
         	lisModel.add(pet);
 		}
-        String sql = "insert into petlocation(x,y,count,z,petTypes,actualPositionX,actualPositionY,petRefreshTime) values";
+        String sql = "insert into petlocation(x,y,count,mapId,petTypes,actualPositionX,actualPositionY,petRefreshTime) values";
         String sql1 = null;
         int size = lisModel.size();
         for (int i = 0; i < size; i++)
         {
             double x = lisModel.get(i).getX();
             double y =  lisModel.get(i).getY();
-            int z =  lisModel.get(i).getZ();
+            int mapIds =  lisModel.get(i).getMapId();
             int counts =  lisModel.get(i).getCount();
             String petTypes = lisModel.get(i).getPetTypes();
             long petTime = Refresh;
             if (size==1) 
             {
-				sql1 =  "("+x+","+y+","+counts+","+z+",'"+petTypes+"',"+x+","+y+","+petTime+");";
+				sql1 =  "("+x+","+y+","+counts+","+mapIds+",'"+petTypes+"',"+x+","+y+","+petTime+");";
 			}else
 			{
 				if (i==0) 
 				{
-					sql1 = "("+x+","+y+","+counts+","+z+",'"+petTypes+"',"+x+","+y+","+petTime+"),";
+					sql1 = "("+x+","+y+","+counts+","+mapIds+",'"+petTypes+"',"+x+","+y+","+petTime+"),";
 				}else
 				{
 					if (i+1<size) 
 					{
-						sql1 = sql1+"("+x+","+y+","+counts+","+z+",'"+petTypes+"',"+x+","+y+","+petTime+"),";
+						sql1 = sql1+"("+x+","+y+","+counts+","+mapIds+",'"+petTypes+"',"+x+","+y+","+petTime+"),";
 					}else
 					{
-						sql1 = sql1+"("+x+","+y+","+counts+","+z+",'"+petTypes+"',"+x+","+y+","+petTime+");";
+						sql1 = sql1+"("+x+","+y+","+counts+","+mapIds+",'"+petTypes+"',"+x+","+y+","+petTime+");";
 					}
 				}
 				

@@ -36,9 +36,9 @@ public interface LinemapDao {
     public List<LinemapModel> getMaxDay(@Param("placeId")String placeId,@Param("start") String start, 
             @Param("end")String end);
 
-    public int getAreaNumberByDay(@Param("floorNo")BigDecimal floorNo,@Param("tableName")String tableName,@Param("xSpot")BigDecimal xSpot,@Param("x1Spot")BigDecimal x1Spot,@Param("ySpot")BigDecimal ySpot,@Param("y1Spot")BigDecimal y1Spot);
+    public int getAreaNumberByDay(@Param("mapId")int mapId,@Param("tableName")String tableName,@Param("xSpot")BigDecimal xSpot,@Param("x1Spot")BigDecimal x1Spot,@Param("ySpot")BigDecimal ySpot,@Param("y1Spot")BigDecimal y1Spot);
     
-    public int getAreaNumberByHour(@Param("floorNo")BigDecimal floorNo,@Param("tableName")String tableName,@Param("time")long time,@Param("xSpot")BigDecimal x,@Param("x1Spot")BigDecimal x1,@Param("ySpot")BigDecimal y,@Param("y1Spot")BigDecimal y1);
+    public int getAreaNumberByHour(@Param("mapId")int mapId,@Param("tableName")String tableName,@Param("time")long time,@Param("xSpot")BigDecimal x,@Param("x1Spot")BigDecimal x1,@Param("ySpot")BigDecimal y,@Param("y1Spot")BigDecimal y1);
     
-    public int getAllAreaData(@Param("floorNo")BigDecimal floorNo,@Param("tableName")String tableName,@Param("xSpot")BigDecimal x,@Param("x1Spot")BigDecimal x1,@Param("ySpot")BigDecimal y,@Param("y1Spot")BigDecimal y1);
+    public int getAllAreaData(@Param("mapId")int mapId,@Param("tableName")String tableName,@Param("xSpot")BigDecimal x,@Param("x1Spot")BigDecimal x1,@Param("ySpot")BigDecimal y,@Param("y1Spot")BigDecimal y1);
 }

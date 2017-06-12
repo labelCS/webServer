@@ -16,17 +16,17 @@ public class TicketModel
     //消息Id
     private MessageModel msg;
     
-    private String id;
+    private int msgId;
     
-    private String msgId;
-    
-    public String getMsgId() {
+    public int getMsgId() {
         return msgId;
     }
 
-    public void setMsgId(String msgId) {
+    public void setMsgId(int msgId) {
         this.msgId = msgId;
     }
+
+    private String id;
 
     public MessageModel getMsg() {
         return msg;

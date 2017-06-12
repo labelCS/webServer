@@ -11,6 +11,8 @@ public class StaticAccuracyApiModel
     private int placeId;
 
     private BigDecimal floorNo;
+    
+    private int mapId;
 
     private String floor;
 
@@ -45,6 +47,14 @@ public class StaticAccuracyApiModel
     private int count10p;
 
     private String detail;
+    
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
 
     public String getTriggerIp()
     {

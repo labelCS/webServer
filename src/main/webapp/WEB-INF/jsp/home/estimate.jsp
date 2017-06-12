@@ -103,7 +103,7 @@ background-position: 16px 16px;
                    <div class="control-group">
                         <label class="control-label" for="zSel"><spring:message code="map_table_title_floor" /></label>
                           <div class="controls">
-                             <select style="width: 58%;height: 15%;" datatype="*"  nullmsg='<spring:message code="map_place_name" />' name="maps.floorNo" id="zSel"  >
+                             <select style="width: 58%;height: 15%;" datatype="*"  nullmsg='<spring:message code="map_place_name" />' name="maps.mapId" id="zSel"  >
                                 <option value=""></option>
                              </select>
                           </div>

@@ -12,16 +12,14 @@ public class Params
     public static final String YYYYMMDD2 = "yyyy-MM-dd";
 
     public static final String YYYYMMDDHHMM = "yyyyMMddHHmm";
-    
-    public static final String YYYYMMDDHHMMSS1 = "yyyyMMddHHmmss";
 
     public static final String YYYYMMDDHH = "yyyyMMddHH";
     
     public static final String YYYYMMddHH00 = "YYYY-MM-dd HH:00:00";
     
-    public static final String YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
+    public static final String YYYYMMDDHHMMSS = "yyyy-MM-dd HH-mm-ss";
     
-    public static final String HHMMSS = "HH:mm:ss";
+    public static final String YYMMDDHHMMSS1 = "yyyy-MM-dd HH:mm:ss";
     
     public static final int HALF_HOUR = 1800000;
     
@@ -180,44 +178,5 @@ public class Params
      * @Fields CDF_KEY_XVALUE : CDF用，返回值key，代表xValue
      */ 
     public static final String CDF_KEY_XVALUE = "xValue";
-    
-    // sva纠错 begin
-    
-    /**
-     * @Fields SVA_VALID_SUCESS sva订阅成功后等待数据上报时间（秒）
-     */
-    public static final long SECOND_WAIT_FOR_DATA = 20;
-    
-    /**
-     * @Fields SVA_VALID_SUCESS sva订阅数据验证成功
-     */
-    public static final String SVA_VALID_SUCESS = "001";
-    
-    /**
-     * @Fields SVA_GET_TOKEN_FAILED sva订阅获取token失败
-     */
-    public static final String SVA_GET_TOKEN_FAILED = "002";
-    
-    /**
-     * @Fields SVA_SUBSCRIB_API_EORROR sva订阅类型不再api列表中
-     */
-    public static final String SVA_SUBSCRIB_API_ERROR = "003";
-    
-    /**
-     * @Fields SVA_UNSUBSCRIB_FAILED sva取消订阅失败
-     */
-    public static final String SVA_UNSUBSCRIB_FAILED = "004";
-    
-    /**
-     * @Fields SVA_SUBSCRIB_FAILED sva订阅失败
-     */
-    public static final String SVA_SUBSCRIB_FAILED = "005";
-    
-    /**
-     * @Fields SUBSCRIB_DATA_GENERATE_FAILED sva订阅成功后数据未上报
-     */
-    public static final String SUBSCRIB_DATA_GENERATE_FAILED = "006";
-    
-    // sva纠错 end
 
 }

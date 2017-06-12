@@ -24,7 +24,7 @@
     
     <select id="getTotalCount" resultType="int">
         select count(distinct a.userID) number 
-        from statisticfloor a join maps b on a.z = b.floorNo 
+        from statisticfloor a join maps b on a.mapId = b.mapId 
         where 
             b.placeId = #{placeId} 
             and a.time &lt; #{end} 
@@ -63,7 +63,7 @@
 
     <select id="getAreaNumberByDay" resultType="int">
         select count(distinct userID) t from ${tableName}
-        where z = #{floorNo}
+        where mapId = #{mapId}
            and x &gt; #{xSpot}
            and x &lt; #{x1Spot}
            and y &gt; #{ySpot}
@@ -73,7 +73,7 @@
     <select id="getAreaNumberByHour" resultType="int">
         select count(distinct userID) t from ${tableName} 
         where timestamp &gt; #{time} 
-          and z = #{floorNo} 
+          and mapId = #{mapId} 
           and x &gt; #{xSpot} 
           and x &lt; #{x1Spot} 
           and y &gt; #{ySpot} 
@@ -83,7 +83,7 @@
     <select id="getAllAreaData" resultType="int">
         select count(*) t from ${tableName}
         where 
-          z = #{floorNo} 
+         mapId = #{mapId} 
           and x &gt; #{xSpot} 
           and x &lt; #{x1Spot} 
           and y &gt; #{ySpot} 

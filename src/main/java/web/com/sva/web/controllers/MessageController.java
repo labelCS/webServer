@@ -547,7 +547,7 @@ public class MessageController
         result.getArea().setId(String.valueOf(form.getShopId()));
         result.getArea().setAreaName(form.getShopName());
         result.getMaps().setFloor(form.getFloor());
-        result.getMaps().setFloorNo(new BigDecimal(form.getFloorNo()));
+        result.getMaps().setMapId((form.getMapId()));
         result.setTimeInterval(form.getTimeInterval());
         result.setxSpot(form.getxSpot());
         result.setX1Spot(form.getX1Spot());

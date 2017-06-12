@@ -7,7 +7,7 @@
     <select id="doquery" resultMap="messageResult">
         SELECT a.*,b.floor,c.name place,d.areaName  
         FROM message a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
             left join area d on a.shopId = d.id
     </select>
@@ -31,7 +31,7 @@
             <result property="name" column="place"/>
         </association>
         <association property="maps" javaType="MapsModel">
-            <result property="floorNo" column="floorNo"/>
+            <result property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <association property="area" javaType="areaModel">
@@ -43,7 +43,7 @@
     <select id="doqueryByStoreid" resultMap="messageResult">
         SELECT a.*,b.floor,c.name place,d.areaName  
         FROM message a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
             left join area d on a.shopId=d.id 
         WHERE a.placeId = #{storeId}
@@ -52,9 +52,9 @@
     <select id="queryByLocation" resultMap="messageResult">
         SELECT t.*,m.floor 
         FROM message t 
-            join maps m on t.floorNo = m.floorNo 
+            join maps m on t.mapId = m.mapId 
         WHERE 
-            m.floorNo = #{z}
+            m.mapId = #{mapId}
             and (t.xSpot-t.rangeSpot) &lt; #{x}/10 
             and (t.xSpot+t.rangeSpot) &gt; #{x}/10
             and (t.ySpot-t.rangeSpot) &lt; #{y}/10
@@ -65,9 +65,9 @@
     <select id="queryByLocation1" resultMap="messageResult">
         SELECT t.*,m.floor 
         FROM message t 
-            join maps m on t.floorNo = m.floorNo 
+            join maps m on t.mapId = m.mapId 
         WHERE 
-            m.floorNo = #{z}
+            m.mapId = #{mapId}
             and t.xSpot &lt; #{x}/10
             and t.x1Spot &gt; #{x}/10
             and t.ySpot &lt; #{y}/10
@@ -78,9 +78,9 @@
     <select id="queryByLocation3" resultMap="messageResult">
         SELECT t.*,m.floor 
         FROM message t 
-            join maps m on t.floorNo = m.floorNo 
+            join maps m on t.mapId = m.mapId 
         WHERE 
-            m.floorNo = #{z}
+            m.mapId = #{mapId}
             and t.xSpot &lt; #{x}/10
             and t.x1Spot &gt; #{x}/10
             and t.ySpot &lt; #{y}/10
@@ -98,6 +98,7 @@
             xSpot,
             ySpot,
             floorNo,
+            mapId,
             rangeSpot,
             message,
             timeInterval,
@@ -114,6 +115,7 @@
             #{xSpot},
             #{ySpot},
             #{maps.floorNo},
+            #{maps.mapId},            
             #{rangeSpot},
             #{message},
             #{timeInterval},
@@ -126,7 +128,7 @@
     
     <delete id="deleteMessage">
         DELETE FROM message 
-        WHERE xSpot = #{xSpot} and ySpot = #{ySpot} and floorNo = #{floorNo}
+        WHERE xSpot = #{xSpot} and ySpot = #{ySpot} and mapId = #{mapId}
     </delete>
     
     <update id="updateMsgInfo">
@@ -143,7 +145,8 @@
             message = #{message},
             timeInterval = #{timeInterval},
             isEnable = #{isEnable},
-            floorNo = #{maps.floorNo}, 
+            floorNo = #{maps.floorNo},
+            mapId = #{maps.mapId},              
             <if test="ticketPath != null">ticketPath = #{ticketPath},</if>
             <if test="moviePath != null">moviePath = #{moviePath},</if>
             <if test="pictruePath != null">pictruePath = #{pictruePath},</if>
@@ -155,23 +158,23 @@
         SELECT count(*) 
         FROM ${tableName} la 
             join (
-                SELECT a.userID, max(a.timestamp) timestamp, max(a.z) z 
+                SELECT a.userID, max(a.timestamp) timestamp, max(a.mapId) mapId 
                 FROM (
                     SELECT lb.* 
                     FROM ${tableName} lb 
                         join (
                             SELECT distinct(timestamp) 
                             FROM ${tableName}
-                            WHERE z = #{maps.floorNo} 
+                            WHERE mapId = #{maps.mapId} 
                             ORDER BY timestamp desc limit 4
                         ) t on lb.timestamp = t.timestamp 
-                    WHERE z = #{maps.floorNo} ) a 
+                    WHERE mapId = #{maps.mapId} ) a 
                 GROUP BY a.userID
             ) b "
         WHERE 
             la.timestamp= b.timestamp 
             and la.userID = b.userID 
-            and la.z = b.z "
+            and la.mapId = b.mapId "
             and la.x &gt; #{x}/10 - #{rangeSpot}/10
             and la.x &lt; #{x}/10 + #{rangeSpot}/10 
             and la.y &gt; #{y}/10 - #{rangeSpot}/10 
@@ -181,7 +184,7 @@
     <select id="getAllMessageData" resultMap="messageResult">
         SELECT a.*,b.floor,c.name place 
         FROM message a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
         WHERE a.isEnable='开启'
     </select>
@@ -189,7 +192,7 @@
     <select id="getAllMessageDataByAreaId" resultMap="messageResult">
         SELECT a.*,b.floor,c.name place 
         FROM message a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
         WHERE a.isEnable='开启' and a.shopId = #{value}
     </select>
@@ -197,7 +200,7 @@
     <select id="getAllMessageDataByAreaIdNew" resultMap="messageResult2">
         SELECT a.*,b.floor,d.ticketPath ticketPaths,c.name place 
         FROM message a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
             left join ticket d on a.id = d.msgId 
         WHERE a.isEnable='开启' and a.shopId=#{value} group by a.id
@@ -223,7 +226,7 @@
             <result property="name" column="place"/>
         </association>
         <association property="maps" javaType="MapsModel">
-            <result property="floorNo" column="floorNo"/>
+            <result property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <collection property="tickets" ofType="TicketModel">

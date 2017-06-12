@@ -29,9 +29,9 @@ public interface PetLocationDao {
      */
     public List<PetLocationModel> getAllData();
     
-    public List<PetLocationModel> getDataByPet(@Param("floorNo")String floorNo,@Param("petName")String petName);
+    public List<PetLocationModel> getDataByPet(@Param("mapId")String mapId,@Param("petName")String petName);
     
-    public List<PetLocationModel> getPetDataByPosition(String floorNo);
+    public List<PetLocationModel> getPetDataByPosition(int mapId);
     
     public int petRefresh(@Param("randNumberX")int randNumberX,@Param("randNumberY")int randNumberY,@Param("petTime")int petTime);
     

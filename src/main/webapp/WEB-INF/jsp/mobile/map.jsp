@@ -40,19 +40,6 @@
         left: 15px;
         bottom: 15px;
     }
-    
-    #cancelNav{
-        width:50px;
-        height:50px;
-        background-image:url(../images/mobile/xxxx.jpg);
-        background-size:50px 50px;
-        position: fixed;
-        left: 75px;
-        bottom: 15px;
-    }
-    #popWrapper{
-        height:200px;
-    }
 </style>
 </head>
 <body>
@@ -81,22 +68,7 @@
         </div>
         <div data-role="content" style="padding-left:0 !important">
             <div id="mapContainer" style = "position:absolute; width:100%;height:100%;"></div>
-            <div id="findPosition" style = "z-index:2;"></div>
-            <div id="cancelNav" style = "z-index:2;display:none"></div>
-            <div id="hammerCover" style = "position:absolute;z-index:1;opacity:0; width:100%;height:100%;"></div>
-            
-	        <!-- 导航菜单弹出框 -->
-		    <div id="showNav" data-role="popup" data-arrow="b" data-transition="slidedown">
-		        <div data-role="controlgroup" data-type="horizontal" style="text-align: center;">
-		            <a id="fromHere" href="#" data-role="button" data-rel="back">出发</a>
-		            <a id="toHere" href="#" data-role="button" data-rel="back">到这儿</a>
-		        </div>
-	        </div>
-        </div>
-        <div id="popFromBottom" data-role="footer" data-position="fixed" style="display:none;">
-            <a id="closeMessage" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right" style="top:-1.5em;right:0;">Close</a>
-            <div id="popWrapper" class="ui-icon-delete">
-            </div>
+            <div id="findPosition"></div>
         </div>
     </div>
     
@@ -114,35 +86,30 @@
             </div>
         </div>
     </div>
-    
+
     <script src="<c:url value='/plugins/jquery.js'/>"></script>
     <script src="<c:url value='/plugins/jquery-mobile/jquery.mobile-1.4.5.js'/>"></script>
     <script src="<c:url value='/plugins/hammer.min.js'/>"></script>
-    <script src="<c:url value='/plugins/d3/d3.js'/>"></script>
-    <script src="<c:url value='/plugins/underscore/underscore.js'/>"></script>
+    <script src="<c:url value='/plugins/d3/d3.js'/>"></script> 
     <script src="<c:url value='/plugins/indoorMap/indoorMap.js'/>"></script>
     <script src="<c:url value='/js/util.js'/>"></script>
     <script src="<c:url value='/js/mobile/map.js'/>"></script>
     <script>
-    var storeId,mapId;
+    var storeId,floorNo;
     var mapInfo;
-    var areaInfo, messageMapper={};
     var mapObj;
-    var currentMap;
     var localIp = null;
     var timer;
+    // 获取本地局域网ip
+    getIPs(function(ip){
+    	if(!localIp){
+    	    localIp = ip;
+    	}
+    });
     $(document).on("pageinit","#mainPage",function(){
-        // 获取本地局域网ip
-        getIPs(function(ip){
-            if(!localIp){
-                localIp = ip;
-                //alert(localIp);
-            }
-            // 此处是 jQuery 事件
-            Map.init();
-            Map.bindEvent();
-            //alert(localIp);
-        });
+        // 此处是 jQuery 事件
+    	Map.init();
+    	Map.bindEvent();
     });
     </script>
 </body>

@@ -7,13 +7,14 @@
     <select id="doquery" resultMap="areaResult">
         SELECT a.*,b.floor,c.name place,ca.name category 
         FROM area a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
             left join category ca on a.categoryId = ca.id
     </select>
 
     <resultMap id="areaResult" type="AreaModel">
         <id property="id" column="id" />
+        <id property="areaId" column="id" />        
         <result property="areaName" column="areaName"/>
         <result property="xSpot" column="xSpot"/>
         <result property="ySpot" column="ySpot"/>
@@ -22,9 +23,9 @@
         <result property="status" column="status"/>
         <result property="isVip" column="isVip"/>
         <result property="zoneId" column="zoneId"/>
-        <result property="areaId" column="id"/>
+        <result property="mapId" column="mapId"/>        
         <association property="maps" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <association property="store" javaType="StoreModel">
@@ -40,7 +41,7 @@
     <select id="doqueryAll" resultMap="areaResult">
         SELECT a.*,b.floor,c.name place,ca.name category 
         FROM area a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
             left join category ca on a.categoryId = ca.id 
         where a.placeId = #{value}
@@ -58,7 +59,7 @@
     <select id="selectArea" resultType="AreaModel">
         SELECT xSpot,ySpot,x1Spot,y1Spot 
         from area 
-        where floorNo = #{value}
+        where mapId = #{value}
     </select>
     
     <select id="getAreaDataById" parameterType="string" resultType="AreaModel">
@@ -68,7 +69,7 @@
     </select>
     
     <select id="getAreaByPlaceId" resultType="AreaModel">
-        SELECT xSpot,ySpot,x1Spot,y1Spot,areaName,floorNo,id 
+        SELECT xSpot,ySpot,x1Spot,y1Spot,areaName,mapId,id 
         from area 
         where placeId = #{value}
     </select>
@@ -83,6 +84,7 @@
                 x1Spot,
                 y1Spot,
                 floorNo,
+                mapId,
                 categoryId,
                 isVip
             ) 
@@ -94,6 +96,7 @@
             #{x1Spot},
             #{y1Spot},
             #{maps.floorNo},
+            #{maps.mapId},            
             #{category.id},
             #{isVip}
         ) 
@@ -107,7 +110,7 @@
             and ySpot = #{ySpot} 
             and x1Spot = #{x1Spot} 
             and y1Spot = #{y1Spot} 
-            and floorNo = #{maps.floorNo} 
+            and mapId = #{maps.mapId} 
             and categoryid = #{category.id}
     </delete>
     
@@ -120,7 +123,7 @@
             ySpot=#{ySpot},
             x1Spot=#{x1Spot},
             y1Spot=#{y1Spot},
-            floorNo=#{maps.floorNo},
+            mapId=#{maps.mapId},
             categoryId=#{category.id},
             isVip = #{isVip}
         where id = #{id}
@@ -132,36 +135,36 @@
         where 
             timestamp &gt; #{startTime}
             and timestamp &lt; #{nowTime}
-            and z = #{area.maps.floorNo} 
-            and x &gt; (#{area.xSpot}*10) 
-            and x &lt; (#{area.x1Spot}*10) 
-            and y &gt; (#{area.ySpot}*10) 
-            and y &lt; (#{area.y1Spot}*10)
+            and mapId = #{area.maps.mapId} 
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10
     </select>
     
     <select id="getNumberByAreaDay" resultType="int">
         SELECT count(distinct userID) number
         FROM ${tableName}
         where 
-            z = #{area.maps.floorNo} 
-            and x &gt; (#{area.xSpot}*10) 
-            and x &lt; (#{area.x1Spot}*10) 
-            and y &gt; (#{area.ySpot}*10) 
-            and y &lt; (#{area.y1Spot}*10)
+            mapId = #{area.maps.mapId} 
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10
     </select>
     
     <select id="getNumberByTime" resultType="int">
         SELECT count(distinct userID) number
         FROM ${tableName}
         where 
-            z = #{floorNo} 
+            mapId = #{mapId} 
     </select>
     
     <select id="getYesterdayNumber" resultType="int">
         SELECT count(distinct userID) number
         FROM ${tableName}
         where 
-            z = #{floorNo}
+            mapId = #{mapId}
             and timestamp &lt;= #{time} 
     </select>
     
@@ -170,11 +173,11 @@
         FROM ${tableName}
         where 
             timestamp &gt; #{time}
-            and z = #{area.floorNo} 
-            and x &gt; ((#{area.xSpot})*10) 
-            and x &lt; ((#{area.x1Spot})*10) 
-            and y &gt; ((#{area.ySpot})*10)
-            and y &lt; ((#{area.y1Spot})*10)
+            and mapId = #{area.mapId} 
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10
     </select>
     
     <select id="checkByName" resultType="int">
@@ -220,11 +223,11 @@
             (
                 SELECT userId 
                 FROM ${tableName}
-                where z = #{area.maps.floorNo} 
-                    and x &gt; (#{area.xSpot}*10) 
-                    and x &lt; (#{area.x1Spot}*10)
-                    and y &gt; (#{area.ySpot}*10)
-                    and y &lt; (#{area.y1Spot}*10)
+                where mapId = #{area.maps.mapId} 
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10
             ) T 
         GROUP BY T.userID
     </select>
@@ -232,11 +235,11 @@
     <select id="getVisitTimes" resultType="Long">
         SELECT timestamp 
         FROM ${tableName}
-        where z = #{area.maps.floorNo} 
-              and x &gt; (#{area.xSpot}*10) 
-              and x &lt; (#{area.x1Spot}*10)
-              and y &gt; (#{area.ySpot}*10)
-              and y &lt; (#{area.y1Spot}*10)
+        where mapId = #{area.maps.mapId} 
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10
             and userID = #{userId} 
         order by timestamp asc
     </select>
@@ -251,12 +254,12 @@
     <select id="getBaShowVisitUser" resultType="int">
         SELECT count(distinct userID)  
         FROM ${tableName}
-        where z = #{area.maps.floorNo} 
+        where mapId = #{area.maps.mapId} 
             and timestamp &gt; #{time} 
-            and x &gt; (#{area.xSpot}*10) 
-            and x &lt; (#{area.x1Spot}*10)
-            and y &gt; (#{area.ySpot}*10)
-            and y &lt; (#{area.y1Spot}*10)
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10
     </select>
     
     <select id="getAllBaShowVisitUser" resultType="String">
@@ -265,7 +268,7 @@
             SELECT userId 
             FROM ${tableName}
             where 
-                z = #{floorNo} 
+                mapId = #{mapId} 
                 and timestamp > #{time} 
         ) T 
         GROUP BY T.userID
@@ -277,7 +280,7 @@
             SELECT userId 
             FROM ${tableName}
             where 
-                z = #{floorNo} 
+                mapId = #{mapId} 
                 and timestamp > #{time} 
         ) T 
         GROUP BY T.userID
@@ -287,12 +290,12 @@
         SELECT timestamp 
         FROM ${tableName}
         where 
-            z = #{area.maps.floorNo} 
+            mapId = #{area.maps.mapId} 
             and timestamp &gt; #{time} 
-            and x &gt; (#{area.xSpot}*10) 
-            and x &lt; (#{area.x1Spot}*10)
-            and y &gt; (#{area.ySpot}*10)
-            and y &lt; (#{area.y1Spot}*10)
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10
             and userID = #{userId}
         order by timestamp asc
     </select>
@@ -301,7 +304,7 @@
         SELECT timestamp
         FROM ${tableName}
         where 
-            z = #{floorNo} 
+            mapId = #{mapId} 
             and timestamp &gt; #{time} 
             and userID = #{userId} 
         order by timestamp asc
@@ -315,12 +318,12 @@
     
     <insert id="svaeBaShowByAllAeare">
         REPLACE INTO 
-            staticVisitbashowall(floorNO,time,allTime,number,averageTime) 
-        VALUES(#{floorNo},#{time},#{allTime},#{number},#{averageTime})
+            staticVisitbashowall(mapId,time,allTime,number,averageTime) 
+        VALUES(#{mapId},#{time},#{allTime},#{number},#{averageTime})
     </insert>
     
     <select id="selectAeareBaShow" resultType="AreaModel">
-        SELECT * FROM area where floorNo = #{value}
+        SELECT * FROM area where mapId = #{value}
     </select>
     
     <select id="getAreaByAreaId" resultType="AreaModel">
@@ -332,7 +335,7 @@
     </select>
     
     <select id="getAllAverageTimeByAreaId" resultType="java.util.Map">
-        SELECT averageTime,number FROM staticvisitbashowall where floorNo = #{floorNo} and time = #{time}
+        SELECT averageTime,number FROM staticvisitbashowall where mapId = #{mapId} and time = #{time}
     </select>
     
     <select id="getOverAverageTime" resultType="java.util.Map">
@@ -343,7 +346,7 @@
         select timestamp,userID  
         from ${tableName}
         where 
-            z = #{floorNo}
+            mapId = #{mapId}
             and timestamp &gt; #{time} 
         order by userID,timestamp
     </select>
@@ -352,12 +355,12 @@
         select timestamp,userID  
         from ${tableName}
         where 
-            z = #{area.maps.floorNo} 
+            mapId = #{area.maps.mapId} 
             and timestamp &gt; #{time}
-            and x &gt; (#{area.xSpot}*10) 
-            and x &lt; (#{area.x1Spot}*10)
-            and y &gt; (#{area.ySpot}*10)
-            and y &lt; (#{area.y1Spot}*10) 
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10 
         order by userID,timestamp
     </select>
     
@@ -365,11 +368,11 @@
         select timestamp,userID  
         from ${tableName}
         where 
-            z = #{area.maps.floorNo} 
-            and x &gt; (#{area.xSpot}*10) 
-            and x &lt; (#{area.x1Spot}*10)
-            and y &gt; (#{area.ySpot}*10)
-            and y &lt; (#{area.y1Spot}*10)
+            mapId = #{area.maps.mapId} 
+            and x &gt; #{area.xSpot}*10 
+            and x &lt; #{area.x1Spot}*10
+            and y &gt; #{area.ySpot}*10
+            and y &lt; #{area.y1Spot}*10
         order by userID,timestamp
     </select>
     
@@ -410,13 +413,13 @@
     <select id="getAllPeoples" resultType="int">
         select count(distinct userID) 
         from ${tableName}
-        where z = #{floorNo} and timestamp &gt; #{time}
+        where mapId = #{mapId} and timestamp &gt; #{time}
     </select>
     
     <select id="getAllArea" resultType="int">
         SELECT count(distinct userID)  
         FROM ${tableName}
-        where z = #{area.maps.floorNo} 
+        where mapId = #{area.maps.mapId} 
             and x &gt; (#{area.xSpot}*10) 
             and x &lt; (#{area.x1Spot}*10)
             and y &gt; (#{area.ySpot}*10)
@@ -428,7 +431,7 @@
     </select>
     
     <select id="getAllAverageTimeByAreaId2" resultType="java.util.Map">
-        select * from ${tableName} where z = #{floorNo} and timestamp &gt; #{time}
+        select * from ${tableName} where mapId = #{mapId} and timestamp &gt; #{time}
     </select>
     
     <select id="getMaxTimestamp" resultType="Long">
@@ -438,7 +441,7 @@
     <select id="geofencingByLocation" resultType="AreaModel">
         select a.* 
         from area a 
-            left join locationphone b on a.floorNo = #{z}
+            left join locationphone b on a.mapId = #{mapId}
         where a.status = 1 
             and a.xSpot &lt;  #{x} / 10
             and a.x1Spot &gt;  #{x} / 10
@@ -449,26 +452,4 @@
     <select id="getAverageTimeByAreaId1" resultType="java.util.Map">
         select * from district_during where district_id = #{areaId} and timestamp &gt; #{time}
     </select>
-    
-    <select id="getACRData" resultType="java.util.Map">
-       select max(timestamp) timestamp,userId from
-        (select userID,timestamp from 
-             ${tableName} 
-             where z = #{floorNo} 
-             and idType = 'ACR' 
-             and x  &gt; #{area.xSpot}*10 
-             and x  &lt; #{area.x1Spot}*10 
-             and y &gt; #{area.ySpot}*10 
-             and y &lt; #{area.y1Spot}*10
-             and timestamp &gt; #{startTime}
-             and timestamp &lt; #{endTime}
-          ) acr group by userId
-    </select>
-
-    <insert id="saveACR">
-        insert into 
-            acrdata(areaName,floorNo,areaId,userId) 
-        valuse(#{acr.floorNo},#{acr.areaName},#{acr.areaId},#{acr.userId})
-    </insert>    
-          
 </mapper>

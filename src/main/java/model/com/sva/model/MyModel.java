@@ -11,6 +11,16 @@ public class MyModel
 
     private String floorNo;
     
+    private int mapId;
+    
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
+
     /**
      * @Fields userId 用户id
      */

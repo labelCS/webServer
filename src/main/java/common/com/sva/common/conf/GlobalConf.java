@@ -2,7 +2,6 @@ package com.sva.common.conf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import com.sva.service.AmqpThread;
 
@@ -14,11 +13,6 @@ public abstract class GlobalConf
 
     public static String password;
 
-    /**
-     * prru采集特征值线程池
-     */
-    private static Map<String,Thread> prruTaskPool = new HashMap<String,Thread>(10);
-    
     /**
      * 对接SVA数据线程池
      */
@@ -34,40 +28,7 @@ public abstract class GlobalConf
      */
     private static ArrayList<Thread> bluemixClientThreadPool = new ArrayList<Thread>(
             10);
-    
-    private static Map<String,Map<String,Object>> navigateData = new HashMap<String,Map<String,Object>>();
-    
-    /**
-     * 加入prru采集特征值线程池
-     * 
-     * @param e
-     */
-    public static synchronized void addPrruThreadPool(String id, Thread e)
-    {
-        prruTaskPool.put(id, e);
-    }
 
-    /**
-     * 移除指定id对应的prru采集特征值线程
-     * 
-     * @param e
-     */
-    public static synchronized void removePrruThreadPool(String id)
-    {
-        prruTaskPool.remove(id);
-    }
-    
-    /**
-     * 根据id获取对于线程
-     * 
-     * @param i
-     * @return
-     */
-    public static synchronized Thread getPrruThread(String id)
-    {
-        return prruTaskPool.get(id);
-    }
-    
     /**
      * 加入SVA数据线程池
      * 
@@ -192,36 +153,5 @@ public abstract class GlobalConf
     public static synchronized AmqpThread getAmqpThread(String svaId)
     {
         return subscriptionMap.get(svaId);
-    }
-    
-    /** 
-     * @Title: addNavigateData 
-     * @Description: 添加移动端html5导航数据
-     * @param fileName
-     * @param data 
-     */
-    public static synchronized void addNavigateData(String fileName, Map<Integer,Map<Integer,List<Integer>>> data, List<Map<String,Object>> pointArray)
-    {
-        // 将点的数组转换为map
-        Map<Integer, Object> poingMap = new HashMap<Integer, Object>();
-        // 遍历list，转换成map
-        for(Map<String,Object> m : pointArray){
-            int id = Integer.parseInt(m.get("id").toString());
-            poingMap.put(id, m);
-        }
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("point", poingMap);
-        result.put("navigate", data);
-        navigateData.put(fileName, result);
-    }
-    
-    /** 
-     * @Title: getNavigateDataByFileName 
-     * @Description: 获取指定路径规划文件对应的导航信息
-     * @param fileName
-     * @return 
-     */
-    public static synchronized Map<String, Object> getNavigateDataByFileName(String fileName){
-        return navigateData.get(fileName);
     }
 }

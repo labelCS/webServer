@@ -56,9 +56,9 @@ public class MyLog {
         public  Logger createLogger(String fileName, boolean flag){
             //获取路径
             String path = System.getProperty("user.dir");
-            path = path+"/";
+//            path = path+"/";
 //            System.out.println(path);
-//            path = path.substring(0, path.indexOf("bin")) +"/logs/run/";
+            path = path.substring(0, path.indexOf("bin")) +"/logs/run/";
             //获取时间
 //            Date d = new Date(); 
 //            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  

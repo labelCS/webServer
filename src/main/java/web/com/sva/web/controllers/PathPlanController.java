@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.sva.service.NavigateService;
 import com.sva.service.XmlService;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /** 
@@ -41,12 +39,6 @@ public class PathPlanController {
      */ 
     @Autowired
     private XmlService service;
-    
-    /** 
-     * @Fields naviSerivce : 导航路径生成逻辑
-     */ 
-    @Autowired
-    private NavigateService naviSerivce;
     /** 
      * @Fields LOG : 日志处理句柄
      */ 
@@ -80,38 +72,8 @@ public class PathPlanController {
     }
     
     /** 
-     * @Title: createXmlStandard 
-     * @Description: 处理生成标准xml的请求
-     * @param map
-     * @return 
-     */
-    @RequestMapping(value = "/api/createXmlStandard", method = {RequestMethod.POST})
-    @ResponseBody
-    public Map<String, Object> createXmlStandard(HttpServletRequest request, @RequestBody Map<String,Object> map){
-        LOG.debug("start create xml");
-        // 从请求中抽取参数
-        String fileName = (String) map.get("fileName");
-        JSONObject data = JSONObject.fromObject(map.get("data"));
-        JSONObject optParam = JSONObject.fromObject(map.get("optParam"));
-        // xml文件保存路径
-        String pathFileName = request.getSession().getServletContext().getRealPath(File.separator + "WEB-INF"
-                + File.separator+"upload") + File.separator + "pathFile" + File.separator + fileName;
-        // 调用service，生成xml
-        int result = service.createStandardPathFile(pathFileName, data, optParam);
-        
-        // 同时生成导航路径
-        naviSerivce.calcNavigatePath((JSONArray) data.get("point"), (JSONArray) data.get("data"), fileName);
-        
-        // 生成返回值
-        Map<String, Object> returnVal = new HashMap<String, Object>();
-        returnVal.put("returnCode", result);
-        returnVal.put("file", fileName);
-        return returnVal;
-    }
-    
-    /** 
-     * @Title: getSimpleXmlData 
-     * @Description: 获取xml的请求
+     * @Title: createXml 
+     * @Description: 处理生成xml的请求
      * @param map
      * @return 
      */

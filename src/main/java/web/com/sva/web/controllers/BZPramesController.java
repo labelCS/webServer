@@ -170,8 +170,8 @@ public class BZPramesController
         sm.setFloorNo8(bd8);
         sm.setPeriodSel(periodSel);
         sm.setCoefficient(coefficient);
-        startTime = "START_LITERAL" + startTime;
-        sm.setStartTime(ConvertUtil.dateStringFormat(startTime,Params.YYYYMMDDHHMMSS));
+        startTime = START_LITERAL + startTime;
+        sm.setStartTime(ConvertUtil.dateStringFormat(startTime,Params.YYMMDDHHMMSS1));
         sm.setId(1);
         bzPramesDao.updateBZInfo(sm);
         
@@ -212,8 +212,8 @@ public class BZPramesController
         sm.setFloorNo3(bd3);
         sm.setPeriodSel(periodSel);
         sm.setCoefficient(coefficient);
-        startTime = "START_LITERAL" + startTime;
-        sm.setStartTime(ConvertUtil.dateStringFormat(startTime,Params.YYYYMMDDHHMMSS));
+        startTime = START_LITERAL + startTime;
+        sm.setStartTime(ConvertUtil.dateStringFormat(startTime,Params.YYMMDDHHMMSS1));
         sm.setId(1);
         bzPramesDao.updateSHInfo(sm);
         modelMap.put(Params.RETURN_KEY_DATA, null);
@@ -273,7 +273,7 @@ public class BZPramesController
             sm.setPeriodSel(periodSel);
             sm.setCoefficient(coefficient);
             startTime = START_LITERAL + startTime;
-            sm.setStartTime(ConvertUtil.dateStringFormat(startTime,Params.YYYYMMDDHHMMSS));
+            sm.setStartTime(ConvertUtil.dateStringFormat(startTime,Params.YYMMDDHHMMSS1));
             sm.setId(1);
             bzPramesDao.updateBZInfo1(sm);
             modelMap.put(Params.RETURN_KEY_DATA, null);
@@ -340,8 +340,8 @@ public class BZPramesController
        sm.setFloorNo4(bd4);
        sm.setPeriodSel(periodSel);
        sm.setCoefficient(coefficient);
-       startTime = "START_LITERAL" + startTime;
-       sm.setStartTime(ConvertUtil.dateStringFormat(startTime,Params.YYYYMMDDHHMMSS));
+       startTime = START_LITERAL + startTime;
+       sm.setStartTime(ConvertUtil.dateStringFormat(startTime,Params.YYMMDDHHMMSS1));
        sm.setId(1);
        bzPramesDao.updateSHInfoJing(sm);
        modelMap.put(Params.RETURN_KEY_DATA, null);

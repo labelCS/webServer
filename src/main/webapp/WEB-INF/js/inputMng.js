@@ -57,9 +57,9 @@ var MsgMng = function () {
 	    for(var i=0;i<len;i++){
 	    	var info = sortData[i];
 	        if(selectTxt == sortData[i].floor){
-	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" selected=true value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" selected=true value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}else{
-	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}
 	    }
 	    removeOption(renderId);
@@ -639,8 +639,8 @@ var MsgMng = function () {
         	                    "mRender": function ( data, type, full ) {
         	                    	var html = "" +
         	                    		'<input type="button" style="width: 53px;height:30px;font-size: 13px;font-family:inherit;" data-type="fuzhi" data-placeid="'+full.store.id+'" data-categoryid="'+full.category.id+'" data-id="'+full.floorid+'" value="'+i18n_fuzhi+'">' +
-        	                    		'<input type="button" data-type="edt" style="width: 54px;height:30px;font-size: 13px;font-family:inherit;" data-placeid="'+full.store.id+'" data-categoryid="'+full.category.id+'" data-xSpot="'+full.xSpot+'" data-x1Spot="'+full.x1Spot+'"data-ySpot="'+full.ySpot+'" data-y1Spot="'+full.y1Spot+'"data-floorno="'+full .maps.floorNo+'" value="'+i18n_edit+'" id="'+full.id+' ">' +
-        	                    		'<input type="button" data-type="del" style="width: 54px;height:30px;font-size: 13px;font-family:inherit;" data-floorNo="'+full .maps.floorNo+'" data-categoryid="'+full.category.id+'" id="'+full.id+'" data-id="'+full.id+'" data-xSpot="'+full.xSpot+'"data-x1Spot="'+full.x1Spot+'" data-ySpot="'+full.ySpot+'" data-y1Spot="'+full.y1Spot+'" value="'+i18n_delete+'">';
+        	                    		'<input type="button" data-type="edt" style="width: 54px;height:30px;font-size: 13px;font-family:inherit;" data-placeid="'+full.store.id+'" data-categoryid="'+full.category.id+'" data-xSpot="'+full.xSpot+'" data-x1Spot="'+full.x1Spot+'"data-ySpot="'+full.ySpot+'" data-y1Spot="'+full.y1Spot+'"data-floorno="'+full.mapId+'" value="'+i18n_edit+'" id="'+full.id+' ">' +
+        	                    		'<input type="button" data-type="del" style="width: 54px;height:30px;font-size: 13px;font-family:inherit;" data-floorNo="'+full.mapId+'" data-categoryid="'+full.category.id+'" id="'+full.id+'" data-id="'+full.id+'" data-xSpot="'+full.xSpot+'"data-x1Spot="'+full.x1Spot+'" data-ySpot="'+full.ySpot+'" data-y1Spot="'+full.y1Spot+'" value="'+i18n_delete+'">';
         	                    		//'<a data-type="preview" role="button" class="btn"  style="font-size:13px;" data-floorNo="'+full.floorNo+'" id="'+full.id+'"  data-xSpot="'+full.xSpot+'" data-ySpot="'+full.ySpot+'" data-pictrue="'+full.pictruePath+'">'+i18n_Preview+'</a>';
         	                    		
         	                        return html;

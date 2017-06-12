@@ -8,11 +8,11 @@
         select a.*,b.floor,c.deviation, d.name place
         from dynamicaccuracy a 
             left join maps b 
-                on a.floorNo = b.floorNo 
+                on a.mapId = b.mapId 
             left join store d 
                 on a.placeId = d.id 
             left join estimatedev c 
-                on b.floorNo = c.floorNo 
+                on b.mapId = c.mapId 
         order by #{sortCol} #{sortDir} 
         limit #{start},#{length}
     </select>
@@ -34,7 +34,7 @@
         <result property="triggerIp" column="triggerIp"/>
         <result property="deviation" column="deviation"/>
         <association property="maps" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <association property="store" javaType="StoreModel">
@@ -47,11 +47,11 @@
         select a.*,b.floor,c.deviation, d.name place
         from dynamicaccuracy a 
             left join maps b 
-                on a.floorNo = b.floorNo 
+                on a.mapId = b.mapId 
             left join store d 
                 on a.placeId = d.id 
             left join estimatedev c 
-                on b.floorNo = c.floorNo
+                on b.mapId = c.mapId
         where  
             a.placeId = #{placeId} and a.start_date &gt; #{startTime} and a.end_date &lt; #{endTime}
     </select>
@@ -60,11 +60,11 @@
         select a.*,b.floor,c.deviation, d.name place
         from dynamicaccuracy a 
             left join maps b 
-                on a.floorNo = b.floorNo 
+                on a.mapId = b.mapId 
             left join store d 
                 on a.placeId = d.id 
             left join estimatedev c 
-                on b.floorNo = c.floorNo
+                on b.mapId = c.mapId
         where  
             a.placeId = #{placeId} and a.start_date &gt; #{startTime} and a.end_date &lt; #{endTime}
     </select>
@@ -73,11 +73,11 @@
         select a.*,b.floor,c.deviation, d.name place
         from dynamicaccuracy a 
             left join maps b 
-                on a.floorNo = b.floorNo 
+                on a.mapId = b.mapId 
             left join store d 
                 on a.placeId = d.id 
             left join estimatedev c 
-                on b.floorNo = c.floorNo
+                on b.mapId = c.mapId
         where  
             a.start_date &gt; #{startTime} and a.end_date &lt; #{endTime}
     </select>
@@ -85,9 +85,9 @@
     <select id="getStaticDataByStoreid" resultMap="dynamicAccuracyResult">
         select a.*,b.floor,c.deviation, d.name place 
         from dynamicaccuracy a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store d on a.placeId = d.id 
-            left join estimatedev c on b.floorNo = c.floorNo 
+            left join estimatedev c on b.mapId = c.mapId 
         where  
             a.placeId = #{placeId}
         order by 
@@ -104,6 +104,7 @@
             triggerIp,
             placeId,
             floorNo,
+            mapId,
             origin,
             destination,
             start_date,
@@ -120,6 +121,7 @@
             #{triggerIp},
             #{store.id},
             #{maps.floorNo},
+            #{maps.mapId},            
             #{origin},
             #{destination},
             #{startDate},
@@ -139,11 +141,11 @@
         select a.*,b.floor,c.deviation, d.name place
         from dynamicaccuracy a 
             left join maps b 
-                on a.floorNo = b.floorNo 
+                on a.mapId = b.mapId 
             left join store d 
                 on a.placeId = d.id 
             left join estimatedev c 
-                on b.floorNo = c.floorNo 
+                on b.mapId = c.mapId 
     </select>
     
 </mapper>

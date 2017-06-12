@@ -28,7 +28,7 @@ public interface ElectronicDao {
 
     public int saveElectronic(ElectronicModel mmm) throws DataAccessException;
 
-    public int deleteMessage(@Param("xSpot")String xSpot, @Param("ySpot")String ySpot, @Param("floorNo")String floorNo);
+    public int deleteMessage(@Param("xSpot")String xSpot, @Param("ySpot")String ySpot, @Param("mapId")String mapId);
 
     public int updateMsgInfo(ElectronicModel mmm);
 

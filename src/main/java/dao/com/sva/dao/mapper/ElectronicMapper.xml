@@ -7,7 +7,7 @@
     <select id="doquery" resultMap="ElectronicResult">
         SELECT a.*,b.floor,c.name place,d.id areaId,d.status status,d.areaName shopName 
         FROM electronic a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
             left join area d on a.shopId = d.id
     </select>
@@ -19,7 +19,7 @@
         <result property="pictruePath" column="pictruePath"/>
         <result property="moviePath" column="moviePath"/>
         <association property="maps" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <association property="store" javaType="StoreModel">
@@ -36,18 +36,19 @@
     <select id="doqueryByStoreid" resultMap="ElectronicResult">
         SELECT a.*,b.floor,c.name place,d.id areaId,d.status status,d.areaName shopName 
         FROM electronic a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
             left join area d on a.shopId = d.id 
         where a.placeId = #{storeid}
     </select>
     
     <insert id="saveElectronic">
-        INSERT INTO electronic(placeId,electronicName,floorNo,message,pictruePath,moviePath,shopId) 
+        INSERT INTO electronic(placeId,electronicName,floorNo,mapId,message,pictruePath,moviePath,shopId) 
         VALUES(
             #{store.id},
             #{electronicName},
             #{maps.floorNo},
+            #{maps.mapId},            
             #{message},
             #{pictruePath},
             #{moviePath},
@@ -57,7 +58,7 @@
     
     <delete id="deleteMessage">
         DELETE FROM message 
-        where xSpot = #{xSpot} and ySpot = #{ySpot} and floorNo = #{floorNo}
+        where xSpot = #{xSpot} and ySpot = #{ySpot} and mapId = #{mapId}
     </delete>
     
     <update id="updateMsgInfo">
@@ -67,6 +68,7 @@
             shopId = #{area.id},
             message = #{message},
             floorNo = #{maps.floorNo},
+            mapId = #{maps.mapId},            
             electronicName = #{electronicName} 
         where id = #{id}
     </update>
@@ -79,6 +81,7 @@
             shopId = #{area.id},
             message = #{message},
             floorNo = #{maps.floorNo},
+            mapId = #{maps.mapId},            
             electronicName = #{electronicName} 
         where id = #{id}
     </update>
@@ -91,6 +94,7 @@
             shopId = #{area.id},
             message = #{message},
             floorNo = #{maps.floorNo},
+            mapId = #{maps.mapId},            
             electronicName = #{electronicName} 
         where id = #{id}
     </update>
@@ -104,6 +108,7 @@
             shopId = #{area.id},
             message = #{message},
             floorNo = #{maps.floorNo},
+            mapId = #{maps.mapId},            
             electronicName = #{electronicName} 
         where id = #{id}
     </update>

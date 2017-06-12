@@ -6,25 +6,27 @@
 
     <select id="getData" resultMap="StatisticFloorResult">
         select 
-            a.z,b.floor, count(distinct a.userID) number 
-        from statisticfloor a join maps b on a.z = b.floorNo 
+            a.mapId,b.floor, count(distinct a.userID) number 
+        from statisticfloor a join maps b on a.mapId = b.mapId 
         where b.placeId = #{placeId} and a.time &lt; #{end} and a.time &gt;= #{start} 
-        group by a.z 
-        order by a.z asc
+        group by a.mapId 
+        order by a.mapId asc
     </select>
 
     <resultMap id="StatisticFloorResult" type="StatisticFloorModel">
         <result property="number" column="number"/>
+        <result property="mapId" column="mapId"/>
+        <result property="floor" column="floor"/>
         <association property="maps" javaType="MapsModel">
-            <id property="floorNo" column="z"/>
-            <result property="name" column="floor"/>
+            <id property="mapId" column="mapId"/>
+            <result property="floor" column="floor"/>
         </association>
     </resultMap>
     
     <select id="getTotalCount" resultType="int">
         select 
             count(distinct a.userID) number
-        from statisticfloor a join maps b on a.z = b.floorNo
+        from statisticfloor a join maps b on a.mapId = b.mapId
         where b.placeId = #{placeId} and a.time &lt; #{end} and a.time &gt;= #{start}
     </select>
     

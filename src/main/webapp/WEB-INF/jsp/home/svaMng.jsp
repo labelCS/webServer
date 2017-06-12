@@ -104,69 +104,71 @@
                                             <input type="text" datatype="number"  errormsg='<spring:message code="sva_port_tishi" />'   nullmsg='<spring:message code="sva_broker" />' style="width: 56%;height: 15%" class="input-xlarge" name="brokerPort" id="brokerId" maxlength="20" reg="^.{0,20}$" placeholder="<spring:message code="sva_broker" />">
                                         </div>
                                     </div>
-                                    <div class="control-group">
-                                        <label class="control-label" for="managerEmail"><spring:message code="email" /></label>
+                                     <div class="control-group">
+                                        <label class="control-label" for="usernameId"><spring:message code="sva_title_username" /></label>
                                         <div class="controls">
-                                            <input type="text" datatype="e"  errormsg='<spring:message code="invalid_email_adress" />' nullmsg='<spring:message code="email_is_required" />' style="width: 56%;height: 15%" class="input-xlarge" name="managerEmail" id="managerEmail" maxlength="20" placeholder="<spring:message code="email" />">
+                                            <input type="text" datatype="password"  nullmsg='<spring:message code="sva_user" />' style="width: 56%;height: 15%" class="input-xlarge" name="username" id="usernameId" maxlength="20" reg="^.{0,20}$" placeholder="<spring:message code="sva_title_showusername" />">
+                                            <input type="hidden" style="width: 56%;height: 15%" class="input-xlarge" name="id" id="idid">
                                         </div>
-                                    </div>
+                                    </div>    
+                                    <input type="hidden" style="width: 56%;height: 15%" class="input-xlarge" name="apiLists" id="apiLists">
+                                    <input type="hidden" style="width: 56%;height: 15%" class="input-xlarge" name="mapLists" id="mapLists">                                        
+                                    <div class="control-group">
+                                        <label class="control-label" for="passwordId"><spring:message code="sva_title_password" /></label>
+                                        <div class="controls">
+                                            <input type="password" datatype="password"  nullmsg='<spring:message code="sva_password" />' style="width: 56%;height: 15%"class="input-xlarge" name="password" id="passwordId" maxlength="20" reg="^.{0,20}$" onblur="getSvaData()"  placeholder="<spring:message code="sva_title_showpassword" />"/>
+                                        </div>
+                                    </div>                                    
                   				</div>
                  			</div>
                 		</div>
                 		<div class="span6" style="padding:10px;">
                   			<div class="row-fluid">
                       			<div class="span12" style="outline:0px solid #E6E4E4;padding:20px 0;">
-                      			     <div class="control-group">
-                                        <label class="control-label" for="usernameId"><spring:message code="sva_title_username" /></label>
-                                        <div class="controls">
-                                            <input type="text" datatype="password"  nullmsg='<spring:message code="sva_user" />' style="width: 56%;height: 15%" class="input-xlarge" name="username" id="usernameId" maxlength="20" reg="^.{0,20}$" placeholder="<spring:message code="sva_title_showusername" />">
-                                            <input type="hidden" style="width: 56%;height: 15%" class="input-xlarge" name="id" id="idid">
-                                        </div>
-                                    </div>                   
-                                    <div class="control-group">
-                                        <label class="control-label" for="passwordId"><spring:message code="sva_title_password" /></label>
-                                        <div class="controls">
-                                            <input type="password" datatype="password"  nullmsg='<spring:message code="sva_password" />' style="width: 56%;height: 15%"class="input-xlarge" name="password" id="passwordId" maxlength="20" reg="^.{0,20}$"  placeholder="<spring:message code="sva_title_showpassword" />"/>
-                                        </div>
-                                    </div>
                                     <div class="control-group">
                                         <label class="control-label" for="SVAPosition"><spring:message code="store_add_name" /></label>
                                         <div class="controls">
                                             <select style="width: 58%;height: 15%;" datatype="*"  nullmsg='<spring:message code="map_store_name" />' name="position" id="SVAPosition" >
-                                                <option value=""></option>
                                             </select> 
                                         </div>
                                     </div>                   					
-                   					<div class="control-group">
-                        				<label class="control-label" for="enableSel"><spring:message code="sva_title_status" /></label>
-                          				<div class="controls">
-                             				<select style="width: 58%;height: 15%;" datatype="*"  nullmsg='<spring:message code="sva_zhuangtai" />' name=status id="enableSel" >
-                                    			<option value=""></option>
-                                    			<option value="1"><spring:message code="message_swith_open" /></option>
-                                    			<option value="0"><spring:message code="message_swith_close" /></option>
-                             				</select>                
-                          				</div>
-                   					</div>
                                     <div class="control-group">
-                                        <label class="control-label" for="subscriptionId"><spring:message code="sva_Subscription_type" /></label>
+                                        <label class="control-label" for=""><spring:message code="sva_Subscription_type" /></label>
                                         <div class="controls">
-                                            <select style="width: 58%;height: 15%;" datatype="*"  nullmsg='<spring:message code="map_store_name" />' name=type id="subscriptionId" >
-                                                <option value="1"><spring:message code="sva_type_anonymization" /></option>
-                                                <option value="0"><spring:message code="sva_type_noanonymization" /></option>
-                                                <option value="2"><spring:message code="sva_type_Designation" /></option>
+                                            <select style="width: 58%;height: 15%;"  datatype="*"  nullmsg='<spring:message code="map_store_name" />' name=type id="apiListId" >
                                             </select>                
                                         </div>
                                     </div>
-                                    <div id="idTypeDiv" class="control-group hide">
+                                    <div id="idTypeDiv" class="control-group ">
                                         <label class="control-label" for="IdType"><spring:message code="sva_id_type" /></label>
                                         <div class="controls">
-                                            <select style="width: 58%;height: 15%;" datatype="*"  nullmsg='<spring:message code="map_store_name" />' name=idType id="IdType" >
-                                                <option value="IP">IP</option>
-                                                <option value="MAC">MAC</option>
-                                                <option value="MSISDN">MSISDN</option>
-                                            </select>                
+                                            <select style="width: 58%;height: 15%;"   nullmsg='<spring:message code="map_store_name" />' name=idType id="svaIdType" >
+                                            </select>
+                                            <span class="hide" id=idTypeTishi></span>                
                                         </div>
                                     </div>
+                                    
+                                    <div class="control-group">
+                                        <label class="control-label" for="enableSel">mapId</label>
+                                        <div class="controls" >
+                                            <select style="width: 58%;height: 15%;" multiple="multiple"  name="mapList" id="mapId" >
+                                            </select>
+                                            <span class="hide" id="mapIdTishi"></span>                
+                                        </div>
+                                    </div>        
+                                                                 
+                                    <div class="control-group">
+                                        <label class="control-label" for="enableSel"><spring:message code="sva_title_status" /></label>
+                                        <div class="controls">
+                                            <select style="width: 58%;height: 15%;" datatype="*"  nullmsg='<spring:message code="sva_zhuangtai" />' name=status id="enableSel" >
+                                                <option value="1"><spring:message code="message_swith_open" /></option>
+                                                <option value="0"><spring:message code="message_swith_close" /></option>
+                                            </select>                
+                                        </div>
+                                    </div>                                    
+                                    
+                                 
+                                    
                   				</div>
                 			</div>
                			</div>
@@ -242,9 +244,8 @@
                             <th><spring:message code="sva_title_password" /></th> 
                             <th><spring:message code="sva_Subscription_type" /></th>
                             <th><spring:message code="sva_id_type" /></th>
+                            <th>mapId</th>                            
                             <th><spring:message code="sva_title_status" /></th>
-                            <th><spring:message code="sva_status_code" /></th>
-                            <th><spring:message code="email" /></th>
                             <th><spring:message code="message_table_title_operation" /></th>
                         </tr>
                     </thead>
@@ -276,7 +277,6 @@
    		i18n_info = '<spring:message code="map_info" />',
    	    i18n_deleteInfo = '<spring:message code="map_delete" />',
         i18n_svaSame = '<spring:message code="map_sva_same" />';
-        i18n_validate = '<spring:message code="valiate_sva" />';
         var i18n_open = '<spring:message code="message_swith_open" />'; 
         var i18n_close = '<spring:message code="message_swith_close" />';
         var i18n_type = '<spring:message code="sva_type_anonymization" />';
@@ -287,6 +287,10 @@
         var i18n_user = '<spring:message code="sva_name_password" />';
         var i18n_wuxiao = '<spring:message code="sva_ip_wuxiao" />';
         var info;
+        var apiList;
+        var idTypeList;
+        var mapListType;
+        var mapList;
         var storeVal ;
       $(document).ready(function() {
           App.init();

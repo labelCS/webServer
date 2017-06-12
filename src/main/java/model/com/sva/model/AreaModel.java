@@ -6,7 +6,7 @@ public class AreaModel
 {
     private String id;
     
-    private String areaId;
+    private int areaId;
     
     private String areaName;
 
@@ -24,6 +24,8 @@ public class AreaModel
 
     private int zoneId;
     
+    private int mapId;
+    
     private String isVip;
     
     private MapsModel maps;
@@ -32,12 +34,21 @@ public class AreaModel
     
     private CategoryModel category;
     
-    public String getAreaId() {
+    
+    public int getAreaId() {
         return areaId;
     }
 
-    public void setAreaId(String areaId) {
+    public void setAreaId(int areaId) {
         this.areaId = areaId;
+    }
+
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
     }
 
     public BigDecimal getFloorNo() {
@@ -46,6 +57,7 @@ public class AreaModel
 
     public void setFloorNo(BigDecimal floorNo) {
         this.floorNo = floorNo;
+
     }
 
     public int getStatus()

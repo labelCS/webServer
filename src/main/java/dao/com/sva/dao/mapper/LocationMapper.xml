@@ -6,8 +6,8 @@
 
     <select id="doquery1" resultMap="locationResult">
         SELECT a.*,b.* 
-        FROM locationphone a left join maps b on a.z = b.floorNo 
-        WHERE a.userID = #{userId} and a.z = #{floorNo}
+        FROM locationphone a left join maps b on a.mapId = b.mapId 
+        WHERE a.userID = #{userId} and a.mapId = #{mapId}
     </select>
 
     <resultMap id="locationResult" type="LocationModel">
@@ -16,6 +16,7 @@
         <result property="x" column="x"/>
         <result property="y" column="y"/>
         <result property="z" column="z"/>
+        <result property="mapId" column="mapId"/>        
         <result property="userID" column="userID"/>
         <association property="maps" javaType="MapsModel">
             <id property="id" column="id"/>
@@ -37,7 +38,7 @@
         SELECT 
             f.userID, 
             max(f.timestamp) timestamp, 
-            max(f.z) z,
+            max(f.mapId) mapId,
             max(f.dataType) dataType,
             max(f.idType) idType,
             max(f.x) x,
@@ -46,21 +47,21 @@
             SELECT la.* 
             FROM 
                 ${tableName} la join (
-                    SELECT a.userID, max(a.timestamp) timestamp, max(a.z) z 
+                    SELECT a.userID, max(a.timestamp) timestamp, max(a.mapId) mapId 
                     FROM (
                         SELECT lb.* 
                         FROM ${tableName} lb join (
                             SELECT distinct(timestamp) 
                             FROM ${tableName} 
-	                        WHERE z = #{floorNo} and timestamp &gt; #{time} 
+	                        WHERE mapId = #{mapId} and timestamp &gt; #{time} 
 	                        ORDER BY timestamp desc 
 	                        LIMIT 4
 	                    ) t on lb.timestamp = t.timestamp 
-	                    WHERE z = #{floorNo} 
+	                    WHERE mapId = #{mapId} 
                     ) a 
                     GROUP BY a.userID
                 ) b 
-            WHERE la.timestamp= b.timestamp and la.userID = b.userID and la.z = b.z
+            WHERE la.timestamp= b.timestamp and la.userID = b.userID and la.mapId = b.mapId
             ) f 
         GROUP BY f.userID
     </select>
@@ -70,7 +71,7 @@
         FROM (
             SELECT * 
             FROM ${tableName}
-            WHERE z = #{floorNo}
+            WHERE mapId = #{mapId}
                 and timestamp &gt; #{time}
             ORDER BY timestamp desc
         ) a 
@@ -82,7 +83,7 @@
         FROM (
             SELECT * 
             FROM ${tableName}
-            WHERE z = #{floorNo} 
+            WHERE mapId = #{mapId} 
         ) a 
         GROUP BY a.userID
     </select>
@@ -101,7 +102,7 @@
     <select id="getUserId" resultType="LocationModel">
         SELECT distinct(userID) 
         FROM ${tableName}
-        WHERE z = #{floorNo} 
+        WHERE mapId = #{mapId} 
             and timestamp &gt; #{time}
     </select>
     
@@ -116,7 +117,7 @@
         SELECT 
             f.userID, 
             max(f.timestamp) timestamp, 
-            max(f.z) z,
+            max(f.mapId) mapId,
             max(f.dataType) dataType,
             max(f.idType) idType,
             max(f.x) x,
@@ -126,19 +127,19 @@
                 SELECT la.* 
                 FROM ${tableName} la 
                     join (
-                        SELECT a.userID, max(a.timestamp) timestamp, max(a.z) z 
+                        SELECT a.userID, max(a.timestamp) timestamp, max(a.mapId) mapId 
                         FROM (
                             SELECT lb.* FROM ${tableName} lb join (
                                 SELECT distinct(timestamp) 
                                 FROM ${tableName}
-                                WHERE z = #{floorNo} and timestamp &gt; #{time} 
+                                WHERE mapId = #{mapId} and timestamp &gt; #{time} 
                                 ORDER BY timestamp desc limit 4
                             ) t on lb.timestamp = t.timestamp 
-                            WHERE z = #{floorNo} 
+                            WHERE mapId = #{mapId} 
                         ) a 
                         GROUP BY a.userID
                     ) b 
-                WHERE la.timestamp= b.timestamp and la.userID = b.userID and la.z = b.z
+                WHERE la.timestamp= b.timestamp and la.userID = b.userID and la.mapId = b.mapId
             ) f 
         GROUP BY f.userID
     </select>
@@ -147,7 +148,7 @@
         <foreach item="time" index="index" collection="timeList" separator=" union " >
             SELECT userID 
             FROM location${time} 
-            WHERE z = #{floorNo} and idType = 'MSISDN'
+            WHERE mapId = #{mapId} and idType = 'MSISDN'
         </foreach>
     </select>
     
@@ -156,7 +157,7 @@
         FROM (
             SELECT * FROM (
                 SELECT * FROM ${tableName}
-                WHERE z = #{floorNo} and timestamp &gt; #{time} 
+                WHERE mapId = #{mapId} and timestamp &gt; #{time} 
                 ORDER BY timestamp desc
             ) a 
         GROUP BY a.userID
@@ -165,19 +166,19 @@
     
     <select id="getNumberByMinute" resultType="int">
         SELECT count(distinct a.userID) number 
-        FROM ${tableName} a join maps b on a.z = b.floorNo 
+        FROM ${tableName} a join maps b on a.mapId = b.mapId 
         WHERE b.placeId = #{placeId}
     </select>
     
     <select id="getYesterdayNumber" resultType="int">
         SELECT count(distinct a.userID) number 
-        FROM ${tableName} a join maps b on a.z = b.floorNo 
+        FROM ${tableName} a join maps b on a.mapId = b.mapId 
         WHERE b.placeId = #{placeId} and a.timestamp &lt; #{time}
     </select>
     
     <select id="getNowPeople" resultType="int">
         SELECT count(distinct a.userID) number 
-        FROM ${tableName} a join maps b on a.z = b.floorNo
+        FROM ${tableName} a join maps b on a.mapId = b.mapId
         WHERE b.placeId = #{placeId} and a.timestamp &gt; #{time}
     </select>
 </mapper>

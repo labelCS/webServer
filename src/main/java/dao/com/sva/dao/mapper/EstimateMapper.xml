@@ -7,7 +7,7 @@
     <select id="doquery" resultMap="EstimateResult">
         SELECT a.*,b.floor,c.name place 
         FROM estimatedev a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id
     </select>
 
@@ -20,7 +20,7 @@
         <result property="d" column="d"/>
         <result property="deviation" column="deviation"/>
         <association property="maps" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <association property="store" javaType="StoreModel">
@@ -32,20 +32,21 @@
     <select id="doqueryByStoreid" resultMap="EstimateResult">
         SELECT a.*,b.floor,c.name place 
         FROM estimatedev a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store c on a.placeId = c.id 
         where a.placeId = #{storeid}
     </select>
     
     <select id="getEstimate" resultType="BigDecimal">
-        SELECT deviation FROM estimatedev where floorNo = #{value}
+        SELECT deviation FROM estimatedev where mapId = #{value}
     </select>
     
     <insert id="saveInfo">
-        INSERT INTO estimatedev(placeId,floorNo,a,b,n,type,d,deviation) 
+        INSERT INTO estimatedev(placeId,floorNo,mapId,a,b,n,type,d,deviation) 
         VALUES(
             #{store.id},
             #{maps.floorNo},
+            #{maps.mapId},            
             #{a},
             #{b},
             #{n},
@@ -64,6 +65,7 @@
         SET 
             placeId = #{store.id},
             floorNo = #{maps.floorNo},
+            mapId = #{maps.mapId},            
             a = #{a},
             b = #{b},
             n = #{n},
@@ -74,19 +76,19 @@
     </update>
     
     <select id="selectID1" resultType="EstimateModel">
-        SELECT * FROM estimatedev WHERE floorNo = #{floorNo} and id != #{id}
+        SELECT * FROM estimatedev WHERE mapId = #{mapId} and id != #{id}
     </select>
     
     <select id="getFloorByFloorNo" resultType="String">
-        SELECT floor FROM maps where floorNo = #{value} limit 1
+        SELECT floor FROM maps where mapId = #{value} limit 1
     </select>
     
     <select id="checkByFloorNo" resultType="int">
-        SELECT count(*) res FROM estimatedev where floorNo = #{value}
+        SELECT count(*) res FROM estimatedev where mapId = #{value}
     </select>
     
     <select id="checkByFloorNo1" resultType="int">
-        SELECT count(*) res FROM  estimatedev where floorNo=#{floorNo} and id !=#{id}
+        SELECT count(*) res FROM  estimatedev where mapId=#{mapId} and id !=#{id}
     </select>
     
 </mapper>

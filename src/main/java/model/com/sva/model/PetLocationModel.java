@@ -6,7 +6,7 @@ public class PetLocationModel {
 	
 	private double y;
 	
-	private int z;
+	private int mapId;
 	
 	private String petTypes;
 	
@@ -109,15 +109,15 @@ public class PetLocationModel {
 		this.y = y;
 	}
 
-	public int getZ() {
-		return z;
-	}
+	public int getMapId() {
+        return mapId;
+    }
 
-	public void setZ(int z) {
-		this.z = z;
-	}
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
 
-	public int getCount() {
+    public int getCount() {
 		return count;
 	}
 

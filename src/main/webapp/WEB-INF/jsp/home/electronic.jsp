@@ -119,7 +119,7 @@
 										<div class="control-group">
 											<label class="control-label" for="zSel"><spring:message code="message_table_title_floor" /></label>
 											<div class="controls">
-												<select datatype="*"  nullmsg='<spring:message code="all_floor_choose" />'  style="width: 59%;height: 15%;" name="maps.floorNo" id="zSel" >
+												<select datatype="*"  nullmsg='<spring:message code="all_floor_choose" />'  style="width: 59%;height: 15%;" name="maps.mapId" id="zSel" >
 													<option value=" "></option>
 												</select>
 											</div>

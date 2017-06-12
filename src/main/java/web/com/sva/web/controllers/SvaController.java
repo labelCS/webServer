@@ -1,17 +1,19 @@
 package com.sva.web.controllers;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,26 +22,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sva.common.HttpUtil;
 import com.sva.common.Util;
 import com.sva.common.conf.Params;
-import com.sva.common.email.SimpleMail;
-import com.sva.common.email.SimpleMailSender;
 import com.sva.dao.SvaDao;
 import com.sva.model.SvaModel;
 import com.sva.service.SubscriptionService;
-import com.sva.service.ValidateSVAService;
+import com.sva.service.core.HttpsService;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping(value = "/svalist")
-public class SvaController
+public class SvaController  extends HttpsService
 {
     
     @Autowired
     private SubscriptionService service;
-    
-    @Autowired
-    private ValidateSVAService validateSVAService;
-    
+
     @Autowired
     private SvaDao dao;
+    
+    
+    /** 
+     * @Fields svaSSLVersion : SVA使用的SSL版本
+     */ 
+    @Value("${sva.sslVersion}")
+    private String svaSSLVersion;
+    
 
     private static final Logger LOG = Logger.getLogger(SvaController.class);
 
@@ -70,12 +78,12 @@ public class SvaController
             sm.setUsername(l.getUsername());
             sm.setPassword(l.getPassword());
             sm.setStatus(l.getStatus());
-            sm.setStatusCode(l.getStatusCode());
             sm.setType(l.getType());
             sm.setIdType(l.getIdType());
             sm.setTokenPort(l.getTokenPort());
             sm.setBrokerPort(l.getBrokerPort());
-            sm.setManagerEmail(l.getManagerEmail());
+            sm.setApiLists(l.getApiLists());
+            sm.setMapLists(l.getMapLists());
             list.add(sm);
         }
         int liSize = list.size();
@@ -136,6 +144,13 @@ public class SvaController
         Integer id = Params.ZERO;
         Integer newId;
         String st = "";
+        //mapId个数
+//        int size  = svaModel.getMapList().size();
+//        String mapIds = null;
+//        if (size>0) {
+//            mapIds =  StringUtils.join(svaModel.getMapList(),",");
+//        }
+//        svaModel.setMapLists(mapIds);
         if (svaModel.getId() != st)
         {
             id = Integer.parseInt(svaModel.getId());
@@ -311,25 +326,26 @@ public class SvaController
         String charset = "UTF-8";
         LOG.debug("from ip:" + ip + ",getToken url:" + url);
         HttpUtil capi = new HttpUtil();
+        String token = null;
 
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         int i = 0;
         String nu = "";
         try
         {
-            capi.httpsPost(url, content, charset);
+            token = capi.httpsPost(url, content, charset);
             if (id == nu)
             {
                 i = dao.checkSvaByName(name);
                 if (i > 0)
                 {
                     modelMap.put("data", false);
-                    return modelMap;
+//                    return modelMap;
                 }
                 else
                 {
                     modelMap.put("data", true);
-                    return modelMap;
+//                    return modelMap;
                 }
             }
             else
@@ -338,12 +354,12 @@ public class SvaController
                 if (i > 0)
                 {
                     modelMap.put("data", false);
-                    return modelMap;
+//                    return modelMap;
                 }
                 else
                 {
                     modelMap.put("data", true);
-                    return modelMap;
+//                    return modelMap;
                 }
 
             }
@@ -363,54 +379,59 @@ public class SvaController
                 return modelMap;
             }
         }
-    }
-    
-    /** 
-     * @Title: svaValidate 
-     * @Description: sva验证(手动) 
-     * @param id
-     * @return 
-     * @author gl
-     */
-    @RequestMapping(value = "/api/svaValidate", method = {RequestMethod.POST})
-    @ResponseBody
-    public Map<String, Object> svaValidate(@RequestParam("id") String id)
-    {
-        LOG.info("Params[id]:" + id);
-
-        Map<String, Object> modelMap = new HashMap<String, Object>(2);
-        Map<String, Object> retMap = validateSVAService.validateSVA(Integer.parseInt(id));
-        SvaModel sva = dao.getSvaById(Integer.parseInt(id));
-        SimpleMail simpleMail = new SimpleMail();
-        String emailTitle = "";
-        boolean isSendEmail = false;
-        if(!(Boolean)retMap.get("status")){
-            // 未修复成功
-            emailTitle = "sva获取location数据获取失败";
-            isSendEmail = true;
-        }else{
-            // 发送邮件（修复成功）
-            if(retMap.get("isRepaired")!= null && (Boolean)retMap.get("isRepaired")){
-                // 修复成功
-                emailTitle = "sva获取location数据获取修复正常";
-                isSendEmail = true;
-            }
-        }
-        String emailContent = (String) retMap.get("msg");
-        simpleMail.setSubject(emailTitle);
-        simpleMail.setContent(emailContent);
-        simpleMail.setToList(Arrays.asList(sva.getManagerEmail()));
-        SimpleMailSender simpleMailSender = new SimpleMailSender(simpleMail);
+        String apiUrl = "https://" + ip + ':' + tokenNumber + "/enabler/apilist/json/v1.0";
+        Map<String,String> subResult = null;
+        JSONArray apiList =null;
+        JSONArray idTypeList = null;
+        String mapListType = null;
+        JSONArray mapList = null;
+        LOG.debug("get apilist:"+" url:"+apiUrl+" svaSSLVersion:"+svaSSLVersion+" token:"+token);
         try {
-            if(isSendEmail){
-                simpleMailSender.send(simpleMail);
-                LOG.info("--sva验证--：邮件已发送成功（手动）,收件人是" + simpleMail.getToList().get(0));
+            if (token!=null) {
+                subResult = this.httpsPost(apiUrl, null, charset,"GET", token, svaSSLVersion);
+                LOG.debug("get apilist result:" + subResult.get("result"));
+                JSONObject jsonObj = JSONObject.fromObject(subResult.get("result"));
+                //判断是否订阅成功,成功为0
+                JSONObject svaResult =  jsonObj.getJSONObject("result");
+                int svaString = svaResult.getInt("error_code");
+                if (0==svaString) {
+                 apiList = jsonObj.getJSONArray("API List");
+                 idTypeList = jsonObj.getJSONArray("IdType List");
+                 mapListType = jsonObj.getJSONObject("Map List Type").toString();
+                 mapList  = jsonObj.getJSONArray("Map List");
+                JSONObject obj = (JSONObject) apiList.get(0);
+                String api = obj.getString("API 0");
+                LOG.debug("apiList:" + apiList+" idTypeList:"+idTypeList+" mapListType:"+mapListType+" mapList:"+mapList+" api 0:"+api);
+                }
             }
-        } catch (AddressException e) {
-            LOG.error("邮件发送失败", e);
-        } catch (MessagingException e) {
-            LOG.error("邮件发送失败", e);
+        } catch (KeyManagementException e) {
+            LOG.error("get apilist KeyManagementException: ",e);
+        } catch (NoSuchAlgorithmException e) {
+            LOG.error("get apilist NoSuchAlgorithmException: ",e);
+        } catch (IOException e) {
+            LOG.error("get apilist IOException: ",e);
         }
+//        List<String>  apiLists = new ArrayList<String>();
+//        apiLists.add("Geofencing");
+//        apiLists.add("locationstream");
+//        apiLists.add("locationstreamanonymous");
+//        apiLists.add("specifieduserslocationstream");
+//        List<String>  idTypeLists = new ArrayList<String>();
+//        idTypeLists.add("IMEI");
+//        idTypeLists.add("IP");
+//        List<String>  mapListS = new ArrayList<String>();
+//        mapListS.add("123");
+//        mapListS.add("133");
+//        mapListS.add("143");
+//        apiList = JSONArray.fromObject(apiLists);
+//        idTypeList = JSONArray.fromObject(idTypeLists);
+//        mapListType =  "ALL"; 
+//        mapList =   JSONArray.fromObject(mapListS);
+        modelMap.put("apiList", apiList);
+        modelMap.put("idTypeList", idTypeList);
+        modelMap.put("mapListType", mapListType);
+        modelMap.put("mapList", mapList);
         return modelMap;
+        
     }
 }

@@ -21,11 +21,11 @@ import com.sva.model.LinemapModel;
  *  
  */
 public interface RangemapDao {
-    public List<LinemapModel> getData(@Param("placeId")String placeId, @Param("floorNo")String floorNo,
+    public List<LinemapModel> getData(@Param("placeId")String placeId, @Param("mapId")String mapId,
             @Param("x1")String x1, @Param("y1")String y1, @Param("x2")String x2, 
             @Param("y2")String y2, @Param("tableName")String tableName);
 
-    public int getTotalCount(@Param("placeId")String placeId, @Param("floorNo")String floorNo, 
+    public int getTotalCount(@Param("placeId")String placeId, @Param("mapId")String mapId, 
             @Param("x1")String x1, @Param("y1")String y1, @Param("x2")String x2, 
             @Param("y2")String y2, @Param("tableName")String tableName);
 

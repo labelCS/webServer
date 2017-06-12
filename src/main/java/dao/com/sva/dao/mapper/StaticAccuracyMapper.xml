@@ -8,9 +8,9 @@
         SELECT 
             a.*,b.floor,c.deviation, d.name place 
         FROM staticaccuracy a
-            left join maps b on a.floorNo = b.floorNo
+            left join maps b on a.mapId = b.mapId
             left join store d on a.placeId = d.id
-            left join estimatedev c on b.floorNo = c.floorNo
+            left join estimatedev c on b.mapId = c.mapId
         ORDER BY ${sortCol} ${sortDir}
         LIMIT #{start},#{length}
     </select>
@@ -35,7 +35,7 @@
         <result property="triggerIp" column="triggerIp"/>
         <result property="deviation" column="deviation"/>
         <association property="map" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <association property="store" javaType="StoreModel">
@@ -48,9 +48,9 @@
         SELECT a.*,b.floor,c.deviation, d.name place 
         FROM 
             staticaccuracy a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store d on a.placeId = d.id 
-            left join estimatedev c on b.floorNo = c.floorNo
+            left join estimatedev c on b.mapId = c.mapId
         WHERE 
             a.placeId = #{placeId}
             and a.start_date &gt; #{startTime}
@@ -61,9 +61,9 @@
         SELECT a.*,b.floor,c.deviation, d.name place 
         FROM 
             staticaccuracy a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store d on a.placeId = d.id 
-            left join estimatedev c on b.floorNo = c.floorNo
+            left join estimatedev c on b.mapId = c.mapId
         WHERE 
             a.placeId = #{placeId}
             and a.start_date &gt; #{startTime} 
@@ -74,9 +74,9 @@
         SELECT a.*,b.floor,c.deviation, d.name place 
         FROM
             staticaccuracy a
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store d on a.placeId = d.id 
-            left join estimatedev c on b.floorNo = c.floorNo
+            left join estimatedev c on b.mapId = c.mapId
         WHERE 
             a.start_date &gt; #{startTime}
             and a.end_date &lt; #{endTime}
@@ -87,9 +87,9 @@
             a.*,b.floor,c.deviation, d.name place 
         FROM
             staticaccuracy a
-            left join maps b on a.floorNo = b.floorNo
+            left join maps b on a.mapId = b.mapId
             left join store d on a.placeId = d.id
-            left join estimatedev c on b.floorNo = c.floorNo
+            left join estimatedev c on b.mapId = c.mapId
         WHERE 
             a.placeId = #{storeid} 
         ORDER BY ${sortCol} ${sortDir}
@@ -105,6 +105,7 @@
             triggerIp,
             placeId,
             floorNo,
+            mapId,
             origin,
             destination,
             start_date,
@@ -124,6 +125,7 @@
             #{triggerIp},
             #{store.id},
             #{map.floorNo},
+            #{map.mapId},            
             #{origin},
             #{destination},
             #{startdate},
@@ -147,7 +149,7 @@
             a.*,b.name place,d.floor,c.deviation 
         FROM staticaccuracy a
             left join store b on a.placeId = b.id
-            left join maps d on a.floorNo = d.floorNo
-            left join estimatedev c on a.floorNo = c.floorNo
+            left join maps d on a.mapId = d.mapId
+            left join estimatedev c on a.mapId = c.mapId
     </select>
 </mapper>

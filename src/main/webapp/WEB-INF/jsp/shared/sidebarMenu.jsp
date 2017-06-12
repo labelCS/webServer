@@ -535,21 +535,6 @@
                                 <span><spring:message code="message_push" /></span>
                             </a> 
                             </c:if>
-                            <c:if test = "${fn:contains(menu,'key_featureBase') or fn:contains(menu,'all') }" >
-                            <c:choose>  
-                                <c:when test="${featureBase}">  
-                                    <li class="active">
-                                </c:when>  
-                                <c:otherwise>  
-                                    <li class="">
-                                </c:otherwise>
-                            </c:choose>
-                            <a href="<c:url value='/home/showFeatureBase' />">
-                                <i class="round" style="background-color: #FFAB00;"></i>
-                                <span><spring:message code="test_featureBase_menu" /></span>
-                            </a>
-                            </li>
-                        </c:if> 
                             <c:choose>  
                                 <c:when test="${phone}">  
                                     <li class="active">

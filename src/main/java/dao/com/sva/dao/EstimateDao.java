@@ -39,10 +39,10 @@ public interface EstimateDao {
     /** 
      * @Title: getEstimate 
      * @Description: 此方法把表对应的字段查询出来依次放入model中 
-     * @param floorNo
+     * @param mapId
      * @return 
      */
-    public BigDecimal getEstimate(String floorNo);
+    public BigDecimal getEstimate(String mapId);
 
     public int saveInfo(EstimateModel em);
 
@@ -50,11 +50,11 @@ public interface EstimateDao {
 
     public int updateInfo(EstimateModel em);
 
-    public List<EstimateModel> selectID1(@Param("floorNo")BigDecimal floorNo, @Param("id")String id);
+    public List<EstimateModel> selectID1(@Param("mapId")BigDecimal mapId, @Param("id")String id);
 
-    public String getFloorByFloorNo(String floorNo);
+    public String getFloorByFloorNo(String mapId);
 
-    public int checkByFloorNo(String floorNo);
+    public int checkByFloorNo(String mapId);
 
-    public int checkByFloorNo1(@Param("floorNo")String floorNo, @Param("id")String id);
+    public int checkByFloorNo1(@Param("mapId")String mapId, @Param("id")String id);
 }

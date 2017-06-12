@@ -97,16 +97,20 @@ var SvaMng = function () {
     	                    "mData": "idType",
     	                    "mRender": function ( data, type, full ) {
     	                    	var html;
-	    	            		if(full.type == "1"){
-	    	            			html = "";
-	    	        			}else{
+//	    	            		if(full.type == "1"){
+//	    	            			html = "";
+//	    	        			}else{
 	    	        				html = data ;
-	    	        			}
+//	    	        			}
     	                        return html;
     	                    }
     	                },
+    					{ 
+    						"aTargets": [9],
+    						"mData": "mapLists"
+    					},
     					{
-    	                    "aTargets": [9],
+    	                    "aTargets": [10],
     	                    "bSortable": false,
     	                    "bFilter": false,
     	                    "mData": function(source, type, val) {
@@ -122,16 +126,8 @@ var SvaMng = function () {
     	                        return html;
     	                      }
     	                },
-    	                { 
-    						"aTargets": [10],
-    						"mData": "statusCode"
-    					},
-    					{ 
-    						"aTargets": [11],
-    						"mData": "managerEmail"
-    					},
     					{
-    	                    "aTargets": [12],
+    	                    "aTargets": [11],
     	                    "bSortable": false,
     	                    "bFilter": false,
     	                    "mData": function(source, type, val) {
@@ -142,10 +138,9 @@ var SvaMng = function () {
 	    	            		if(full.status == "1"){
 	    	            				html = '<input type=button data-type="stop" style="width:62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_disable+'" class="btn btn-mini" />' +
 	    	        				'&nbsp;<input type=button data-type="edt" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_edit+'" class="btn btn-mini" />';
-	    	            				html+='<input type=button data-type="validate" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_validate+'" class="btn btn-mini" />';
 	    	        			}else{
-	    	        				html = '<input type=button data-type="recover" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_enable+'" class="btn btn-mini" />'+
-	    	        				'&nbsp;<input type=button data-type="edt" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_edit+'" class="btn btn-mini" />';
+	    	        				html = '<input type=button data-type="recover" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;"  data-id="'+full.id+'" value="'+i18n_enable+'" class="btn btn-mini" />'+
+	    	        				'&nbsp;<input type=button data-type="edt" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;"  data-id="'+full.id+'" value="'+i18n_edit+'" class="btn btn-mini" />';
 	    	        			}
 	    	            		html+='<input type=button data-type="del" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_delete+'" class="btn btn-mini" />';
     	                        return html;
@@ -182,6 +177,7 @@ var SvaMng = function () {
 	    return;
 	};
 	
+	
 	var removeOption = function(renderId) {
 		$('#' + renderId + ' .addoption').remove().trigger("liszt:updated");
 	};
@@ -189,15 +185,6 @@ var SvaMng = function () {
     return {
     	
     	bindClickEvent: function(){
-    		
-    		$("input[data-type='validate']").live("click",function(e){
-        		var id = $(this).data("id");
-        		$.post("/sva/svalist/api/svaValidate",{id:id},function(data){
-        			if(!data.error){
-        				refreshTable();
-        			}
-        		});
-           });
 
             $("input[data-type='stop']").live("click",function(e){
             	if (confirm(i18n_status)) {
@@ -250,10 +237,10 @@ var SvaMng = function () {
 	           		broker = rowObj.childNodes[4].innerHTML,
 	           	 	username = $(rowObj.childNodes[5].childNodes[0]).attr("title"),
 	           	 	 //  password = rowObj.childNodes[].innerHTML,
-	           	 	status = rowObj.childNodes[8].innerHTML,
+	           	 	status = rowObj.childNodes[9].innerHTML,
+	           	 	mapIds = rowObj.childNodes[8].innerHTML,
 	           	    type = rowObj.childNodes[6].innerHTML,
 	           	    idType = rowObj.childNodes[7].innerHTML;
-	           		managerEmail = rowObj.childNodes[10].innerHTML;
 	           			
 	           	       
 				$("input[name='ip']").val(ip);
@@ -264,40 +251,63 @@ var SvaMng = function () {
 	           	$("#tokenId").val(token);
 	           	$("#brokerId").val(broker);
 	           	$("input[name='id']").val(id);
-	           	$("#managerEmail").val(managerEmail);
-	           	if (type==i18n_type) {
-		           	$("#subscriptionId").val(1);
-					$("#typename1").hide();
-					$("#typename2").hide();
-				}
-	           	if (type==i18n_type2) {
-	           		$("#subscriptionId").val(2);
-	           	}
-	           	if (type==i18n_type1) {
-		           	$("#subscriptionId").val(0);
-					$("#typename1").show();
-					$("#typename2").show();
-					$("#typenameId").val(data1.typename);
-					$("#typepasswordId").val(data1.typepassword);
-	           	}
-	           	if(status==i18n_open)
-	            {
-	           		$("#enableSel").val(1);           	 
-	           	 }
-	           	if (status==i18n_close) {
-					
-	           		$("#enableSel").val(0);           	 
-				}
-	           	
+
+	           	var param = {id:$("#idid").val(),svaName:$("#SVAId").val(),ip:$("#IpId").val(),userName:$("#usernameId").val(),password:$("#passwordId").val(),token:$("#tokenId").val()}; 
+	        	$.post("/sva/svalist/api/checkName",param,function(data){
+	          		  var b = data.data;
+	          		   apiList = data.apiList;
+	          		   idTypeList = data.idTypeList;
+	          		   mapListType = data.mapListType;
+	          		   mapList = data.mapList;
+	          		   if(apiList!=null)
+	          			   {
+	          			   var apiData = apiList.join(",");
+	          			   $("#apiLists").val(apiData);
+	          			   }
+	          		   
+	          		   var maps = mapIds.split(",");
+	         		 setSvaData("mapId",mapList,maps);
+//	         		 setSvaData("svaIdType",idTypeList,idType)
+
+	 	           	if (type==i18n_type) {
+		           		var idTypeACR =["","ACR"];
+		        		setSvaApiList("apiListId",apiList,1);
+			           	$("#apiListId").val(1);
+			           	setSvaData("svaIdType",idTypeACR)
+			           	$("#svaIdType").val(idType);
+					}
+		           	if (type==i18n_type2) {
+		        		setSvaApiList("apiListId",apiList,2);
+		           		$("#apiListId").val(2);
+		           		setSvaData("svaIdType",idTypeList)
+		           		$("#svaIdType").val(idType);
+		           	}
+		           	if (type==i18n_type1) {
+		        		setSvaApiList("apiListId",apiList,0);
+		        		setSvaData("svaIdType",idTypeList)
+			           	$("#apiListId").val(0);
+		        		$("#svaIdType").val(idType);
+		           	}
+		           	if(status==i18n_open)
+		            {
+		           		$("#enableSel").val(1);           	 
+		           	 }
+		           	if (status==i18n_close) {
+						
+		           		$("#enableSel").val(0);           	 
+					}
+		           	
+	          		});	           	
+
 	           	// 如果非匿名化订阅，显示idType
-	           	if(type == i18n_type1){
-            		$("#idTypeDiv").show();
-            		$("#IdType").val(idType);
-            	}
-	           	if(type == i18n_type2){
-            		$("#idTypeDiv").show();
-            		$("#IdType").val(idType);
-            	}
+//	           	if(type == i18n_type1){
+//            		$("#idTypeDiv").show();
+//            		$("#IdType").val(idType);
+//            	}
+//	           	if(type == i18n_type2){
+//            		$("#idTypeDiv").show();
+//            		$("#IdType").val(idType);
+//            	}
 	           	
 	           	$.get("/sva/store/api/getData?t="+Math.random(),function(data){
 	        		if(!data.error){
@@ -323,15 +333,6 @@ var SvaMng = function () {
 				}
            });
             
-            // 非匿名化订阅的情况，可以选择id类型
-            $("#subscriptionId").on("change",function(e){
-            	var subType = $("#subscriptionId").val();
-            	if(subType == "1"){
-            		$("#idTypeDiv").hide();
-            	}else{
-            		$("#idTypeDiv").show();
-            	}
-            });
             
             $("#confirm").on("click",function(e){
 //            	$("#jiazai").show();
@@ -339,12 +340,20 @@ var SvaMng = function () {
             	$(".sameInfo").removeClass("Validform_wrong");
             	var param = {id:$("#idid").val(),svaName:$("#SVAId").val(),ip:$("#IpId").val(),userName:$("#usernameId").val(),password:$("#passwordId").val(),token:$("#tokenId").val()};
             	var check = validForm.check(false);
-            	
+            	var mapIds = $("#mapId").val();
+            	if (mapIds!=null) {
+					var mapData = mapIds.join(",");
+					$("#mapLists").val(mapData);
+				}
+			   	document.getElementById("mapIdTishi").setAttribute('class','Validform_checktip Validform_right');
+			   	$("#mapIdTishi").html("通过验证!");
+			   	if ($("#apiListId").val()==1) {
+				   	document.getElementById("idTypeTishi").setAttribute('class','Validform_checktip Validform_right');
+				   	$("#mapIdTishi").html("通过验证!");
+				}
             	if(check){
 //            	$("#jiazai").show();
-            		// gaolu begin
-            		$(".demoform").submit();
-            		// gaolu end
+            		
               	  $.post("/sva/svalist/api/checkName",param,function(data){
               		  var b = data.data;
               		  if (data.ip) 
@@ -500,6 +509,137 @@ function clearinfo()
    	$(".sameInfo").text("");
    	$("#tokenId").val("9001");
    	$("#brokerId").val("4703");
-   	$("#idTypeDiv").hide();
+	$("#mapLists").val("");
+	$("#apiLists").val("");
+	$("#mapId").val("");
+	$("#apiListId").val("");
+	$("#mapLists").html("");
+	$("#mapLists").hide();
+   	$("#idTypeDiv").show();
 
 }
+function removeAll(renderId){  
+    document.getElementById(renderId).options.length=0;
+
+}  
+function setSvaData(renderId,data,selectTxt){
+    var len = data.length;
+    var options = '';
+    for(var i=0;i<len;i++){
+    	var info = data[i];
+    	if (selectTxt && _.indexOf(selectTxt, info)>=0 ) {
+    		options += '<option class="addoption" selected=true value="'+info+'">' + info +'</option>';
+		}else
+			{
+			options += '<option class="addoption"  value="'+info+'">' + info +'</option>';
+			}
+    }
+    removeAll(renderId);
+    $('#' + renderId).append(options);
+    return;
+};
+
+
+function setSvaApiList(renderId,data,callback,selectTxt){
+    var len = data.length;
+    var options = '';
+    var apiTemp ;
+    for(var i=0;i<len;i++){
+    	var info = data[i];
+    	var svaVal;
+	    	if (info=="locationstream") {
+	    		svaVal = 0;
+	    		if (selectTxt) {
+	    			options += '<option class="addoption" selected=true value="'+svaVal+'">' + i18n_type1 +'</option>';
+				}
+	    		options += '<option class="addoption" value="'+svaVal+'">' + i18n_type1 +'</option>';
+			}
+	    	if (info=="locationstreamanonymous") {
+	    		svaVal = 1;
+	    		if (selectTxt) {
+	    			options += '<option class="addoption" selected=true value="'+svaVal+'">' + i18n_type +'</option>';
+				}
+	    		options += '<option class="addoption" value="'+svaVal+'">' + i18n_type +'</option>';
+			}
+	    	if (info=="specifieduserslocationstream") {
+	    		svaVal = 2;
+	    		if (selectTxt) {
+	    			options += '<option class="addoption" selected=true value="'+svaVal+'">' + i18n_type2 +'</option>';
+				}
+	    		options += '<option class="addoption" value="'+svaVal+'">' + i18n_type2 +'</option>';
+			}
+    }
+    removeAll(renderId);
+    $('#' + renderId).append(options);
+    return;
+};
+function getSvaData()
+{
+	$(".sameInfo").html("");
+	$(".sameInfo").removeClass("Validform_wrong");
+	var svaIp = $("#IpId").val();
+	var svaName = $("#SVAId").val();
+	var svaUser = $("#usernameId").val();
+	var svaPass = $("#passwordId").val();
+	var svaToken = $("#tokenId").val();
+	var param = {id:$("#idid").val(),svaName:$("#SVAId").val(),ip:$("#IpId").val(),userName:$("#usernameId").val(),password:$("#passwordId").val(),token:$("#tokenId").val()};
+	var check = false;
+//	$("#IpId").blur();
+//	$("#SVAId").blur();
+//	$("#usernameId").blur();
+//	$("#passwordId").blur();
+//	$("#tokenId").blur();
+	if (svaIp!=""&&svaName!=""&&svaUser!=""&&svaPass!=""&&svaToken!="") {
+		check = true;
+	}
+	if(check){
+//	$("#jiazai").show();
+		
+  	  $.post("/sva/svalist/api/checkName",param,function(data){
+  		  var b = data.data;
+  		   apiList = data.apiList;
+  		   idTypeList = data.idTypeList;
+  		   mapListType = data.mapListType;
+  		   mapList = data.mapList;
+  		   if(apiList!=null)
+  			   {
+  			   var apiData = apiList.join(",");
+  			   $("#apiLists").val(apiData);
+  			   }
+  		  if (data.ip) 
+  		  {
+	              $(".sameInfo").addClass("Validform_wrong");
+	              $(".sameInfo").text(i18n_wuxiao);
+	              return false;
+		   }
+ 		  if (data.error) 
+  		  {
+	              $(".sameInfo").addClass("Validform_wrong");
+	              $(".sameInfo").text(i18n_user);
+	              return false;
+		   }
+ 		 setSvaData("mapId",mapList);
+ 		 setSvaApiList("apiListId",apiList);
+ 		 setSvaData("svaIdType",idTypeList)
+//      		if (b)
+//      		{
+//      			$(".demoform").submit();
+//				}else
+//					{
+//		              $(".sameInfo").addClass("Validform_wrong");
+//		              $(".sameInfo").text(i18n_svaSame);
+//					}
+  		});
+  	}
+}
+
+// 非匿名化订阅的情况，可以选择id类型
+$("#apiListId").on("change",function(e){
+	var subType = $("#apiListId").val();
+	if(subType == "1"){
+		var idTypeACR = ["","ACR"];
+		   setSvaData("svaIdType",idTypeACR)
+	}else{
+		 setSvaData("svaIdType",idTypeList)
+	}
+});

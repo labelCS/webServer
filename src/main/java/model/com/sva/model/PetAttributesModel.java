@@ -13,6 +13,8 @@ public class PetAttributesModel {
 	
 	private String floorNo;
 	
+    private int mapId;	
+	
 	private double x;
 	
 	private double y;
@@ -21,7 +23,16 @@ public class PetAttributesModel {
 	
 	private int id;
 	
-	public double getX() {
+	
+	public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
+
+    public double getX() {
 		return x;
 	}
 

@@ -35,8 +35,8 @@ public class AmqpDaoTest extends BasicDaoTest {
         LocationModel loc = new LocationModel();
         loc.setDataType("ok");
         loc.setIdType("IP");
-        loc.setTimestamp(new BigDecimal(System.currentTimeMillis()));
-        loc.setTimestampPrru(new BigDecimal(1212121));
+        loc.setTimeLocal(new BigDecimal(System.currentTimeMillis()));
+        loc.setTimestamp(new BigDecimal(1212121));
         loc.setUserID("12121212");
         loc.setX(new BigDecimal(1));
         loc.setY(new BigDecimal(2));
@@ -57,8 +57,8 @@ public class AmqpDaoTest extends BasicDaoTest {
         LocationModel loc = new LocationModel();
         loc.setDataType("ok");
         loc.setIdType("IP");
-        loc.setTimestamp(new BigDecimal(System.currentTimeMillis()));
-        loc.setTimestampPrru(new BigDecimal(1212121));
+        loc.setTimeLocal(new BigDecimal(System.currentTimeMillis()));
+        loc.setTimestamp(new BigDecimal(1212121));
         loc.setUserID("12121212");
         loc.setX(new BigDecimal(1));
         loc.setY(new BigDecimal(2));
@@ -74,8 +74,7 @@ public class AmqpDaoTest extends BasicDaoTest {
         String gpp = "2_01";
         String rsrp = "-1300";
         String ip = "17.0.0.1";
-        long timestamp = System.currentTimeMillis();
-        int result = amqpDao.svaPrru(enbid, userId, gpp, rsrp, ip,timestamp);
+        int result = amqpDao.svaPrru(enbid, userId, gpp, rsrp, ip);
         Assert.assertEquals("结果为1",1, result);
     }
     

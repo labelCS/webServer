@@ -74,77 +74,45 @@ public class XmlParser
     public List<PrruModel> getAttrVal(String flooNo, int plceId, String xPath,
             String... values)
     {
-    	if (values == null || values.length == 0)
-        {
-            return null;
-        }
         @SuppressWarnings("unchecked")
         List<Node> node = root.selectNodes(xPath);
-        //读取比例尺
-        @SuppressWarnings("unchecked")
-        List<Node> scaleNode = root.selectNodes("//Project/Floors/Floor/DrawMap");
-        double scale = 0;
-        String eNodeBid;
-        if (scaleNode==null) {
-        	LOG.error( "Project/Floors/Floor/DrawMap hasn't node");
-            return null;
-        }else
+
+        if (values == null || values.length == 0 || node == null)
         {
-            scale = Double.valueOf((scaleNode.get(0).valueOf('@' + "scale")));
-            eNodeBid = scaleNode.get(0).valueOf('@' + "eNodeBid").trim();
+            return Collections.emptyList();
         }
         List<PrruModel> results = new ArrayList<PrruModel>(10);
-        String result = null;
-        PrruModel pm = null;
+        String result;
+        PrruModel pm;
         int si = node.size();
-        String id = "id";
-        String name = "name";
-        String x = "x";
-        String y = "y";
-        String necode = "neCode";
+        Map<String,String> mapModel;
+        
         for (int i = 0; i < si; i++)
         {
+            mapModel = new HashMap<String,String>();
+            mapModel.put("id", null);
+            mapModel.put("name", null);
+            mapModel.put("x", null);
+            mapModel.put("y", null);
+            mapModel.put("neCode", null);
             pm = new PrruModel();
             pm.setPlaceId(plceId);
-            pm.seteNodeBid(eNodeBid);
             for (String value : values)
             {
-                if (node == null)
+                result = node.get(i).valueOf('@' + value);
+                if (StringUtils.isEmpty(result))
                 {
-                	LOG.error(xPath + " hasn't node");
+                    LOG.error(" not find data:" + value);
                     continue;
                 }
-                result = node.get(i).valueOf('@' + value);
-                if (value.equals("cellId"))
-                {
-                    pm.setCellId(result);;
-                }
-                if (value.equals(id))
-                {
-                    pm.setNeId(result);
-                }
-                if (value.equals(necode))
-                {
-                    pm.setNeCode(eNodeBid + "__" + result);
-                }
-                if (value.equals(name))
-                {
-                    pm.setNeName(result);
-                }
-                if (value.equals(x))
-                {
-                    pm.setX(String.valueOf(new java.text.DecimalFormat("#.00").format(Integer.parseInt(result)/scale)));
-                }
-                if (value.equals(y))
-                {
-                    pm.setY(String.valueOf(new java.text.DecimalFormat("#.00").format(Integer.parseInt(result)/scale)));
-                }
-                if (result == null || "".equals(result))
-                {
-                	LOG.error(" not find data:" + value);
-                }
-
+                mapModel.put(value, result);
             }
+            
+            pm.setNeId(mapModel.get("id"));
+            pm.setNeCode(mapModel.get("neCode"));
+            pm.setNeName(mapModel.get("name"));
+            pm.setX(zhuanhuan(mapModel.get("x")));
+            pm.setY(zhuanhuan(mapModel.get("y")));                
             pm.setFloorNo(flooNo);
             results.add(pm);
         }

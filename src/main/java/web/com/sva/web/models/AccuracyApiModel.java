@@ -9,6 +9,8 @@ public class AccuracyApiModel
     private int placeId;
 
     private String floorNo;
+    
+    private int mapId;
 
     private String origin;
 
@@ -37,6 +39,14 @@ public class AccuracyApiModel
     private String type;
 
     private BigDecimal averDevi;
+    
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
 
     public int getCount3()
     {

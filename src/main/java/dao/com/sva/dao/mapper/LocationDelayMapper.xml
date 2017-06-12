@@ -8,7 +8,7 @@
         select a.*,b.name place,d.floor 
         from locationdelay a
             left join store b on a.placeId = b.id 
-            left join maps d on a.floorNo = d.floorNo
+            left join maps d on a.mapId = d.mapId
     </select>
 
     <resultMap id="locationDelayResult" type="LocationDelayModel">
@@ -21,7 +21,7 @@
             <result property="name" column="place"/>
         </association>
         <association property="maps" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
     </resultMap>
@@ -29,9 +29,9 @@
     <select id="getAllDatas" resultMap="locationDelayResult2">
         select a.*,b.floor,c.deviation, d.name place 
         from locationdelay a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store d on a.placeId = d.id 
-            left join estimatedev c on b.floorNo = c.floorNo 
+            left join estimatedev c on b.mapId = c.mapId 
         where a.updateTime &gt; #{startTime} and a.updateTime &lt; #{endTime}
     </select>
     
@@ -46,7 +46,7 @@
             <result property="name" column="place"/>
         </association>
         <association property="maps" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
     </resultMap>
@@ -54,9 +54,9 @@
     <select id="getDataByPlaceIdTime" resultMap="locationDelayResult2">
         select a.*,b.floor,c.deviation, d.name place 
         from locationdelay a 
-            left join maps b on a.floorNo = b.floorNo 
+            left join maps b on a.mapId = b.mapId 
             left join store d on a.placeId = d.id 
-            left join estimatedev c on b.floorNo = c.floorNo 
+            left join estimatedev c on b.mapId = c.mapId 
         where a.placeId = #{placeId} and a.updateTime &gt; #{startTime} and a.updateTime &lt; #{endTime}
     </select>
     
@@ -64,15 +64,16 @@
         select a.*,b.name place,d.floor 
         from locationdelay a 
             left join store b on a.placeId = b.id 
-            left join maps d on a.floorNo = d.floorNo 
+            left join maps d on a.mapId = d.mapId 
         where a.placeId = #{placeId}
     </select>
     
     <insert id="savaMessagePush">
-        INSERT INTO locationdelay(placeId,floorNo,dataDelay,positionDelay,updateTime) 
+        INSERT INTO locationdelay(placeId,floorNo,mapId,dataDelay,positionDelay,updateTime) 
         VALUES(
             #{store.id},
-            #{maps.floor},
+            #{maps.floorNo},
+            #{maps.mapId},            
             #{dataDelay},
             #{positionDelay},
             #{updateTime}

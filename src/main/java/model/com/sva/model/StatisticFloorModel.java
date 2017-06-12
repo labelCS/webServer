@@ -13,7 +13,28 @@ public class StatisticFloorModel
     
     private int number;
     
+    private int mapId;  
+    
+    private String floor;
+      
     private MapsModel maps;
+    
+    
+    public String getFloor() {
+        return floor;
+    }
+
+    public void setFloor(String floor) {
+        this.floor = floor;
+    }
+
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
 
     public BigDecimal getZ()
     {

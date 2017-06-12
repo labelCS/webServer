@@ -36,9 +36,9 @@ var MsgMng = function () {
 	    for(var i=0;i<len;i++){
 	    	var info = sortData[i];
 	        if(selectTxt == sortData[i].floor){
-	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" selected=true value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" selected=true value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}else{
-	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}
 	    }
 	    removeOption(renderId);
@@ -57,9 +57,9 @@ var MsgMng = function () {
 	    for(var i=0;i<len;i++){
 	    	var info = sortData[i];
 	        if(selectTxt == sortData[i].floor){
-	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" selected=true value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" selected=true value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}else{
-	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" value="'+sortData[i].floorNo+'">' + sortData[i].floor +'</option>';
+	    		options += '<option class="addoption" data-width="'+info.imgWidth+'" data-height="'+info.imgHeight+'"  data-x="'+info.xo+'"data-y="'+info.yo+'" data-path="'+info.path+'" data-scale="'+info.scale+'" data-coordinate ="'+info.coordinate+'" value="'+sortData[i].mapId+'">' + sortData[i].floor +'</option>';
 	    	}
 	    }
 	    removeOption(renderId);
@@ -552,7 +552,7 @@ var MsgMng = function () {
         				}
         			});
         		} 
-        		var all_options = ['皮卡丘','鬼斯通','小火龙','绿毛虫','胖丁'];
+        		var all_options = ['皮卡丘','绿毛虫','小火龙','鬼斯通'];
         		var option  = document.getElementById("petName").options;
         		 var leng = all_options.length;
         		 for (i=0; i<data.data.length; i++)

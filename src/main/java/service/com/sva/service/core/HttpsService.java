@@ -103,7 +103,7 @@ public abstract class HttpsService {
             throws NoSuchAlgorithmException, KeyManagementException,
             IOException
     {
-    	log.debug("httpsPost url:" + url+" count:"+content);
+    	log.debug("httpsPost url:" + url);
         Map<String,String> result = new HashMap<String,String>();
         String returnVal = "";
         URL console = new URL(url);
@@ -145,8 +145,7 @@ public abstract class HttpsService {
             }
             is.close();
             returnVal = outStream.toString(charset);
-            log.debug(returnVal+" "+charset);
-            
+            log.debug(result);
         }
         con.disconnect();
         

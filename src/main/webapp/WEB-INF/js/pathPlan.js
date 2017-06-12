@@ -40,13 +40,13 @@ var PathPlan = function () {
         var len = sortData.length;
         var options = '';
         for(var i=0;i<len;i++){
-            if(sortData[i].floorNo == selectTxt){
+            if(sortData[i].mapId == selectTxt){
                 options += '<option class="addoption" selected value="'
-                    + sortData[i].floorNo + '">' + sortData[i].floor
+                    + sortData[i].mapId + '">' + sortData[i].floor
                     + '</option>';
             }else{
                 options += '<option class="addoption" value="'
-                    + sortData[i].floorNo + '">' + sortData[i].floor
+                    + sortData[i].mapId + '">' + sortData[i].floor
                     + '</option>';
             }
         }
@@ -224,48 +224,6 @@ var PathPlan = function () {
                         		mpe.refresh(map);
                         	}
                         });
-            		}else{
-            			alert("返回值：" +data.returnCode);
-            		}
-        		}
-        	});
-        });
-        	
-    	// 导出标准xml文件
-        $("#exportStandard").click(function(e){
-        	var mapData = mpe.getData(map);
-        	if(!checkData(mapData)){
-        		alert("存在不可达点，请确认后再导出");
-        		return;
-        	}
-        	
-        	// 使用商场和楼层结合作为文件名
-        	var placeId = $("#marketSel").val(),
-            	floorNo = $("#floorSel").val(),
-        		fileName = placeId + "_" + floorNo + "_pathplan_standard.xml",
-        		width3D = $("#width3D").val(),
-        		height3D = $("#height3D").val(),
-        		upperLeftX3D = $("#upperLeftX3D").val(),
-        		upperLeftY3D = $("#upperLeftY3D").val(),
-        		param = {
-        			fileName:fileName,
-        			data:mapData,
-        			optParam:{
-        				width3D:width3D,
-            			height3D:height3D,
-            			upperLeftX3D:upperLeftX3D,
-            			upperLeftY3D:upperLeftY3D
-        			}        			
-        		};
-        	$.ajax({
-        		url:"/sva/pathplan/api/createXmlStandard",
-        		type:"post",
-        		data:JSON.stringify(param),
-        		contentType:'application/json',
-        		dataType:"json",
-        		success:function(data){
-        			if(data.returnCode == 1){  
-        				alert("已在服务端生成！");
             		}else{
             			alert("返回值：" +data.returnCode);
             		}

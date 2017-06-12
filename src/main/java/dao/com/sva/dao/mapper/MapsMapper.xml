@@ -44,15 +44,15 @@
     </select>
     
     <select id="getMapDetail" resultType="MapsModel">
-        SELECT * FROM maps WHERE floorNo = #{value}
+        SELECT * FROM maps WHERE mapId = #{value}
     </select>
     
     <select id="getMapName" resultType="String">
-        SELECT path FROM maps WHERE floorNo = #{value} limit 1
+        SELECT path FROM maps WHERE mapId = #{value} limit 1
     </select>
     
     <select id="getFloorid" resultType="String">
-        SELECT floorid FROM maps WHERE floorNo = #{value} limit 1
+        SELECT floorid FROM maps WHERE mapId = #{value} limit 1
     </select>
     
     <insert id="saveMapInfo">
@@ -106,7 +106,7 @@
     </insert>
     
     <delete id="deleteMapByFloor">
-        DELETE FROM maps where floorNo = #{value}
+        DELETE FROM maps where mapId = #{value}
     </delete>
     
     <select id="getFloors" resultType="MapsModel">
@@ -116,13 +116,13 @@
     <select id="getMapDataFromPrru" resultMap="mapResult">
         SELECT a.*,b.name place 
         FROM maps a left join store b on a.placeId = b.id 
-        WHERE a.floorNo in (select distinct(floorNo) from prru)
+        WHERE a.mapId in (select distinct(mapId) from prru)
     </select>
     
     <select id="getMapDataFromPrruByStoreid" resultMap="mapResult">
         SELECT a.*,b.name place 
         FROM maps a left join store b on a.placeId = b.id 
-        WHERE a.floorNo in (select distinct(floorNo) from prru ) 
+        WHERE a.mapId in (select distinct(mapId) from prru ) 
             and a.placeId = #{storeId}
     </select>
     
@@ -136,17 +136,17 @@
     </select>
     
     <select id="getFloorByPlaceId" resultType="int">
-        SELECT floorNo FROM maps WHERE placeId = #{value}
+        SELECT mapId FROM maps WHERE placeId = #{value}
     </select>
     
     <select id="getFloorNo" resultType="Map">
-        SELECT floorNo,placeId FROM maps
+        SELECT mapId,placeId FROM maps
     </select>
     
     <select id="chekByFloorNo1" resultType="int">
         SELECT count(*) res 
         FROM maps 
-        WHERE floorNo = #{floorNo} and id != #{id}
+        WHERE mapId = #{mapId} and id != #{id}
     </select>
     
     <select id="checkByPlace" resultType="int">
@@ -158,7 +158,7 @@
     <select id="chekByFloorNo" resultType="int">
         SELECT count(*) res 
         FROM maps 
-        WHERE floorNo = #{floorNo}
+        WHERE mapId = #{mapId}
     </select>
     
     <update id="updateMap">
@@ -170,7 +170,6 @@
             scale = #{scale},
             coordinate = #{coordinate},
             angle = #{angle},
-            floorNo = #{floorNo},
             placeId = #{store.id},
             floorid = #{floorid},
             mapType = #{mapType},
@@ -182,6 +181,7 @@
                 </if>
             </if>
             <if test="mapId != null">mapId = #{mapId},</if>
+            <if test="mapId != null">floorNo = #{floorNo},</if>            
             <if test="svg != null">svg = #{svg},</if>
             <if test="route != null">route = #{route},</if>
             <if test="pathFile != null">pathfile = #{pathFile},</if>
@@ -224,7 +224,7 @@
     </delete>
     
     <select id="getFloorByFloorNo" resultType="String">
-        SELECT floor FROM maps WHERE floorNo = #{value} limit 1
+        SELECT floor FROM maps WHERE mapId = #{value} limit 1
     </select>
 
     <insert id="saveAllPeople">
@@ -250,12 +250,11 @@
     </select>
     
     <select id="getMapCarData" resultMap="mapResult">
-        SELECT a.*,b.name place FROM maps a left join store b on a.placeId = b.id where a.floorNo = #{value} and a.mapType = 1
+        SELECT a.*,b.name place FROM maps a left join store b on a.placeId = b.id where a.mapId = #{value} and a.mapType = 1
        <!-- SELECT * FROM maps WHERE floorNo = #{value} and mapType = 1  -->
     </select>
     
     <select id="getParkingNumber" resultType="String">
-        SELECT parkingNumber FROM parkinginformation WHERE floorNo = #{value} and isTrue = 0
-    </select>
-    
+        SELECT parkingNumber FROM parkinginformation WHERE mapId = #{value} and isTrue = 0
+    </select>          
 </mapper>

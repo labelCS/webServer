@@ -48,33 +48,6 @@ function HtmlDecode3(str) {
 	return str2;
 }
 
-/*
-# 描述：给数字字符串补零，不支持负数
-# @param num 待补全的数字
-# @param fill 补全的长度
-# @return 处理后的字符串
-*/
-function addZeroFromLeft(num, fill) {
-    var len = ('' + num).length;
-    return (Array(
-        fill > len ? fill - len + 1 || 0 : 0
-    ).join(0) + num);
-}
-
-/*
-# 描述：将ip转为16进制字符串
-# @param ip 
-# @return 处理后的字符串
-*/
-function ipToHex(ip){
-	var arr = ip.split(".");
-	var result = "";
-	for(var k in arr){
-		result += addZeroFromLeft(parseInt(arr[k]).toString(16).toUpperCase(), 2);
-	}
-	return result;
-}
-
 //get the IP addresses associated with an account
 function getIPs(callback){
 	var ip_dups = {};

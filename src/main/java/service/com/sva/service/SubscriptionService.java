@@ -83,11 +83,11 @@ public class SubscriptionService extends HttpsService {
      * @param phoneIp: 手机ip
      */
     public void subscribeSvaPhone(SvaModel sva, String phoneIp){
-//        mylog.location("subscribeSvaPhone started:"
-//                + "svaId:" + sva.getId() 
-//                + ",ip:" + sva.getIp() 
-//                + ",port:" + sva.getTokenPort()
-//                + ",phoneIp:" + phoneIp);
+        mylog.location("subscribeSvaPhone started:"
+                + "svaId:" + sva.getId() 
+                + ",ip:" + sva.getIp() 
+                + ",port:" + sva.getTokenPort()
+                + ",phoneIp:" + phoneIp);
         LOG.debug("subscribeSvaPhone started:"
                 + "svaId:" + sva.getId() 
                 + ",ip:" + sva.getIp() 
@@ -123,15 +123,19 @@ public class SubscriptionService extends HttpsService {
             if(FLAG1.equals(hasIdType)){
                 idTypeString = ",\"idType\":\""+sva.getIdType()+"\"";
             }
-            
+            // 是否需要在订阅参数中加maplist
+            String mapList = "";
+            if(!"".equals(sva.getMapLists())){
+                mapList = ",\"maplist\":\""+sva.getMapLists()+"\"";
+            }
             url = "https://" + sva.getIp() + ":" + sva.getTokenPort()
                     + "/enabler/catalog/locationstreamreg/json/v1.0";
             content = "{\"APPID\":\"" + sva.getUsername()
-                    + "\"" + idTypeString
+                    + "\"" + idTypeString+mapList
                     + ",\"useridlist\":[\""
                     + ConvertUtil.convertMacOrIp(phoneIp)
                     + "\"]}";
-            LOG.debug("subscribeSvaPhone param:"+content);
+            
             // 获取订阅ID
             Map<String,String> subResult = this.httpsPost(url, content, charset,"POST", tokenResult.get("token"),svaSSLVersion);
             LOG.debug("subscribeSvaPhone result:" + subResult.get("result"));
@@ -277,12 +281,13 @@ public class SubscriptionService extends HttpsService {
             
             // 是否需要在订阅参数中加idType
             String idTypeString = "";
-            String isIpMac = "0a0a0a0a";
-            if (("MAC").equals(sva.getIdType())) {
-                isIpMac = "C01ADA2E2BC0";
-            }
             if(FLAG1.equals(hasIdType)){
                 idTypeString = ",\"idType\":\""+sva.getIdType()+"\"";
+            }
+            // 是否需要在订阅参数中加maplist
+            String mapList = "";
+            if(!"".equals(sva.getMapLists())){
+                mapList = ",\"maplist\":\""+sva.getMapLists()+"\"";
             }
             
             // 非匿名化全量订阅
@@ -290,7 +295,7 @@ public class SubscriptionService extends HttpsService {
             {
                 url = "https://" + sva.getIp() + ":" + sva.getTokenPort()
                         + "/enabler/catalog/locationstreamreg/json/v1.0";
-                content = "{\"APPID\":\"" + sva.getUsername() + "\"" + idTypeString + "}";
+                content = "{\"APPID\":\"" + sva.getUsername() + "\"" + idTypeString +mapList+ "}";
             }
             // 匿名化全量订阅
             else if (sva.getType() == 1)
@@ -300,7 +305,7 @@ public class SubscriptionService extends HttpsService {
                         + ":"
                         + sva.getTokenPort()
                         + "/enabler/catalog/locationstreamanonymousreg/json/v1.0";
-                content = "{\"APPID\":\"" + sva.getUsername() + "\"}";
+                content = "{\"APPID\":\"" + sva.getUsername() +idTypeString+mapList+ "\"}";
             }
             // 指定用户订阅
             else if (sva.getType() == 2)
@@ -308,8 +313,8 @@ public class SubscriptionService extends HttpsService {
                 url = "https://" + sva.getIp() + ":" + sva.getTokenPort()
                         + "/enabler/catalog/locationstreamreg/json/v1.0";
                 content = "{\"APPID\":\"" + sva.getUsername()+ "\""
-                        + idTypeString
-                        + ",\"useridlist\":[\""+isIpMac+"\"]}";
+                        + idTypeString+mapList
+                        + ",\"useridlist\":[\"0a0a0a0a\"]}";
             }
             LOG.debug("subscription param:"+content);
             // 获取订阅ID

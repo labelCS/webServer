@@ -76,26 +76,26 @@ public class LinemapDaoTest extends BasicDaoTest {
     
     @Test
     public void getAreaNumberByDayTest(){
-        BigDecimal floorNo = new BigDecimal(10001);
+        int mapId = 10001;
         BigDecimal x = new BigDecimal(10001);
         BigDecimal x1 = new BigDecimal(10001);
         BigDecimal y = new BigDecimal(10001);
         BigDecimal y1 = new BigDecimal(10001);
         String tableName = "location20161111";
-        int result = linemapDao.getAreaNumberByDay(floorNo,tableName,x,x1,y,y1);
+        int result = linemapDao.getAreaNumberByDay(mapId,tableName,x,x1,y,y1);
         Assert.assertEquals("结果为0",0, result);
     }
     
     @Test
     public void getAreaNumberByHourTest(){
-        BigDecimal floorNo = new BigDecimal(10001);
+        int mapId = 10001;
         BigDecimal x = new BigDecimal(10001);
         BigDecimal x1 = new BigDecimal(10001);
         BigDecimal y = new BigDecimal(10001);
         BigDecimal y1 = new BigDecimal(10001);
         String tableName = "location20161111";
         long time = 1;
-        int result = linemapDao.getAreaNumberByHour(floorNo,tableName,time,x,x1,y,y1);
+        int result = linemapDao.getAreaNumberByHour(mapId,tableName,time,x,x1,y,y1);
         Assert.assertEquals("结果为0",0, result);
     }
 }

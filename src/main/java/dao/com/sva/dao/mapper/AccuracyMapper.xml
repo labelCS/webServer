@@ -8,11 +8,11 @@
         select a.*,b.floor,c.deviation, d.name 
         from accuracy a 
             left join maps b 
-                on a.floorNo = b.floorNo 
+                on a.mapId = b.mapId 
             left join store d 
                 on a.placeId = d.id 
             left join estimatedev c 
-                on b.floorNo = c.floorNo 
+                on b.mapId = c.mapId 
         order by #{sortCol} #{sortDir} 
         limit #{start},#{length}
     </select>
@@ -34,7 +34,7 @@
         <result property="count10p" column="count_10p"/>
         <result property="detail" column="detail"/>
         <association property="maps" javaType="MapsModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="floor" column="floor"/>
         </association>
         <association property="store" javaType="StoreModel">
@@ -42,7 +42,7 @@
             <result property="name" column="name"/>
         </association>
         <association property="estimate" javaType="EstimateModel">
-            <id property="floorNo" column="floorNo"/>
+            <id property="mapId" column="mapId"/>
             <result property="deviation" column="deviation"/>
         </association>
     </resultMap>
@@ -51,11 +51,11 @@
         select a.*,b.floor,c.deviation, d.name 
         from accuracy a 
             left join maps b 
-                on a.floorNo = b.floorNo 
+                on a.mapId = b.mapId 
             left join store d 
                 on a.placeId = d.id 
             left join estimatedev c 
-                on b.floorNo = c.floorNo 
+                on b.mapId = c.mapId 
         where a.placeId = #{storeid}
         order by #{sortCol} #{sortDir} 
         limit #{start},#{length}
@@ -69,11 +69,11 @@
         select a.*,b.floor,c.deviation, d.name 
         from accuracy a 
             left join maps b 
-                on a.floorNo = b.floorNo 
+                on a.mapId = b.mapId 
             left join store d 
                 on a.placeId = d.id 
             left join estimatedev c 
-                on b.floorNo = c.floorNo 
+                on b.mapId = c.mapId 
     </select>
     
     <insert id="saveTestInfo">
@@ -81,6 +81,7 @@
             accuracy(
                 placeId,
                 floorNo,
+                mapId,
                 origin,
                 destination,
                 start_date,
@@ -99,6 +100,7 @@
         VALUES(
             #{store.id},
             #{maps.floorNo},
+            #{maps.mapId},            
             #{origin},
             #{destination},
             #{startdate},

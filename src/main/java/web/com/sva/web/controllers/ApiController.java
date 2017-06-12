@@ -56,7 +56,6 @@ import com.sva.dao.RegisterDao;
 import com.sva.dao.StaticAccuracyDao;
 import com.sva.dao.SvaDao;
 import com.sva.dao.TicketDao;
-import com.sva.model.ACRModel;
 import com.sva.model.AccuracyModel;
 import com.sva.model.AreaModel;
 import com.sva.model.CodeModel;
@@ -182,13 +181,13 @@ public class ApiController
         {
             return null;
         }
-        
         long paramUpdate = 0;       
+               // 查询参数更新的时间      
         Collection<ParamModel> paramUpdates = daoParam.doquery();     
         for (ParamModel paramModel : paramUpdates)        
-        {     
-            paramUpdate = paramModel.getUpdateTime();     
-        }
+           {     
+              paramUpdate = paramModel.getUpdateTime();     
+           }
         long petTime = petLoction.getMaxPetTime();
         List<LocationModel> list = new ArrayList<LocationModel>(10);
         Collection<LocationModel> resultList = dao.queryLocationByUseId(ConvertUtil.convertMacOrIp(requestModel.getIp()));
@@ -320,7 +319,7 @@ public class ApiController
         boolean result = true;
         for (SvaModel sva : svaList)
         {
-            service.subscribeSvaPhone(sva,ip);
+            service.subscribeSvaPhone(sva, ip);
         }        
 
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
@@ -340,7 +339,7 @@ public class ApiController
         boolean result = true;
         for (SvaModel sva : svaList)
         {
-            service.unsubscribeSvaPhone(sva,ip);
+            service.unsubscribeSvaPhone(sva, ip);
         }    
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         modelMap.put("error", null);
@@ -431,7 +430,7 @@ public class ApiController
         {
             area.setFloorNo(area.getMaps().getFloorNo());
         }
-
+      
         modelMap.put("error", null);
         modelMap.put("data", resultList);
         modelMap.put("areaData", areaList);
@@ -628,12 +627,12 @@ public class ApiController
     @RequestMapping(value = "/getEstimate", method = {RequestMethod.POST})
     @ResponseBody
     public Map<String, Object> getEstimate(
-            @RequestParam("floorNo") String floorNo)
+            @RequestParam("mapId") String mapId)
     {
-        LOG.info("floorNo:" + floorNo);
+        LOG.info("mapId:" + mapId);
         // 返回值
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
-        BigDecimal result = daoEstimate.getEstimate(floorNo);
+        BigDecimal result = daoEstimate.getEstimate(mapId);
         modelMap.put("error", null);
         modelMap.put("data", result);
         return modelMap;
@@ -642,9 +641,9 @@ public class ApiController
     @RequestMapping(value = "/getPrruInfo", method = {RequestMethod.POST})
     @ResponseBody
     public Map<String, Object> getPrruInfo(
-            @RequestParam("floorNo") String floorNo)
+            @RequestParam("mapId") String mapId)
     {
-        Collection<PrruModel> resultList = prruDao.getPrruInfoByflooNo(floorNo);
+        Collection<PrruModel> resultList = prruDao.getPrruInfoByflooNo(mapId);
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         modelMap.put("error", null);
         modelMap.put("data", resultList);
@@ -1151,7 +1150,7 @@ public class ApiController
     @ResponseBody
     public Map<String, Object> twoPeoPleData(@RequestBody MyModel model)
     {
-        String floorNo = model.getFloorNo();
+        int mapId = model.getMapId();
         String myPhone = model.getMyPhone();
         String otherPhone = model.getOtherPhone();
         LocationModel myresult = null;
@@ -1172,8 +1171,8 @@ public class ApiController
             userID1 = list1.get(i);
         }
         LOG.debug("userID:" + userID + " userID1:" + userID1);
-        List<LocationModel> lis = locationDao.doquery1(userID, floorNo);
-        List<LocationModel> lis1 = locationDao.doquery1(userID1, floorNo);
+        List<LocationModel> lis = locationDao.doquery1(userID, mapId);
+        List<LocationModel> lis1 = locationDao.doquery1(userID1, mapId);
 
         
         if (lis.size()>0) {
@@ -2030,9 +2029,9 @@ public Map<String, Object> getShDateJing()
     {
         Map<String, Object> map = new HashMap<String, Object>(2);
         Collection<PetLocationModel> pet= null;
-        String floorNo = model.getFloorNo();
+        int mapId = model.getMapId();
 
-        pet = petLoction.getPetDataByPosition(floorNo);
+        pet = petLoction.getPetDataByPosition(mapId);
         map.put("data", pet);
 
         return map;
@@ -2250,11 +2249,11 @@ public Map<String, Object> getDataByFloorNo(@RequestParam("floorNo") String floo
         bean.setCount5(form.getCount5());
         bean.setDestination(form.getDestination());
         bean.setDetail(form.getDetail());
-        bean.setEnddate(ConvertUtil.dateStringFormat(form.getEnddate(), Params.YYYYMMDDHHMMSS));
+        bean.setEnddate(ConvertUtil.dateStringFormat(form.getEnddate(), Params.YYMMDDHHMMSS1));
         bean.setId(form.getId());
         bean.setOffset(form.getOffset());
         bean.setOrigin(form.getOrigin());
-        bean.setStartdate(ConvertUtil.dateStringFormat(form.getStartdate(), Params.YYYYMMDDHHMMSS));
+        bean.setStartdate(ConvertUtil.dateStringFormat(form.getStartdate(), Params.YYMMDDHHMMSS1));
         bean.setTriggerIp(form.getTriggerIp());
         bean.setType(form.getType());
         bean.setVariance(form.getVariance());
@@ -2296,6 +2295,7 @@ public Map<String, Object> getDataByFloorNo(@RequestParam("floorNo") String floo
         MapsModel map = new MapsModel();
         map.setFloorNo(form.getFloorNo());
         map.setFloor(form.getFloor());
+        map.setMapId(form.getMapId());
         bean.setMap(map);
         StoreModel store = new StoreModel();
         store.setId(form.getPlaceId());
@@ -2329,6 +2329,7 @@ public Map<String, Object> getDataByFloorNo(@RequestParam("floorNo") String floo
         bean.setTriggerIp(form.getTriggerIp());
         MapsModel map = new MapsModel();
         map.setFloorNo(form.getFloorNo());
+        map.setMapId(form.getMapId());
         map.setFloor(form.getFloor());
         bean.setMaps(map);
         StoreModel store = new StoreModel();
@@ -2440,65 +2441,6 @@ public Map<String, Object> getDataByFloorNo(@RequestParam("floorNo") String floo
         map.put("result", result);
         map.put("error",errorResult);
         
-        return map;
-        
-    }
-    
-    @RequestMapping(value = "/creatData", method = {RequestMethod.GET})
-    @ResponseBody
-    public Map<String, Object> creatData(@RequestParam("floorNo") int floorNo,@RequestParam("startTime")String startTime,@RequestParam("endTime")String endTime)
-    {
-        
-        //根据楼层号删除添加sql
-        String sql = "delete from acrdata where floorNo ="+floorNo;
-        String insertSql = "insert into acrdata(areaId,floorNo,areaName,userId,timestamp) values ";
-        Map<String, Object> map = new HashMap<String,Object>();
-        List<AreaModel> lis  = null;
-        List<Map<String, Object>> listMap = null;
-        String areaName = null;
-        String areaId = null;
-        String userId = null;
-        String timestamp = null;
-        String tableName = Params.LOCATION + startTime.substring(0, 8);
-        long start = ConvertUtil.dateFormatStringtoLong(startTime, Params.YYYYMMDDHHMMSS1);
-        long end = ConvertUtil.dateFormatStringtoLong(endTime, Params.YYYYMMDDHHMMSS1);
-        LOG.debug("creatData time:"+start+" "+end);
-        //判断楼层号是否为空
-        if ("".equals(floorNo)) {
-            map.put("error", "floorNo is null!");
-            return map;
-        }else
-        {
-            List<String> inputTempList = new ArrayList<String>();
-            //根据楼层号获取所以得区域
-            lis =daoArea.getAreaByFloorNo(floorNo);
-            for (int i = 0; i < lis.size(); i++) {
-                AreaModel area = lis.get(i);
-                areaName = area.getAreaName();
-                areaId = area.getId();
-                //获取某个区域人的userId
-                listMap = daoArea.getACRData(area, tableName, floorNo,start,end);
-                for (int j = 0; j < listMap.size(); j++) {
-                    userId = listMap.get(j).get("userId").toString();
-                    timestamp = ConvertUtil.dateFormat((Long)(listMap.get(j).get("timestamp")),Params.YYYYMMDDHHMMSS);
-                    String temp = "("+areaId+","+floorNo+",'"+areaName+"','"+userId+"','"+timestamp+"')";
-                    inputTempList.add(temp);
-                }
-            
-            }
-            //拼接字符串
-            String acrInsert = insertSql + StringUtils.join(inputTempList, ",");
-            int reslut = 0;
-            //区域人数不为空执行删除插入操作
-            if (inputTempList.size()>0) {
-                comDao.doUpdate(sql);
-                reslut  = comDao.doUpdate(acrInsert);
-            }else
-            {
-                map.put("error", "no people from area");  
-            }
-            map.put("result", reslut);
-        }
         return map;
         
     }

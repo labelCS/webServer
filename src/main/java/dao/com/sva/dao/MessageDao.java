@@ -38,7 +38,7 @@ public interface MessageDao {
     public int saveMsgInfo(MessageModel mmm);
 
     public int deleteMessage(@Param("xSpot")String xSpot, @Param("ySpot")String ySpot, 
-            @Param("floorNo")String floorNo);
+            @Param("mapId")String mapId);
 
     public int updateMsgInfo(MessageModel mmm);
 

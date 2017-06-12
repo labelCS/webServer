@@ -44,7 +44,7 @@ public class PetLocationDaoTest extends BasicDaoTest {
     
     @Test
     public void getPetDataByPositionTest(){
-        String floorNo = "1";
+        int floorNo = 1;
         List<PetLocationModel> result = petLocationDao.getPetDataByPosition(floorNo);
         Assert.assertEquals("结果为0",0, result.size());
     }

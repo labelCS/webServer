@@ -16,7 +16,7 @@
             join store c on b.storeId = c.id
             join maps d on c.id = d.placeId 
         WHERE 
-            d.floorNo = #{value} 
+            d.mapId = #{value} 
             and a.status != 2
     </select>
     
@@ -64,9 +64,9 @@
     
     <insert id="saveSvaInfo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO 
-            svalist(ip,name,username,password,status,type,idType,tokenPort,brokerPort,managerEmail) 
+            svalist(ip,name,username,password,status,type,idType,tokenPort,brokerPort,mapLists,apiLists) 
         VALUES(
-            #{ip},#{name},#{username},#{password},#{status},#{type},#{idType},#{tokenPort},#{brokerPort},#{managerEmail}
+            #{ip},#{name},#{username},#{password},#{status},#{type},#{idType},#{tokenPort},#{brokerPort},#{mapLists},#{apiLists}
         )
     </insert>
     
@@ -81,15 +81,9 @@
             type = #{type},
             idType = #{idType},
             tokenPort = #{tokenPort},
-            brokerPort = #{brokerPort}, 
-            managerEmail = #{managerEmail}
-        WHERE id = #{id}
-    </update>
-    
-    <update id="udpateSvaStatusCode">
-        UPDATE svalist 
-        SET 
-            statusCode = #{statusCode} 
+            brokerPort = #{brokerPort},
+            mapLists = #{mapLists},
+            apiLists = #{apiLists} 
         WHERE id = #{id}
     </update>
     

@@ -9,19 +9,22 @@
         (
             idType VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci', 
             timestamp BIGINT(20) NULL DEFAULT NULL, 
-            time_sva BIGINT(20) NULL DEFAULT NULL, 
+            time_begin BIGINT(20) NULL DEFAULT NULL, 
+            time_local BIGINT(20) NULL DEFAULT NULL, 
+            during BIGINT(20) NOT NULL DEFAULT 0, 
             dataType VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci', 
             x DECIMAL(10,0) NULL DEFAULT NULL, 
             y DECIMAL(10,0) NULL DEFAULT NULL, 
-            z DECIMAL(10,0) NULL DEFAULT NULL, 
+            z DECIMAL(10,0) NULL DEFAULT NULL,
+            mapId BIGINT(20) NOT NULL DEFAULT 1,              
+            loc_count BIGINT(20) NOT NULL DEFAULT 1, 
             userID VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
             mmes1 VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
             enbs1 VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
             enbid VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
-            svaid int(11) NOT NULL,
             INDEX `Index 1` (`userID`), 
             INDEX `Index 2` (`timestamp`) 
-         );
+         )COLLATE='utf8_unicode_ci' ENGINE=InnoDB;
     </update>
     
     <select id="isTableExist" resultType="int">
@@ -77,12 +80,5 @@
     <insert id="saveVisitiTime">
         ${value}
     </insert>
-    
-    <select id="countLocationDataNum" resultType="int">
-        SELECT COUNT(*) 
-        FROM ${tableName} 
-        WHERE
-        svaid = #{svaid} and timestamp &gt;= #{begin} and timestamp &lt;= #{end} 
-    </select>
     
 </mapper>
