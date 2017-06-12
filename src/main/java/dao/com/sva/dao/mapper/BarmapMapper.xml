@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.BarmapDao">
+
+    <select id="getData" resultMap="StatisticFloorResult">
+        select 
+            a.z,b.floor, count(distinct a.userID) number 
+        from statisticfloor a join maps b on a.z = b.floorNo 
+        where b.placeId = #{placeId} and a.time &lt; #{end} and a.time &gt;= #{start} 
+        group by a.z 
+        order by a.z asc
+    </select>
+
+    <resultMap id="StatisticFloorResult" type="StatisticFloorModel">
+        <result property="number" column="number"/>
+        <association property="maps" javaType="MapsModel">
+            <id property="floorNo" column="z"/>
+            <result property="name" column="floor"/>
+        </association>
+    </resultMap>
+    
+    <select id="getTotalCount" resultType="int">
+        select 
+            count(distinct a.userID) number
+        from statisticfloor a join maps b on a.z = b.floorNo
+        where b.placeId = #{placeId} and a.time &lt; #{end} and a.time &gt;= #{start}
+    </select>
+    
+</mapper>

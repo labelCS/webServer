@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.BZParamsDao">
+
+    <select id="doquery" resultType="BZPramesModel">
+        select * from mwcprames
+    </select>
+    
+    <select id="doquery3" resultType="BZPramesModel">
+        select * from shprames
+    </select>
+    
+    <select id="doquery4" resultType="BZPramesModel">
+        select * from shpramesjing
+    </select>
+    
+    <select id="doquery1" resultType="BZPramesModel">
+        SELECT a.*,b.floor,c.name place 
+        FROM BZPrames a left join maps b on a.floorNo = b.floorNo left join store c on a.placeId = c.id 
+    </select>
+
+    <update id="updateBZInfo">
+        REPLACE INTO mwcprames(
+            densitySel1,
+            radiusSel1,
+            densitySel2,
+            radiusSel2,
+            densitySel3,
+            radiusSel3,
+            densitySel4,
+            radiusSel4,
+            densitySel5,
+            radiusSel5,
+            densitySel6,
+            radiusSel6,
+            densitySel7,
+            radiusSel7,
+            densitySel8,
+            radiusSel8,
+            floorNo1,
+            floorNo2,
+            floorNo3,
+            floorNo4,
+            floorNo5,
+            floorNo6,
+            floorNo7,
+            floorNo8,
+            periodSel,
+            startTime,
+            coefficient,
+            id) 
+        VALUES(
+            #{densitySel},
+            #{radiusSel},
+            #{densitySel1},
+            #{radiusSel1},
+            #{densitySel2},
+            #{radiusSel2},
+            #{densitySel3},
+            #{radiusSel3},
+            #{densitySel4},
+            #{radiusSel4},
+            #{densitySel5},
+            #{radiusSel5},
+            #{densitySel6},
+            #{radiusSel6},
+            #{densitySel7},
+            #{radiusSel7},
+            #{floorNo},
+            #{floorNo2},
+            #{floorNo3},
+            #{floorNo4},
+            #{floorNo5},
+            #{floorNo6},
+            #{floorNo7},
+            #{floorNo8},
+            #{periodSel},
+            #{startTime},
+            #{coefficient},
+            #{id}
+        )
+    </update>
+    
+    <update id="updateSHInfo">
+        REPLACE INTO shprames(
+            densitySel1,
+            radiusSel1,
+            densitySel2,
+            radiusSel2,
+            densitySel3,
+            radiusSel3,
+            floorNo1,
+            floorNo2,
+            floorNo3,
+            periodSel,
+            startTime,
+            coefficient,
+            id) 
+        VALUES(
+            #{densitySel},
+            #{radiusSel},
+            #{densitySel1},
+            #{radiusSel1},
+            #{densitySel2},
+            #{radiusSel2},
+            #{floorNo1},
+            #{floorNo2},
+            #{floorNo3},
+            #{periodSel},
+            #{startTime},
+            #{coefficient},
+            #{id}
+        )
+    </update>
+    
+    <update id="updateSHInfoJing">
+        REPLACE INTO shpramesjing(
+            densitySel1,
+            radiusSel1,
+            densitySel2,
+            radiusSel2,
+            densitySel3,
+            radiusSel3,
+            densitySel4,
+            radiusSel4,
+            floorNo1,
+            floorNo2,
+            floorNo3,
+            floorNo4,
+            periodSel,
+            startTime,
+            coefficient,
+            id) 
+        VALUES(
+            #{densitySel},
+            #{radiusSel},
+            #{densitySel1},
+            #{radiusSel1},
+            #{densitySel2},
+            #{radiusSel2},
+            #{densitySel4},
+            #{radiusSel4},
+            #{floorNo1},
+            #{floorNo2},
+            #{floorNo3},
+            #{floorNo4},
+            #{periodSel},
+            #{startTime},
+            #{coefficient},
+            #{id}
+        )
+    </update>
+    
+    <select id="getBzData" resultType="map">
+        select floorNo,startTime from bzprames where placeId = #{value}
+    </select>
+    
+    <select id="getBzAllData" resultType="map">
+        select floorNo,startTime,floorNo2,floorNo3,periodSel,coefficient from bzprames where id = #{value}
+    </select>
+    
+    <select id="getAllFloorNo" resultType="map">
+        select 
+            floorNo1,startTime,floorNo2,floorNo3,floorNo4,floorNo5,floorNo6,floorNo7,floorNo8,periodSel,coefficient 
+        from mwcprames 
+        where id = #{value}
+    </select>
+    
+    <select id="getAllFloorNo2" resultType="map">
+        select floorNo1,startTime,floorNo2,floorNo3,periodSel,coefficient from shprames where id = #{value}
+    </select>
+    
+    <select id="getAllFloorNoJing" resultType="map">
+        select floorNo1,startTime,floorNo2,floorNo3,floorNo4,periodSel,coefficient 
+        from shpramesjing 
+        where id = #{value}
+    </select>
+    
+    <select id="doquery2" resultType="BZPramesModel1">
+        select * from bzprames
+    </select>
+    
+    <update id="updateBZInfo1">
+        REPLACE INTO bzprames(
+            densitySel,
+            radiusSel,
+            densitySel1,
+            radiusSel1,
+            densitySel2,
+            radiusSel2,
+            placeId,
+            placeId2,
+            placeId2sp,
+            placeId3,
+            placeId3SP,
+            floorNo,
+            floorNo2,
+            floorNo2sp,
+            floorNo3,
+            floorNo3sp,
+            periodSel,
+            startTime,
+            coefficient,
+            id) 
+        VALUES(
+            #{densitySel},
+            #{radiusSel},
+            #{densitySel1},
+            #{radiusSel1},
+            #{densitySel2},
+            #{radiusSel2},
+            #{placeId},
+            #{placeId2},
+            #{placeId2sp},
+            #{placeId3},
+            #{placeId3sp},
+            #{floorNo},
+            #{floorNo2},
+            #{floorNo2sp},
+            #{floorNo3},
+            #{floorNo3sp},
+            #{periodSel},
+            #{startTime},
+            #{coefficient},
+            #{id}
+         )
+    </update>
+</mapper>
