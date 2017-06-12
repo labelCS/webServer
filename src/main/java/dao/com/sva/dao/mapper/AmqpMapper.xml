@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.AmqpDao">
+
+    <insert id="saveAmqpData">
+        INSERT INTO ${tableName}
+            (IdType,Timestamp,time_sva,datatype,x,y,z,userid,svaid) 
+        VALUES (
+            #{loc.idType},
+            #{loc.timestamp},
+            #{loc.timestampSva},
+            #{loc.dataType},
+            #{loc.x},
+            #{loc.y},
+            #{loc.z},
+            #{loc.userID},
+            #{loc.svaId}
+        )
+    </insert>
+    
+    <select id="checkPhoneIsExisted" resultType="int">
+        SELECT count(userid)
+        FROM locationphone 
+        WHERE userid = #{value}
+    </select>
+    
+    <update id="updatePhoneLocation">
+        UPDATE locationphone
+        SET 
+            IdType = #{idType}, 
+            Timestamp = #{timestamp},
+            time_sva = #{timestampSva},
+            datatype = #{dataType},
+            x = #{x}, 
+            y = #{y},
+            z = #{z} 
+        WHERE userid = #{userID}
+    </update>
+    
+    <insert id="svaPrru">
+        INSERT INTO prrusignal
+            (enbid,userId,gpp,rsrp,timestamp)
+        VALUES (
+            #{enbid},
+            #{userId},
+            #{gpp},
+            #{rsrp},
+            #{timestamp}
+        )
+    </insert>
+    
+    <insert id="svaGeofencing">
+        INSERT INTO geofencing
+            (IdType,userid,mapid,zoneid,enter,Timestamp,time_local)
+        VALUES (
+            #{idType},
+            #{userId},
+            #{mapId},
+            #{zoneId},
+            #{zoneEvent},
+            #{timestamp},
+            #{timeLocal}
+        )
+    </insert>
+
+    <select id="getActiveSva" resultType="SvaModel">
+        SELECT * FROM 
+            svalist a left join svastoremap b on a.id = b.svaId 
+        WHERE a.status = 1
+    </select>
+    
+</mapper>

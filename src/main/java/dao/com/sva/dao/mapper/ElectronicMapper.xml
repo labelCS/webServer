@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.ElectronicDao">
+
+    <select id="doquery" resultMap="ElectronicResult">
+        SELECT a.*,b.floor,c.name place,d.id areaId,d.status status,d.areaName shopName 
+        FROM electronic a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join area d on a.shopId = d.id
+    </select>
+
+    <resultMap id="ElectronicResult" type="ElectronicModel">
+        <id property="id" column="id" />
+        <result property="electronicName" column="electronicName"/>
+        <result property="message" column="message"/>
+        <result property="pictruePath" column="pictruePath"/>
+        <result property="moviePath" column="moviePath"/>
+        <association property="maps" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+        <association property="area" javaType="AreaModel">
+            <id property="id" column="areaId"/>
+            <result property="status" column="status"/>
+            <result property="areaName" column="shopName"/>
+        </association>
+    </resultMap>
+    
+    <select id="doqueryByStoreid" resultMap="ElectronicResult">
+        SELECT a.*,b.floor,c.name place,d.id areaId,d.status status,d.areaName shopName 
+        FROM electronic a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join area d on a.shopId = d.id 
+        where a.placeId = #{storeid}
+    </select>
+    
+    <insert id="saveElectronic">
+        INSERT INTO electronic(placeId,electronicName,floorNo,message,pictruePath,moviePath,shopId) 
+        VALUES(
+            #{store.id},
+            #{electronicName},
+            #{maps.floorNo},
+            #{message},
+            #{pictruePath},
+            #{moviePath},
+            #{area.id}
+        )
+    </insert>
+    
+    <delete id="deleteMessage">
+        DELETE FROM message 
+        where xSpot = #{xSpot} and ySpot = #{ySpot} and floorNo = #{floorNo}
+    </delete>
+    
+    <update id="updateMsgInfo">
+        UPDATE electronic 
+        SET 
+            placeId = #{store.id},
+            shopId = #{area.id},
+            message = #{message},
+            floorNo = #{maps.floorNo},
+            electronicName = #{electronicName} 
+        where id = #{id}
+    </update>
+    
+    <update id="updateMsgInfo1">
+        UPDATE electronic 
+        SET 
+            moviePath = #{moviePath},
+            placeId = #{store.id},
+            shopId = #{area.id},
+            message = #{message},
+            floorNo = #{maps.floorNo},
+            electronicName = #{electronicName} 
+        where id = #{id}
+    </update>
+    
+    <update id="updateMsgInfo2">
+        UPDATE electronic 
+        SET 
+            pictruePath = #{pictruePath},
+            placeId = #{store.id},
+            shopId = #{area.id},
+            message = #{message},
+            floorNo = #{maps.floorNo},
+            electronicName = #{electronicName} 
+        where id = #{id}
+    </update>
+    
+    <update id="updateMsgInfo3">
+        UPDATE electronic 
+        SET 
+            moviePath = #{moviePath},
+            pictruePath = #{pictruePath},
+            placeId = #{store.id},
+            shopId = #{area.id},
+            message = #{message},
+            floorNo = #{maps.floorNo},
+            electronicName = #{electronicName} 
+        where id = #{id}
+    </update>
+    
+    <delete id="deleteElectronic">
+        delete from electronic where id = #{id}
+    </delete>
+</mapper>

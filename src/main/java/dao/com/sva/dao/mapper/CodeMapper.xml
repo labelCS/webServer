@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.CodeDao">
+
+    <select id="getData" resultType="CodeModel">
+        SELECT * FROM code
+    </select>
+    
+    <insert id="saveCodeInfo">
+        INSERT INTO code (name,password) 
+        VALUES(#{name}, #{password})
+    </insert>
+    
+    <delete id="deleteCode">
+        DELETE FROM code where name = #{name} and password = #{password}
+    </delete>
+
+    <select id="checkIsValid" resultType="int">
+        SELECT count(*) res FROM code where name = #{name} and password = #{password}
+    </select>
+    
+    <select id="checkByName" resultType="int">
+        SELECT count(*) res FROM code where name = #{name}
+    </select>
+    
+</mapper>

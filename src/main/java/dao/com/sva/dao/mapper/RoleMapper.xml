@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.RoleDao" >
+    <select id="doquery" resultType="RoleModel">
+        select * from role where id != 1
+    </select>
+
+    <select id="selectMenu" resultType="java.util.Map">
+        select * from menuname
+    </select>
+    
+    <select id="selectMenuEnglish" resultType="java.util.Map">
+        select * from menuenglish
+    </select> 
+    
+    <select id="selectMenuid" resultType="String">
+        select m.id from menuname m
+    </select>   
+  
+    <select id="selectMenuidEN" resultType="String">
+        select m.id from menuenglish m
+    </select> 
+    
+    <select id="queryMenu" resultType="String">
+        select m.name from menuname m where id = #{value}
+    </select>           
+    
+    <select id="queryMenuEN" resultType="String">
+        select m.name from menuenglish m where id = #{value}
+    </select>     
+    
+    <select id="selmenu" resultType="String">
+        select m.name from menuname m where keyZH = #{value}
+    </select>  
+    
+     <select id="selmenuEN" resultType="String">
+        select m.name from menuenglish m where keyEN = #{value}
+    </select> 
+    
+     <select id="queryMenuKey" resultType="String">
+        select m.keyZH from menuname m where id = #{value}
+    </select>
+    
+     <select id="queryMenuKeyEN" resultType="String">
+        select m.keyEN from menuenglish m where id = #{value}
+    </select> 
+         
+     <select id="queryMenuId" resultType="String">
+        select id from menuname where name =  #{value}
+    </select>   
+    
+     <select id="queryMenuIdEN" resultType="String">
+        select id from menuenglish where name = #{value}
+    </select> 
+    
+     <select id="queryStoreId" resultType="String">
+        select id from store where name = #{value}
+    </select>    
+    
+     <select id="selectStoreid" resultType="String">
+        select s.id from store s
+    </select>                    
+                
+     <select id="queryStore" resultType="String">
+        select name from Store where id = #{value}
+    </select>       
+    
+     <select id="selectRoleSame" resultType="int">
+       SELECT COUNT(*) FROM role WHERE name = #{name} and id !=#{id}
+    </select>  
+    
+     <select id="queryStoreidFromRole" resultType="String">
+       SELECT r.storesid FROM role r left join  account a on a.roleid = r.id WHERE a.username = #{value}
+    </select>  
+    
+     <select id="queryStoreFromRole" resultType="String">
+       SELECT r.stores FROM role r left join  account a on a.roleid = r.id WHERE a.username = #{value}
+    </select>    
+    
+     <select id="selectRoleid" resultType="int">
+        SELECT roleid FROM account  WHERE username = #{value}
+    </select>   
+    
+     <insert id="saveInfo">
+        INSERT INTO role
+            (name,updateTime,menus,stores,menukey,storesid) 
+        VALUES(#{name},#{updateTime},#{menues},#{stores},#{menukey},#{storesid})
+    </insert>
+    
+    <update id="updateInfo">
+        UPDATE role SET 
+            name=#{name}, menus=#{menues}, stores=#{stores},
+            updateTime=#{updateTime},storesid=#{storesid},menukey=#{menukey} WHERE id=#{id}
+    </update>  
+    
+    <update id="updateInfoStore">
+         UPDATE role SET storesid=#{storesid},stores =#{stores} WHERE id=#{id}
+    </update>  
+    
+    <delete id="deleteById">
+        DELETE from role WHERE id=#{value}
+    </delete>
+                                   
+                    
+</mapper>

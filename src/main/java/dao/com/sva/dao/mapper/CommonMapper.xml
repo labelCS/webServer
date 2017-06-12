@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.CommonDao">
+
+    <update id="createTable">
+        CREATE TABLE  ${value}
+        (
+            idType VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci', 
+            timestamp BIGINT(20) NULL DEFAULT NULL, 
+            time_sva BIGINT(20) NULL DEFAULT NULL, 
+            dataType VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci', 
+            x DECIMAL(10,0) NULL DEFAULT NULL, 
+            y DECIMAL(10,0) NULL DEFAULT NULL, 
+            z DECIMAL(10,0) NULL DEFAULT NULL, 
+            userID VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+            mmes1 VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
+            enbs1 VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
+            enbid VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
+            svaid int(11) NOT NULL,
+            INDEX `Index 1` (`userID`), 
+            INDEX `Index 2` (`timestamp`) 
+         );
+    </update>
+    
+    <select id="isTableExist" resultType="int">
+        SELECT COUNT(*) 
+        FROM information_schema.tables 
+        WHERE table_name = #{tableName} and TABLE_SCHEMA = #{schema}
+    </select>
+    
+    <update id="doUpdate">
+        ${value}
+    </update>
+    
+    <select id="doTest" resultType="int">
+        ${value}
+    </select>
+    
+    <select id="doTest1" resultType="Map">
+        ${value}
+    </select>
+
+    <select id="doDeleteInfo" resultType="String">
+        SELECT TABLE_NAME 
+        FROM information_schema.tables 
+        WHERE TABLE_SCHEMA = 'sva' AND TABLE_NAME LIKE '%location2%' and table_name &lt; #{time}
+    </select>
+    
+    <update id="deleteTable">
+        DROP TABLE IF EXISTS ${value}
+    </update>
+    
+    <select id="getStatisticTemp" resultType="Map">
+        select * from statistictemp
+    </select>
+    
+    <select id="getDataToday" resultType="Map">
+        select * from statisticlinetemp 
+        where placeId = 1 and time like '%${value}%'
+        order by time asc
+    </select>
+    
+    <select id="getAllPeople" resultType="Map">
+        select * from ${tableName} where timestamp &gt; #{time}
+    </select>
+    
+    <select id="getAllArea" resultType="Map">
+        select * from area
+    </select>
+    
+    <select id="getAreaVisitTime" resultType="Map">
+        select *from district_during where district_id = #{value}
+    </select>
+    
+    <insert id="saveVisitiTime">
+        ${value}
+    </insert>
+    
+    <select id="countLocationDataNum" resultType="int">
+        SELECT COUNT(*) 
+        FROM ${tableName} 
+        WHERE
+        svaid = #{svaid} and timestamp &gt;= #{begin} and timestamp &lt;= #{end} 
+    </select>
+    
+</mapper>

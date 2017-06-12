@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.AccuracyDao">
+
+    <select id="getData" resultMap="accuracyResult">
+        select a.*,b.floor,c.deviation, d.name 
+        from accuracy a 
+            left join maps b 
+                on a.floorNo = b.floorNo 
+            left join store d 
+                on a.placeId = d.id 
+            left join estimatedev c 
+                on b.floorNo = c.floorNo 
+        order by #{sortCol} #{sortDir} 
+        limit #{start},#{length}
+    </select>
+
+    <resultMap id="accuracyResult" type="AccuracyModel">
+        <id property="id" column="id" />
+        <result property="origin" column="origin"/>
+        <result property="destination" column="destination"/>
+        <result property="startdate" column="start_date"/>
+        <result property="enddate" column="end_date"/>
+        <result property="type" column="type"/>
+        <result property="triggerIp" column="triggerIp"/>
+        <result property="offset" column="offset"/>
+        <result property="variance" column="variance"/>
+        <result property="averDevi" column="averDevi"/>
+        <result property="count3" column="count_3"/>
+        <result property="count5" column="count_5"/>
+        <result property="count10" column="count_10"/>
+        <result property="count10p" column="count_10p"/>
+        <result property="detail" column="detail"/>
+        <association property="maps" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="name"/>
+        </association>
+        <association property="estimate" javaType="EstimateModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="deviation" column="deviation"/>
+        </association>
+    </resultMap>
+
+    <select id="getDataByStoreid" resultMap="accuracyResult">
+        select a.*,b.floor,c.deviation, d.name 
+        from accuracy a 
+            left join maps b 
+                on a.floorNo = b.floorNo 
+            left join store d 
+                on a.placeId = d.id 
+            left join estimatedev c 
+                on b.floorNo = c.floorNo 
+        where a.placeId = #{storeid}
+        order by #{sortCol} #{sortDir} 
+        limit #{start},#{length}
+    </select>
+    
+    <select id="getDataLength" resultType="int">
+        select count(*) a from accuracy
+    </select>
+    
+    <select id="allQueryAccuracy" resultMap="accuracyResult">
+        select a.*,b.floor,c.deviation, d.name 
+        from accuracy a 
+            left join maps b 
+                on a.floorNo = b.floorNo 
+            left join store d 
+                on a.placeId = d.id 
+            left join estimatedev c 
+                on b.floorNo = c.floorNo 
+    </select>
+    
+    <insert id="saveTestInfo">
+        INSERT INTO 
+            accuracy(
+                placeId,
+                floorNo,
+                origin,
+                destination,
+                start_date,
+                end_date,
+                triggerIp,
+                offset,
+                variance,
+                count_3,
+                count_5,
+                count_10,
+                count_10p,
+                detail,
+                type,
+                averDevi
+            ) 
+        VALUES(
+            #{store.id},
+            #{maps.floorNo},
+            #{origin},
+            #{destination},
+            #{startdate},
+            #{enddate},
+            #{triggerIp},
+            #{offset},
+            #{variance},
+            #{count3},
+            #{count5},
+            #{count10},
+            #{count10p},
+            #{detail},
+            #{type},
+            #{averDevi}
+        )
+    </insert>
+</mapper>
