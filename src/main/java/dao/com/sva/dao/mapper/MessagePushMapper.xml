@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.MessagePushDao">
+
+    <select id="getDataByPlaceIdTime" resultMap="MsgPushResult">
+        SELECT 
+            a.*,b.floor, d.name place 
+        FROM messagepush a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store d on a.placeId = d.id 
+        WHERE 
+            a.placeId = #{placeId} 
+            and a.updateTime &gt; #{startTime} 
+            and a.updateTime &lt; #{endTime}
+    </select>
+
+    <resultMap id="MsgPushResult" type="MessagePushModel">
+        <id property="id" column="id" />
+        <result property="pushRight" column="pushRight"/>
+        <result property="pushWrong" column="pushWrong"/>
+        <result property="notPush" column="notPush"/>
+        <result property="centerRadius" column="centerRadius"/>
+        <result property="centerReality" column="centerReality"/>
+        <result property="isRigth" column="isRigth"/>
+        <result property="updateTime" column="updateTime"/>
+        <association property="map" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+    </resultMap>
+    
+    <select id="getAllDatas" resultMap="MsgPushResult">
+        SELECT 
+            a.*,b.floor, d.name place 
+        FROM messagepush a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store d on a.placeId = d.id 
+        WHERE 
+            a.updateTime &gt; #{startTime} 
+            and a.updateTime &lt; #{endTime} 
+    </select>
+    
+    <select id="getAllData" resultMap="MsgPushResult">
+        SELECT 
+            a.*,b.name place,d.floor 
+        FROM messagepush a 
+            left join store b on a.placeId = b.id 
+            left join maps d on a.floorNo = d.floorNo
+    </select>
+    
+    <select id="getAllDataByStoreId" resultMap="MsgPushResult">
+        select 
+            a.*,b.name place,d.floor 
+        from messagepush a 
+            left join store b on a.placeId = b.id 
+            left join maps d on a.floorNo = d.floorNo 
+        where a.placeId = #{value}
+    </select>
+    
+    <insert id="savaMessagePush">
+        INSERT INTO 
+            messagepush(placeId,floorNo,pushRight,pushWrong,notPush,centerRadius,centerReality,isRigth,updateTime) 
+        VALUES(
+            #{store.id},
+            #{map.floorNo},
+            #{pushRight},
+            #{pushWrong},
+            #{notPush},
+            #{centerRadius},
+            #{centerReality},
+            #{isRigth},
+            #{updateTime}
+        )
+    </insert>
+</mapper>

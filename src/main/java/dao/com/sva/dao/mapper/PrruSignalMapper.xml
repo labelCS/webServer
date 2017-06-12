@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.PrruSignalDao">
+
+    <select id="getSignalByUserIdTime" resultType="PrruSignalModel">
+        SELECT * FROM prruSignal WHERE timestamp &gt; #{timestamp} and userId = #{userId} order by timestamp
+    </select>
+
+    <select id="getOneSignalByUserIdTime" resultType="PrruSignalModel">
+        SELECT * FROM prruSignal 
+        WHERE 
+            userId = #{userId}
+            and timestamp = (
+                SELECT timestamp 
+                FROM prruSignal 
+                WHERE timestamp &gt; #{timestamp} and userId = #{userId}
+                ORDER BY timestamp 
+                LIMIT 1
+            )
+    </select>
+    
+    <select id="getCurrentSignalByUserId" resultType="PrruSignalModel">
+        SELECT * FROM prruSignal 
+        WHERE 
+            userId = #{userId} 
+            and timestamp = (
+                SELECT timestamp 
+                FROM prruSignal 
+                WHERE userId = #{userId}
+                ORDER BY timestamp desc 
+                LIMIT 1
+            )
+    </select>
+    
+    <select id="getTwoSignalByUserId" resultType="PrruSignalModel">
+        SELECT prruSignal.* 
+        FROM prruSignal join (
+                SELECT distinct(timestamp) 
+                FROM prruSignal 
+                WHERE userId = #{userId} 
+                ORDER BY timestamp desc 
+                LIMIT 2
+            ) a
+        WHERE prruSignal.userId = #{userId} and prruSignal.timestamp = a.timestamp;
+    </select>
+    
+    <select id="getRelativeFeature" resultType="PrruFeatureModel">
+        SELECT a.*,b.gpp,b.featureValue 
+        FROM prruFeature a join (
+                SELECT * 
+                FROM prruFeatureDetail 
+                WHERE gpp in
+                <foreach item="item" index="index" collection="gpps"
+                    open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            ) b on a.id = b.featureId
+        WHERE a.floorNo = #{floorNo};
+    </select>
+    
+    <delete id="deleteSignal">
+        DELETE FROM prrusignal
+    </delete>
+    
+    <insert id="savePrruFeature" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO 
+            prrufeature(x,y,floorNo,checkValue,featureRadius,userId,timestamp,eNodeBid) 
+        VALUES (#{x},#{y},#{floorNo},#{checkValue},#{featureRadius},#{userId},#{timestamp},#{eNodeBid})
+    </insert>
+    
+    <insert id="savePrruFeatureDetail" useGeneratedKeys="true" parameterType="java.util.List">
+        INSERT INTO prruFeatureDetail(featureId,gpp,featureValue) 
+        VALUES 
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.featureId},#{item.gpp},#{item.featureValue})
+        </foreach>
+    </insert>
+    
+    <select id="getFeatureByPosition" resultType="PrruFeatureModel">
+        SELECT * 
+        FROM prruFeature 
+        WHERE x = #{x} and y = #{y} and floorNo = #{floorNo} 
+        LIMIT 1
+    </select>
+    
+    <select id="getFeatureBaseData" resultType="FeatureBaseExportModel">
+        SELECT a.*,b.gpp,b.featureValue,c.floorid,c.mapId 
+        FROM prruFeature a 
+            join prruFeatureDetail b on a.id = b.featureId
+            left join maps c on a.floorNo = c.floorNo
+            left join store d on c.placeId = d.id
+        WHERE  d.id = #{value} 
+        ORDER BY a.id
+    </select>
+    
+    <delete id="deletFeatureById">
+        DELETE FROM prruFeature WHERE id = #{value}
+    </delete>
+    
+    <delete id="deleteFeatureDetailByFeatureId">
+        DELETE FROM prruFeatureDetail WHERE featureId = #{value}
+    </delete>
+    
+    <select id="getAllFeaturePostion" resultType="PrruFeatureModel">
+        SELECT * FROM prruFeature WHERE floorNo = #{value}
+    </select>
+    
+    <select id="queryFloorNoByUseId" resultType="PrruFeatureModel">
+        SELECT z 
+        FROM locationPhone 
+        WHERE userID = #{value}
+        ORDER BY timestamp desc 
+        LIMIT 1
+    </select>
+    
+    <delete id="delSimulateDataByFloorNo">
+        DELETE prrufeature,prrufeaturedetail 
+        from prrufeature LEFT JOIN prrufeaturedetail on prrufeature.id = prrufeaturedetail.featureId 
+        where prrufeature.userId = 'simulate'
+        <if test="floorNo != ''">
+    		and prrufeature.floorNo=#{floorNo} 
+    	</if>
+    	<if test="eNodeBid != ''">
+    		and prrufeature.eNodeBid=#{eNodeBid}
+    	</if>
+    </delete>
+    
+</mapper>

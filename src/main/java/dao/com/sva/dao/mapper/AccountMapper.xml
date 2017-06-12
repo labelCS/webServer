@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.AccountDao">
+
+    <select id="selectStore" resultType="string">
+        SELECT 
+            r.storesid 
+        FROM 
+            account a left join role r on r.id = a.roleid 
+        WHERE 
+            a.username = #{value}
+    </select>
+
+    <select id="selMenuKey" resultType="string">
+        SELECT 
+            r.menukey 
+        FROM 
+            account a left join role r on r.id = a.roleid 
+        WHERE 
+            a.username = #{value}
+    </select>
+    
+    <select id="doquery" resultMap="accountResult">
+        SELECT a.*,b.name FROM account a left join role b on a.roleid = b.id WHERE a.id != 1
+    </select>
+
+    <resultMap id="accountResult" type="AccountModel">
+        <id property="id" column="id" />
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="updateTime" column="updateTime"/>
+        <association property="role" javaType="RoleModel">
+            <id property="id" column="roleid"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+    
+    <select id="selectCategorySame" resultType="int">
+        SELECT COUNT(*) FROM account WHERE username = #{name} and id != #{id}
+    </select>
+    
+    <select id="findUser" resultMap="accountResult">
+        SELECT 
+            a.*,r.name 
+        FROM account a left join role r on  a.roleid = r.id  
+        WHERE username = #{username} and password = #{password}
+    </select>
+    
+    <insert id="saveInfo">
+        INSERT INTO 
+            account(username,password,roleid,updateTime) 
+        VALUES(#{username},#{password},#{role.id},#{updateTime})
+    </insert>
+    
+    <update id="updateInfo">
+        UPDATE account 
+        SET 
+            username = #{username}, 
+            password = #{password},
+            roleid = #{role.id},
+            updateTime = #{updateTime}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE from account WHERE id = #{id}
+    </delete>
+    
+</mapper>

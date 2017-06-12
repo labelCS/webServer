@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.CategoryDao">
+
+    <select id="doquery" resultType="CategoryModel">
+        SELECT * FROM category
+    </select>
+
+    <select id="selectCategorySame" resultType="int">
+        SELECT COUNT(*) FROM category WHERE name = #{name} and id != #{id}
+    </select>
+    
+    <insert id="saveInfo">
+        INSERT INTO category(name,updateTime,createTime) 
+        VALUES(#{name},#{updateTime},#{createTime})
+    </insert>
+    
+    <update id="updateInfo">
+        UPDATE category 
+        SET name = #{name}, updateTime = #{updateTime} WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE from category WHERE id = #{id}
+    </delete>
+    
+</mapper>

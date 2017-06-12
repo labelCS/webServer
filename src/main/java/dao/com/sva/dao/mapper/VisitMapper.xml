@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.VisitDao">
+    <select id="getIpExistence" parameterType="string" resultType="VisitModel">
+        SELECT * FROM website_visit where  ip = #{value}
+    </select>
+    
+    <select id="getAllCount" resultType="String">
+        select visitCount from website_visit
+    </select>
+    
+    <update id="updateData" >
+	    update website_visit 
+	    set
+		    userName = #{userName},
+		    visitCount = #{visitCount},
+		    last_visitTime = #{lastVisitTime}
+	    where ip = #{ip}
+    </update>
+    
+    <insert id="saveData">
+        insert into website_visit(
+            userName,visitCount,first_visitTime,last_visitTime,ip
+        ) 
+        values(#{userName},#{visitCount},#{firstVisitTime},#{lastVisitTime},#{ip})
+    </insert>
+    
+    
+</mapper>
