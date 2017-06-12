@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.RangemapDao">
+
+    <select id="getData" resultType="LinemapModel">
+        SELECT 
+            FROM_UNIXTIME(timestamp/1000,'%Y/%m/%d %H:00:00') time, count(distinct a.userID) number
+        FROM ${tableName}
+	        a join maps b on a.z = b.floorNo 
+        WHERE 
+            b.placeId = #{placeId} 
+            and b.floorNo = #{floorNo} 
+            and a.x &gt; #{x1} 
+            and a.x &lt; #{x2} 
+            and a.y &gt; #{y1} 
+            and a.y &lt; #{y2} 
+        GROUP BY time 
+        ORDER BY time asc 
+    </select>
+    
+    <select id="getTotalCount" resultType="int">
+        SELECT 
+            count(distinct a.userID) number 
+        FROM ${tableName}
+            a join maps b on a.z = b.floorNo 
+        WHERE 
+            b.placeId = #{placeId} 
+            and b.floorNo = #{floorNo} 
+            and a.x &gt; #{x1} 
+            and a.x &lt; #{x2} 
+            and a.y &gt; #{y1} 
+            and a.y &lt; #{y2}
+    </select>
+    
+    <select id="getDataForArea" resultType="Map">
+        SELECT time, number 
+        FROM statisticarea 
+        WHERE 
+            areaId = #{areaId} 
+            and time &gt;= #{startTime} 
+            and time &lt;= #{endTime} 
+        ORDER BY time asc
+    </select>
+    
+    <select id="getDataForAreaByDay" resultType="Map">
+        SELECT time, number 
+        FROM statisticareaday 
+        WHERE 
+            areaId = #{areaId} 
+            and time &gt;= #{startTime} 
+            and time &lt;= #{endTime} 
+        ORDER BY time asc
+    </select>
+    
+    <select id="getAreaName" resultType="Map">
+        SELECT areaName,id FROM area
+    </select>
+    
+    <select id="getNameById" resultType="String">
+        SELECT areaName FROM area WHERE id = #{value} limit 1
+    </select>
+    
+    <select id="getVisitData" resultType="Map">
+        SELECT 
+            time,averageTime,number 
+        FROM staticvisit 
+        WHERE 
+            areaId = #{areaId} 
+            and time &gt;= #{startTime} 
+            and time &lt;= #{endTime}
+    </select>
+    
+</mapper>

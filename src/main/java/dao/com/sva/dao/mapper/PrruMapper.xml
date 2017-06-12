@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.PrruDao">
+
+    <select id="getPrruInfoByflooNo" resultType="PrruModel">
+        SELECT * from prru where floorNo = #{value}
+    </select>
+    
+    <insert id="saveInfo">
+        INSERT INTO 
+            prru(floorNo,x,y,pRRUid,name,placeId,neCode,eNodeBid,cellId) 
+        VALUES(#{floorNo},#{x},#{y},#{neId},#{neName},#{placeId},#{neCode},#{eNodeBid},#{cellId})
+    </insert>
+    
+    <delete id="deleteInfo">
+        DELETE from prru  WHERE floorNo = #{floorNo}
+        <if test="eNodeBid != ''">
+    		and eNodeBid=#{eNodeBid} 
+    	</if>
+    </delete>
+    
+    <select id="checkByFloorNo" resultType="int">
+        SELECT count(*) res 
+        FROM prru 
+        WHERE floorNo = #{floorNo} and floorNo != #{id}
+    </select>
+    
+    <update id="updateInfo">
+        UPDATE  prru 
+        SET floorNo=#{floorNo} 
+        WHERE floorNo = #{newfloorNo}
+    </update>
+    
+    <select id="getSignal" resultType="Map">
+        SELECT * FROM prrusignal where timestamp = (select max(timestamp) from prrusignal where userId = #{userId} and timestamp > #{time}  )
+    </select>
+    
+    <select id="getPrruInfo" resultType="PrruModel">
+    	select DISTINCT eNodeBid,cellId from prru where floorNo=#{floorNo} and eNodeBid=#{eNodeBid}
+    </select>
+    
+    <select id="getPrruInfoByfloorNo" resultType="PrruModel">
+    	SELECT * from pRRU where floorNo=#{floorNo}
+    	<if test="eNodeBid != ''">
+    		and eNodeBid=#{eNodeBid} 
+    	</if>
+    	<if test="cellId != ''">
+    		and cellId=#{cellId}
+    	</if>
+    </select>
+</mapper>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.StaticAccuracyDao">
+
+    <select id="getData" resultMap="staticResult">
+        SELECT 
+            a.*,b.floor,c.deviation, d.name place 
+        FROM staticaccuracy a
+            left join maps b on a.floorNo = b.floorNo
+            left join store d on a.placeId = d.id
+            left join estimatedev c on b.floorNo = c.floorNo
+        ORDER BY ${sortCol} ${sortDir}
+        LIMIT #{start},#{length}
+    </select>
+
+    <resultMap id="staticResult" type="StaticAccuracyModel">
+        <id property="id" column="id" />
+        <result property="origin" column="origin"/>
+        <result property="destination" column="destination"/>
+        <result property="startdate" column="start_date"/>
+        <result property="enddate" column="end_date"/>
+        <result property="avgeOffset" column="avgeOffset"/>
+        <result property="maxOffset" column="maxOffset"/>
+        <result property="staicAccuracy" column="staicAccuracy"/>
+        <result property="offsetCenter" column="offsetCenter"/>
+        <result property="offsetNumber" column="offsetNumber"/>
+        <result property="stability" column="stability"/>
+        <result property="count3" column="count_3"/>
+        <result property="count5" column="count_5"/>
+        <result property="count10" column="count_10"/>
+        <result property="count10p" column="count_10p"/>
+        <result property="detail" column="detail"/>
+        <result property="triggerIp" column="triggerIp"/>
+        <result property="deviation" column="deviation"/>
+        <association property="map" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+    </resultMap>
+    
+    <select id="getDataByPlaceIdTime" resultMap="staticResult">
+        SELECT a.*,b.floor,c.deviation, d.name place 
+        FROM 
+            staticaccuracy a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store d on a.placeId = d.id 
+            left join estimatedev c on b.floorNo = c.floorNo
+        WHERE 
+            a.placeId = #{placeId}
+            and a.start_date &gt; #{startTime}
+            and a.end_date &lt; #{endTime}
+    </select>
+    
+    <select id="getAllDataByPlaceIdTime" resultMap="staticResult">
+        SELECT a.*,b.floor,c.deviation, d.name place 
+        FROM 
+            staticaccuracy a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store d on a.placeId = d.id 
+            left join estimatedev c on b.floorNo = c.floorNo
+        WHERE 
+            a.placeId = #{placeId}
+            and a.start_date &gt; #{startTime} 
+            and a.end_date &lt; #{endTime}
+    </select>
+    
+    <select id="getAllData" resultMap="staticResult">
+        SELECT a.*,b.floor,c.deviation, d.name place 
+        FROM
+            staticaccuracy a
+            left join maps b on a.floorNo = b.floorNo 
+            left join store d on a.placeId = d.id 
+            left join estimatedev c on b.floorNo = c.floorNo
+        WHERE 
+            a.start_date &gt; #{startTime}
+            and a.end_date &lt; #{endTime}
+    </select>
+    
+    <select id="getStaticDataByStoreid" resultMap="staticResult">
+        SELECT 
+            a.*,b.floor,c.deviation, d.name place 
+        FROM
+            staticaccuracy a
+            left join maps b on a.floorNo = b.floorNo
+            left join store d on a.placeId = d.id
+            left join estimatedev c on b.floorNo = c.floorNo
+        WHERE 
+            a.placeId = #{storeid} 
+        ORDER BY ${sortCol} ${sortDir}
+        LIMIT #{start},#{length}
+    </select>
+    
+    <select id="getDataLength" resultType="int">
+        select count(*) a from staticaccuracy
+    </select>
+    
+    <insert id="staticSaveTestInfo">
+        INSERT INTO staticaccuracy(
+            triggerIp,
+            placeId,
+            floorNo,
+            origin,
+            destination,
+            start_date,
+            end_date,
+            avgeOffset,
+            maxOffset,
+            staicAccuracy,
+            offsetCenter,
+            offsetNumber,
+            stability,
+            count_3,
+            count_5,
+            count_10,
+            count_10p,
+            detail
+        ) VALUES (
+            #{triggerIp},
+            #{store.id},
+            #{map.floorNo},
+            #{origin},
+            #{destination},
+            #{startdate},
+            #{enddate},
+            #{avgeOffset},
+            #{maxOffset},
+            #{staicAccuracy},
+            #{offsetCenter},
+            #{offsetNumber},
+            #{stability},
+            #{count3},
+            #{count5},
+            #{count10},
+            #{count10p},
+            #{detail}
+        )
+    </insert>
+    
+    <select id="allQueryStaicAccuracy" resultMap="staticResult">
+        SELECT 
+            a.*,b.name place,d.floor,c.deviation 
+        FROM staticaccuracy a
+            left join store b on a.placeId = b.id
+            left join maps d on a.floorNo = d.floorNo
+            left join estimatedev c on a.floorNo = c.floorNo
+    </select>
+</mapper>
