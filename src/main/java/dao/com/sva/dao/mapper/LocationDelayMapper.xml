@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.LocationDelayDao">
+
+    <select id="getAllData" resultMap="locationDelayResult">
+        select a.*,b.name place,d.floor 
+        from locationdelay a
+            left join store b on a.placeId = b.id 
+            left join maps d on a.floorNo = d.floorNo
+    </select>
+
+    <resultMap id="locationDelayResult" type="LocationDelayModel">
+        <id property="id" column="id" />
+        <result property="dataDelay" column="dataDelay"/>
+        <result property="positionDelay" column="positionDelay"/>
+        <result property="updateTime" column="updateTime"/>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+        <association property="maps" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+    </resultMap>
+    
+    <select id="getAllDatas" resultMap="locationDelayResult2">
+        select a.*,b.floor,c.deviation, d.name place 
+        from locationdelay a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store d on a.placeId = d.id 
+            left join estimatedev c on b.floorNo = c.floorNo 
+        where a.updateTime &gt; #{startTime} and a.updateTime &lt; #{endTime}
+    </select>
+    
+    <resultMap id="locationDelayResult2" type="LocationDelayModel">
+        <id property="id" column="id" />
+        <result property="dataDelay" column="dataDelay"/>
+        <result property="positionDelay" column="positionDelay"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="deviation" column="deviation"/>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+        <association property="maps" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+    </resultMap>
+    
+    <select id="getDataByPlaceIdTime" resultMap="locationDelayResult2">
+        select a.*,b.floor,c.deviation, d.name place 
+        from locationdelay a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store d on a.placeId = d.id 
+            left join estimatedev c on b.floorNo = c.floorNo 
+        where a.placeId = #{placeId} and a.updateTime &gt; #{startTime} and a.updateTime &lt; #{endTime}
+    </select>
+    
+    <select id="getAllDataByStoreid" resultMap="locationDelayResult">
+        select a.*,b.name place,d.floor 
+        from locationdelay a 
+            left join store b on a.placeId = b.id 
+            left join maps d on a.floorNo = d.floorNo 
+        where a.placeId = #{placeId}
+    </select>
+    
+    <insert id="savaMessagePush">
+        INSERT INTO locationdelay(placeId,floorNo,dataDelay,positionDelay,updateTime) 
+        VALUES(
+            #{store.id},
+            #{maps.floor},
+            #{dataDelay},
+            #{positionDelay},
+            #{updateTime}
+        )
+    </insert>
+  
+</mapper>

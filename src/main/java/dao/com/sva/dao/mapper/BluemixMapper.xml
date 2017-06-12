@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.BluemixDao">
+
+    <select id="doquery" resultType="BluemixModel">
+        SELECT * FROM bluemix where status &lt;&gt; 2
+    </select>
+
+    <select id="queryAllStatus" resultType="BluemixModel">
+        SELECT * FROM bluemix
+    </select>
+    
+    <insert id="saveInfo">
+        INSERT INTO bluemix(
+            ip,svaUser,svaPassword,url,site,ibmUser,ibmPassword,status,updateTime,createTime,tokenPort,brokerPort
+        ) 
+        VALUES(
+            #{ip},
+            #{svaUser},
+            #{svaPassword},
+            #{url},
+            #{site},
+            #{ibmUser},
+            #{ibmPassword},
+            #{status},
+            #{updateTime},
+            #{createTime},
+            #{tokenPort},
+            #{brokerPort}
+        )
+    </insert>
+    
+    <update id="updateInfo">
+        UPDATE bluemix 
+        SET 
+            ip = #{ip}, 
+            svaUser = #{svaUser}, 
+            svaPassword = #{svaPassword}, 
+            url = #{url}, 
+            site = #{site}, 
+            ibmUser = #{ibmUser}, 
+            ibmPassword = #{ibmPassword}, 
+            updateTime = #{updateTime},
+            tokenPort = #{tokenPort},
+            brokerPort = #{brokerPort} 
+        WHERE id = #{id}
+    </update>
+    
+    <update id="deleteInfo">
+        UPDATE bluemix SET status=2 WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE from bluemix WHERE id = #{id}
+    </delete>
+    
+    <update id="changeStatus">
+        UPDATE bluemix SET status = #{status} WHERE id = #{id}
+    </update>
+    
+</mapper>

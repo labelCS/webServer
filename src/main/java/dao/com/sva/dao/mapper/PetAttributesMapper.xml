@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.PetAttributesDao">
+
+    <select id="getAllData" resultType="PetAttributesModel">
+        SELECT * FROM petsproperties
+    </select>
+    
+    <insert id="saveData">
+        INSERT INTO petsproperties(
+            probability,viewRange,captureRange,petName,count
+        ) VALUES (
+            #{probability},
+            #{viewRange},
+            #{captureRange},
+            #{petName},
+            #{count}
+        )
+    </insert>
+    
+    <insert id="saveTicketData">
+        replace INTO ticketcatch(
+            ticketPath,userName,catchTime,ticketType
+        ) VALUES (
+            #{ticketPath},
+            #{phoneNumber},
+            #{catchTime},
+            #{ticketType}
+        )
+    </insert>    
+    
+    <update id="updateData">
+        UPDATE petsproperties 
+        SET 
+            probability = #{probability},
+            viewRange = #{viewRange},
+            captureRange = #{captureRange},
+            petName = #{petName},
+            count = #{count} 
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteData">
+        DELETE FROM petsproperties WHERE id = #{value}
+    </delete>
+    
+    <update id="updatePetTime">
+        UPDATE petlocation 
+        SET petRefreshTime = #{petTime} 
+        WHERE petTypes = #{petName}
+    </update>
+    
+    <update id="updatePetTimeByCaputrue">
+        UPDATE petlocation SET petRefreshTime = #{petTime}
+    </update>
+    
+    <select id="getPetProbabilityByPetName" resultType="String">
+        SELECT probability from petsproperties where petName = #{petName} 
+    </select>    
+    
+     <select id="getPetByUserName" resultType="PetAttributesModel">
+        SELECT a.*,b.userName phoneNumber,b.catchTime captureTime
+        from petsproperties a 
+        join petscatch b 
+        on a.petName = b.petType 
+        and b.userName = #{userName}
+    </select>
+    
+     <select id="getTicketByUserName" resultType="TicketModel">
+     select * from ticketcatch where userName = #{userName} order by catchTime 
+    </select>          
+</mapper>

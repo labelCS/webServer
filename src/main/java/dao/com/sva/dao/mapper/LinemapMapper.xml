@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.LinemapDao">
+
+    <select id="getDataByDay" resultType="LinemapModel">
+        select number, time 
+        from statisticday 
+        where time &lt; #{end} 
+            and time &gt;= #{start}
+            and placeId = #{placeId} 
+        order by time asc
+    </select>
+    
+    <select id="getDataByHour" resultType="LinemapModel">
+        select number, time 
+        from statistichour 
+        where time &lt; #{end} 
+            and time &gt;= #{start}
+            and placeId = #{placeId} 
+        order by time asc
+    </select>
+    
+    <select id="getTotalCount" resultType="int">
+        select count(distinct a.userID) number 
+        from statisticfloor a join maps b on a.z = b.floorNo 
+        where 
+            b.placeId = #{placeId} 
+            and a.time &lt; #{end} 
+            and a.time &gt;= #{start}
+    </select>
+    
+    <select id="getMaxTime" resultType="LinemapModel">
+        select distinct(time) time, 0 number 
+        from statistichour 
+        where number = (
+            select max(number) number 
+            from statistichour 
+            where time &lt; #{end} 
+                and time &gt;= #{start} 
+                and placeId = #{placeId}
+            ) 
+            and time &lt; #{end} 
+            and time &gt;= #{start} 
+            and placeId = #{placeId}
+    </select>
+    
+    <select id="getMaxDay" resultType="LinemapModel">
+        select distinct(time) time, 0 number 
+        from statisticday 
+        where number = (
+            select max(number) number 
+            from statisticday 
+            where time &lt; #{end} 
+                and time &gt;= #{start} 
+                and placeId = #{placeId}
+            ) 
+            and time &lt; #{end} 
+            and time &gt;= #{start} 
+            and placeId = #{placeId}
+    </select>
+
+    <select id="getAreaNumberByDay" resultType="int">
+        select count(distinct userID) t from ${tableName}
+        where z = #{floorNo}
+           and x &gt; #{xSpot}
+           and x &lt; #{x1Spot}
+           and y &gt; #{ySpot}
+           and y &lt; #{y1Spot}
+    </select>
+    
+    <select id="getAreaNumberByHour" resultType="int">
+        select count(distinct userID) t from ${tableName} 
+        where timestamp &gt; #{time} 
+          and z = #{floorNo} 
+          and x &gt; #{xSpot} 
+          and x &lt; #{x1Spot} 
+          and y &gt; #{ySpot} 
+          and y &lt; #{y1Spot}
+    </select>
+    
+    <select id="getAllAreaData" resultType="int">
+        select count(*) t from ${tableName}
+        where 
+          z = #{floorNo} 
+          and x &gt; #{xSpot} 
+          and x &lt; #{x1Spot} 
+          and y &gt; #{ySpot} 
+          and y &lt; #{y1Spot}
+    </select>    
+</mapper>

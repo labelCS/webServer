@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.TicketDao" >
+
+    <resultMap id="ticketResult" type="TicketModel" >
+        <id property="id" column="id" />
+        <result property="chances" column="chances"/>
+        <result property="ticketPath" column="ticketPath"/>
+        <association property="msg" javaType="MessageModel">
+            <id property="id" column="msgId"/>
+            <result property="shopName" column="name" />
+        </association>          
+    </resultMap>
+   
+    <select id="getAllTicket" resultMap="ticketResult">
+        SELECT a.*,b.shopName name 
+        FROM ticket a 
+            left join message b on b.id = a.msgId 
+        WHERE a.msgId = #{value}
+    </select>
+   
+    <select id="getAllTicketById" resultType="TicketModel">
+        SELECT a.* 
+        FROM ticket a 
+            left join message b on b.id = a.msgId 
+            left join store c on c.id = b.placeId 
+        WHERE b.placeId = #{placeId} and a.msgId = #{msgId}
+    </select>
+   
+    <insert id="saveTicket" >
+        INSERT INTO ticket(
+            msgId,chances,ticketPath,ticketType
+        ) VALUES(
+            #{msg.id},#{chances},#{ticketPath},#{ticketType})
+    </insert>
+   
+    <update id="updataTicket">
+        UPDATE ticket 
+        SET 
+            msgId=#{msg.id},chances=#{chances},ticketPath=#{ticketPath},ticketType=#{ticketType}
+        WHERE id=#{id}
+    </update>
+   
+    <delete id="deleteTicket">
+        DELETE FROM ticket WHERE id = #{value}
+    </delete>
+   
+    <select id="getTiketPathByMsgId" resultType="Map">
+        SELECT ticketPath,chances,ticketType FROM ticket WHERE msgId = #{value}
+    </select>
+</mapper>

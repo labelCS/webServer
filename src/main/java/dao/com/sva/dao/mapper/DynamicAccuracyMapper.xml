@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.DynamicAccuracyDao">
+
+    <select id="getData" resultMap="dynamicAccuracyResult">
+        select a.*,b.floor,c.deviation, d.name place
+        from dynamicaccuracy a 
+            left join maps b 
+                on a.floorNo = b.floorNo 
+            left join store d 
+                on a.placeId = d.id 
+            left join estimatedev c 
+                on b.floorNo = c.floorNo 
+        order by #{sortCol} #{sortDir} 
+        limit #{start},#{length}
+    </select>
+    
+    <resultMap id="dynamicAccuracyResult" type="DynamicAccuracyModel">
+        <id property="id" column="id" />
+        <result property="origin" column="origin"/>
+        <result property="destination" column="destination"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="offset" column="offset"/>
+        <result property="maxOffset" column="maxOffset"/>
+        <result property="avgeOffset" column="avgeOffset"/>
+        <result property="count3" column="count_3"/>
+        <result property="count5" column="count_5"/>
+        <result property="count10" column="count_10"/>
+        <result property="count10p" column="count_10p"/>
+        <result property="detail" column="detail"/>
+        <result property="triggerIp" column="triggerIp"/>
+        <result property="deviation" column="deviation"/>
+        <association property="maps" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+    </resultMap>
+    
+    <select id="getDataByPlaceIdTime" resultMap="dynamicAccuracyResult">
+        select a.*,b.floor,c.deviation, d.name place
+        from dynamicaccuracy a 
+            left join maps b 
+                on a.floorNo = b.floorNo 
+            left join store d 
+                on a.placeId = d.id 
+            left join estimatedev c 
+                on b.floorNo = c.floorNo
+        where  
+            a.placeId = #{placeId} and a.start_date &gt; #{startTime} and a.end_date &lt; #{endTime}
+    </select>
+    
+    <select id="getAllDataByPlaceIdTime" resultMap="dynamicAccuracyResult">
+        select a.*,b.floor,c.deviation, d.name place
+        from dynamicaccuracy a 
+            left join maps b 
+                on a.floorNo = b.floorNo 
+            left join store d 
+                on a.placeId = d.id 
+            left join estimatedev c 
+                on b.floorNo = c.floorNo
+        where  
+            a.placeId = #{placeId} and a.start_date &gt; #{startTime} and a.end_date &lt; #{endTime}
+    </select>
+    
+    <select id="getAllData" resultMap="dynamicAccuracyResult">
+        select a.*,b.floor,c.deviation, d.name place
+        from dynamicaccuracy a 
+            left join maps b 
+                on a.floorNo = b.floorNo 
+            left join store d 
+                on a.placeId = d.id 
+            left join estimatedev c 
+                on b.floorNo = c.floorNo
+        where  
+            a.start_date &gt; #{startTime} and a.end_date &lt; #{endTime}
+    </select>
+    
+    <select id="getStaticDataByStoreid" resultMap="dynamicAccuracyResult">
+        select a.*,b.floor,c.deviation, d.name place 
+        from dynamicaccuracy a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store d on a.placeId = d.id 
+            left join estimatedev c on b.floorNo = c.floorNo 
+        where  
+            a.placeId = #{placeId}
+        order by 
+            #{sortCol} #{sortDir}
+        limit #{start},#{length}
+    </select>
+
+    <select id="getDataLength" resultType="int">
+        select count(*) a from dynamicaccuracy
+    </select>
+    
+    <insert id="dynamicSaveTestInfo">
+        INSERT INTO dynamicaccuracy(
+            triggerIp,
+            placeId,
+            floorNo,
+            origin,
+            destination,
+            start_date,
+            end_date,
+            avgeOffset,
+            maxOffset,
+            offset,
+            count_3,
+            count_5,
+            count_10,
+            count_10p,
+            detail
+        ) VALUES(
+            #{triggerIp},
+            #{store.id},
+            #{maps.floorNo},
+            #{origin},
+            #{destination},
+            #{startDate},
+            #{endDate},
+            #{avgeOffset},
+            #{maxOffset},
+            #{offset},
+            #{count3},
+            #{count5},
+            #{count10},
+            #{count10p},
+            #{detail}
+        )
+    </insert>
+    
+    <select id="allQueryDynamicAccuracy" resultMap="dynamicAccuracyResult">
+        select a.*,b.floor,c.deviation, d.name place
+        from dynamicaccuracy a 
+            left join maps b 
+                on a.floorNo = b.floorNo 
+            left join store d 
+                on a.placeId = d.id 
+            left join estimatedev c 
+                on b.floorNo = c.floorNo 
+    </select>
+    
+</mapper>

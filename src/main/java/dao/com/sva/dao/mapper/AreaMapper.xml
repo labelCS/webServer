@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.AreaDao">
+
+    <select id="doquery" resultMap="areaResult">
+        SELECT a.*,b.floor,c.name place,ca.name category 
+        FROM area a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join category ca on a.categoryId = ca.id
+    </select>
+    
+    <select id="getAreaByMessage" resultMap="areaResult">
+        SELECT a.*,b.floor,c.name place,ca.name category 
+        FROM area a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join category ca on a.categoryId = ca.id 
+            left join message d on d.shopId = a.id
+            where d.isEnable = '开启' 
+    </select>    
+
+    <resultMap id="areaResult" type="AreaModel">
+        <id property="id" column="id" />
+        <result property="areaName" column="areaName"/>
+        <result property="xSpot" column="xSpot"/>
+        <result property="ySpot" column="ySpot"/>
+        <result property="x1Spot" column="x1Spot"/>
+        <result property="y1Spot" column="y1Spot"/>
+        <result property="status" column="status"/>
+        <result property="isVip" column="isVip"/>
+        <result property="zoneId" column="zoneId"/>
+        <result property="areaId" column="id"/>
+        <association property="maps" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+        <association property="category" javaType="CategoryModel">
+            <id property="id" column="categoryid"/>
+            <result property="name" column="category"/>
+        </association>
+    </resultMap>
+
+    <select id="doqueryAll" resultMap="areaResult">
+        SELECT a.*,b.floor,c.name place,ca.name category 
+        FROM area a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join category ca on a.categoryId = ca.id 
+        where a.placeId = #{value}
+    </select>
+    
+    <select id="getAreaByFloorNo" resultMap="areaResult">
+        SELECT a.*,b.floor,c.name place,ca.name category 
+        FROM area a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+            left join category ca on a.categoryId = ca.id 
+        where a.floorNo = #{value}
+    </select>    
+    
+    <select id="selectArea" resultType="AreaModel">
+        SELECT xSpot,ySpot,x1Spot,y1Spot 
+        from area 
+        where floorNo = #{value}
+    </select>
+    
+    <select id="getAreaDataById" parameterType="string" resultType="AreaModel">
+        SELECT xSpot,ySpot,x1Spot,y1Spot 
+        from area 
+        where id = #{value}
+    </select>
+    
+    <select id="getAreaByPlaceId" resultType="AreaModel">
+        SELECT xSpot,ySpot,x1Spot,y1Spot,areaName,floorNo,id 
+        from area 
+        where placeId = #{value}
+    </select>
+    
+    <insert id="saveAreaInfo">
+        INSERT INTO 
+            area(
+                placeId,
+                areaName,
+                xSpot,
+                ySpot,
+                x1Spot,
+                y1Spot,
+                floorNo,
+                categoryId,
+                isVip
+            ) 
+        VALUES(
+            #{store.id},
+            #{areaName},
+            #{xSpot},
+            #{ySpot},
+            #{x1Spot},
+            #{y1Spot},
+            #{maps.floorNo},
+            #{category.id},
+            #{isVip}
+        ) 
+    </insert>
+    
+    <delete id="deleteArea">
+        DELETE 
+        FROM area 
+        where 
+            xSpot = #{xSpot} 
+            and ySpot = #{ySpot} 
+            and x1Spot = #{x1Spot} 
+            and y1Spot = #{y1Spot} 
+            and floorNo = #{maps.floorNo} 
+            and categoryid = #{category.id}
+    </delete>
+    
+    <update id="updateAreaInfo">
+        UPDATE area 
+        SET 
+            placeId=#{store.id},
+            areaName = #{areaName},
+            xSpot=#{xSpot},
+            ySpot=#{ySpot},
+            x1Spot=#{x1Spot},
+            y1Spot=#{y1Spot},
+            floorNo=#{maps.floorNo},
+            categoryId=#{category.id},
+            isVip = #{isVip}
+        where id = #{id}
+    </update>
+    
+    <select id="getNumberByArea" resultType="int">
+        SELECT count(distinct userID) number
+        FROM ${tableName}
+        where 
+            timestamp &gt; #{startTime}
+            and timestamp &lt; #{nowTime}
+            and z = #{area.maps.floorNo} 
+            and x &gt; (#{area.xSpot}*10) 
+            and x &lt; (#{area.x1Spot}*10) 
+            and y &gt; (#{area.ySpot}*10) 
+            and y &lt; (#{area.y1Spot}*10)
+    </select>
+    
+    <select id="getNumberByAreaDay" resultType="int">
+        SELECT count(distinct userID) number
+        FROM ${tableName}
+        where 
+            z = #{area.maps.floorNo} 
+            and x &gt; (#{area.xSpot}*10) 
+            and x &lt; (#{area.x1Spot}*10) 
+            and y &gt; (#{area.ySpot}*10) 
+            and y &lt; (#{area.y1Spot}*10)
+    </select>
+    
+    <select id="getNumberByTime" resultType="int">
+        SELECT count(distinct userID) number
+        FROM ${tableName}
+        where 
+            z = #{floorNo} 
+    </select>
+    
+    <select id="getYesterdayNumber" resultType="int">
+        SELECT count(distinct userID) number
+        FROM ${tableName}
+        where 
+            z = #{floorNo}
+            and timestamp &lt;= #{time} 
+    </select>
+    
+    <select id="getNumberByFloorNo" resultType="int">
+        SELECT count(distinct userID) number
+        FROM ${tableName}
+        where 
+            timestamp &gt; #{time}
+            and z = #{area.floorNo} 
+            and x &gt; ((#{area.xSpot})*10) 
+            and x &lt; ((#{area.x1Spot})*10) 
+            and y &gt; ((#{area.ySpot})*10)
+            and y &lt; ((#{area.y1Spot})*10)
+    </select>
+    
+    <select id="checkByName" resultType="int">
+        SELECT count(*) res 
+        FROM area 
+        where areaName = #{value}
+    </select>
+    
+    <select id="checkByName1" resultType="int">
+        SELECT count(*) res 
+        FROM area 
+        where areaName = #{name}
+            and id != #{id}
+    </select>
+    
+    <select id="getAreaName" resultType="java.util.Map">
+        select id,areaName 
+        from area 
+        where placeId=#{value}
+    </select>
+    
+    <select id="getAreaNames" resultType="String">
+        select areaName 
+        from area 
+        where placeId=#{value}
+    </select>
+    
+    <select id="getAreaNameByAreaId" resultType="String">
+        select areaName 
+        from area 
+        where id=#{value}
+    </select>
+    
+    <select id="getZoneId" resultType="String">
+        select zoneid 
+        from area 
+        where id=#{value}
+    </select>
+    
+    <select id="getVisitUser" resultType="String">
+        SELECT T.userID 
+        FROM 
+            (
+                SELECT userId 
+                FROM ${tableName}
+                where z = #{area.maps.floorNo} 
+                    and x &gt; (#{area.xSpot}*10) 
+                    and x &lt; (#{area.x1Spot}*10)
+                    and y &gt; (#{area.ySpot}*10)
+                    and y &lt; (#{area.y1Spot}*10)
+            ) T 
+        GROUP BY T.userID
+    </select>
+    
+    <select id="getVisitTimes" resultType="Long">
+        SELECT timestamp 
+        FROM ${tableName}
+        where z = #{area.maps.floorNo} 
+              and x &gt; (#{area.xSpot}*10) 
+              and x &lt; (#{area.x1Spot}*10)
+              and y &gt; (#{area.ySpot}*10)
+              and y &lt; (#{area.y1Spot}*10)
+            and userID = #{userId} 
+        order by timestamp asc
+    </select>
+    
+    <insert id="saveVisitData">
+        REPLACE INTO 
+            staticVisit(
+            areaId,time,allTime,number,averageTime) 
+        VALUES(#{areaId},#{time},#{allTime},#{number},#{averageTime})
+    </insert>
+    
+    <select id="getBaShowVisitUser" resultType="int">
+        SELECT count(distinct userID)  
+        FROM ${tableName}
+        where z = #{area.maps.floorNo} 
+            and timestamp &gt; #{time} 
+            and x &gt; (#{area.xSpot}*10) 
+            and x &lt; (#{area.x1Spot}*10)
+            and y &gt; (#{area.ySpot}*10)
+            and y &lt; (#{area.y1Spot}*10)
+    </select>
+    
+    <select id="getAllBaShowVisitUser" resultType="String">
+        SELECT T.userID 
+        FROM (
+            SELECT userId 
+            FROM ${tableName}
+            where 
+                z = #{floorNo} 
+                and timestamp > #{time} 
+        ) T 
+        GROUP BY T.userID
+    </select>
+    
+    <select id="getUserByFloorNo" resultType="String">
+        SELECT T.userID 
+        FROM (
+            SELECT userId 
+            FROM ${tableName}
+            where 
+                z = #{floorNo} 
+                and timestamp > #{time} 
+        ) T 
+        GROUP BY T.userID
+    </select>
+    
+    <select id="getBaShowVisitTimes" resultType="Long">
+        SELECT timestamp 
+        FROM ${tableName}
+        where 
+            z = #{area.maps.floorNo} 
+            and timestamp &gt; #{time} 
+            and x &gt; (#{area.xSpot}*10) 
+            and x &lt; (#{area.x1Spot}*10)
+            and y &gt; (#{area.ySpot}*10)
+            and y &lt; (#{area.y1Spot}*10)
+            and userID = #{userId}
+        order by timestamp asc
+    </select>
+    
+    <select id="getBaShowAllVisitTimes" resultType="Long">
+        SELECT timestamp
+        FROM ${tableName}
+        where 
+            z = #{floorNo} 
+            and timestamp &gt; #{time} 
+            and userID = #{userId} 
+        order by timestamp asc
+    </select>
+    
+    <insert id="svaeBaShowByAeare">
+        REPLACE INTO 
+            staticVisitbashow(areaId,time,allTime,number,averageTime) 
+        VALUES(#{areaId},#{time},#{allTime},#{number},#{averageTime})
+    </insert>
+    
+    <insert id="svaeBaShowByAllAeare">
+        REPLACE INTO 
+            staticVisitbashowall(floorNO,time,allTime,number,averageTime) 
+        VALUES(#{floorNo},#{time},#{allTime},#{number},#{averageTime})
+    </insert>
+    
+    <select id="selectAeareBaShow" resultType="AreaModel">
+        SELECT * FROM area where floorNo = #{value}
+    </select>
+    
+    <select id="getAreaByAreaId" resultType="AreaModel">
+        SELECT * FROM area where id = #{value}
+    </select>
+    
+    <select id="getAverageTimeByAreaId" resultType="java.util.Map">
+        select * from staticvisit where areaId = #{areaId} and time = #{visiday}
+    </select>
+    
+    <select id="getAllAverageTimeByAreaId" resultType="java.util.Map">
+        SELECT averageTime,number FROM staticvisitbashowall where floorNo = #{floorNo} and time = #{time}
+    </select>
+    
+    <select id="getOverAverageTime" resultType="java.util.Map">
+        SELECT allTime,number FROM staticvisit where areaId = #{areaId} and time = #{time}
+    </select>
+    
+    <select id="getBaShowAllData" resultType="java.util.Map">
+        select timestamp,userID  
+        from ${tableName}
+        where 
+            z = #{floorNo}
+            and timestamp &gt; #{time} 
+        order by userID,timestamp
+    </select>
+    
+    <select id="getBaShowData" resultType="java.util.Map">
+        select timestamp,userID  
+        from ${tableName}
+        where 
+            z = #{area.maps.floorNo} 
+            and timestamp &gt; #{time}
+            and x &gt; (#{area.xSpot}*10) 
+            and x &lt; (#{area.x1Spot}*10)
+            and y &gt; (#{area.ySpot}*10)
+            and y &lt; (#{area.y1Spot}*10) 
+        order by userID,timestamp
+    </select>
+    
+    <select id="getVisitTIme" resultType="java.util.Map">
+        select timestamp,userID  
+        from ${tableName}
+        where 
+            z = #{area.maps.floorNo} 
+            and x &gt; (#{area.xSpot}*10) 
+            and x &lt; (#{area.x1Spot}*10)
+            and y &gt; (#{area.ySpot}*10)
+            and y &lt; (#{area.y1Spot}*10)
+        order by userID,timestamp
+    </select>
+    
+    <select id="getNowNumber" resultType="java.util.Map">
+        select areaName,number,areaId  from nowpeople where placeId = #{value}
+    </select>
+    
+    <select id="getNowAllTime" resultType="java.util.Map">
+        select allTime  from staticvisit where areaId = #{areaId} and time = #{time}
+    </select>
+    
+    <update id="updateStatus">
+        update area 
+        set status = 0 where id = #{value}
+    </update>
+    
+    <update id="updateStatus1">
+        update area 
+        set status = 1 where id = #{value}
+    </update>
+    
+    <update id="updateZoneId">
+        update area 
+        set zoneId = #{zoneId} where id = #{areaId}
+    </update>
+    
+    <update id="updateZoneIdToNull">
+        update area 
+        set zoneId = null where id = #{value}
+    </update>
+    
+    <select id="getBaShowVisitUser2" resultType="int">
+        select count(distinct userID) 
+        from district_during 
+        where district_id = #{areaId} and timestamp &gt; #{time}
+    </select>
+    
+    <select id="getAllPeoples" resultType="int">
+        select count(distinct userID) 
+        from ${tableName}
+        where z = #{floorNo} and timestamp &gt; #{time}
+    </select>
+    
+    <select id="getAllArea" resultType="int">
+        SELECT count(distinct userID)  
+        FROM ${tableName}
+        where z = #{area.maps.floorNo} 
+            and x &gt; (#{area.xSpot}*10) 
+            and x &lt; (#{area.x1Spot}*10)
+            and y &gt; (#{area.ySpot}*10)
+            and y &lt; (#{area.y1Spot}*10)
+    </select>
+    
+    <select id="getZoneIdByAreaId" resultType="string">
+        select zoneid from area where id = #{value}
+    </select>
+    
+    <select id="getAllAverageTimeByAreaId2" resultType="java.util.Map">
+        select * from ${tableName} where z = #{floorNo} and timestamp &gt; #{time}
+    </select>
+    
+    <select id="getMaxTimestamp" resultType="Long">
+        select timestamp from district_during order by timestamp desc limit 1
+    </select>
+    
+    <select id="geofencingByLocation" resultType="AreaModel">
+        select a.* 
+        from area a 
+            left join locationphone b on a.floorNo = #{z}
+        where a.status = 1 
+            and a.xSpot &lt;  #{x} / 10
+            and a.x1Spot &gt;  #{x} / 10
+            and (a.ySpot) &lt; #{y} / 10
+            and (a.y1Spot) &gt; #{y} / 10;
+    </select>
+    
+    <select id="getAverageTimeByAreaId1" resultType="java.util.Map">
+        select * from district_during where district_id = #{areaId} and timestamp &gt; #{time}
+    </select>
+    
+    <select id="getACRData" resultType="java.util.Map">
+       select max(timestamp) timestamp,userId from
+        (select userID,timestamp from 
+             ${tableName} 
+             where z = #{floorNo} 
+             and idType = 'ACR' 
+             and x  &gt; #{area.xSpot}*10 
+             and x  &lt; #{area.x1Spot}*10 
+             and y &gt; #{area.ySpot}*10 
+             and y &lt; #{area.y1Spot}*10
+             and timestamp &gt; #{startTime}
+             and timestamp &lt; #{endTime}
+          ) acr group by userId
+    </select>
+
+    <insert id="saveACR">
+        insert into 
+            acrdata(areaName,floorNo,areaId,userId) 
+        valuse(#{acr.floorNo},#{acr.areaName},#{acr.areaId},#{acr.userId})
+    </insert>    
+
+    <select id="getTicketByLocation" resultType="String">
+        SELECT id
+        FROM message
+        where 
+            floorNo = #{floorNo} 
+            and #{x} &gt; (xSpot) 
+            and #{x} &lt; (x1Spot)
+            and #{y} &gt; (ySpot) 
+            and #{y} &lt; (y1Spot)
+    </select>
+        
+</mapper>

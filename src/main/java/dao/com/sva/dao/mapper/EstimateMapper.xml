@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.EstimateDao">
+
+    <select id="doquery" resultMap="EstimateResult">
+        SELECT a.*,b.floor,c.name place 
+        FROM estimatedev a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id
+    </select>
+
+    <resultMap id="EstimateResult" type="EstimateModel">
+        <id property="id" column="id" />
+        <result property="a" column="a"/>
+        <result property="b" column="b"/>
+        <result property="n" column="n"/>
+        <result property="type" column="type"/>
+        <result property="d" column="d"/>
+        <result property="deviation" column="deviation"/>
+        <association property="maps" javaType="MapsModel">
+            <id property="floorNo" column="floorNo"/>
+            <result property="floor" column="floor"/>
+        </association>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+    </resultMap>
+
+    <select id="doqueryByStoreid" resultMap="EstimateResult">
+        SELECT a.*,b.floor,c.name place 
+        FROM estimatedev a 
+            left join maps b on a.floorNo = b.floorNo 
+            left join store c on a.placeId = c.id 
+        where a.placeId = #{storeid}
+    </select>
+    
+    <select id="getEstimate" resultType="BigDecimal">
+        SELECT deviation FROM estimatedev where floorNo = #{value}
+    </select>
+    
+    <insert id="saveInfo">
+        INSERT INTO estimatedev(placeId,floorNo,a,b,n,type,d,deviation) 
+        VALUES(
+            #{store.id},
+            #{maps.floorNo},
+            #{a},
+            #{b},
+            #{n},
+            #{type},
+            #{d},
+            #{deviation}
+        )
+    </insert>
+    
+    <delete id="deleteInfo">
+        DELETE FROM estimatedev where id = #{value}
+    </delete>
+    
+    <update id="updateInfo">
+        UPDATE estimatedev 
+        SET 
+            placeId = #{store.id},
+            floorNo = #{maps.floorNo},
+            a = #{a},
+            b = #{b},
+            n = #{n},
+            type = #{type},
+            d = #{d},
+            deviation = #{deviation}
+        where id = #{id}
+    </update>
+    
+    <select id="selectID1" resultType="EstimateModel">
+        SELECT * FROM estimatedev WHERE floorNo = #{floorNo} and id != #{id}
+    </select>
+    
+    <select id="getFloorByFloorNo" resultType="String">
+        SELECT floor FROM maps where floorNo = #{value} limit 1
+    </select>
+    
+    <select id="checkByFloorNo" resultType="int">
+        SELECT count(*) res FROM estimatedev where floorNo = #{value}
+    </select>
+    
+    <select id="checkByFloorNo1" resultType="int">
+        SELECT count(*) res FROM  estimatedev where floorNo=#{floorNo} and id !=#{id}
+    </select>
+    
+</mapper>

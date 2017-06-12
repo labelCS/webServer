@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.MapsDao">
+
+    <select id="doquery" resultMap="mapResult">
+        SELECT a.*,b.name place FROM maps a left join store b on a.placeId = b.id
+    </select>
+    
+    <resultMap id="mapResult" type="MapsModel">
+        <id property="id" column="id" />
+        <result property="floor" column="floor"/>
+        <result property="xo" column="xo"/>
+        <result property="yo" column="yo"/>
+        <result property="scale" column="scale"/>
+        <result property="coordinate" column="coordinate"/>
+        <result property="angle" column="angle"/>
+        <result property="path" column="path"/>
+        <result property="mapId" column="mapId"/>
+        <result property="floorNo" column="floorNo"/>
+        <result property="imgWidth" column="imgWidth"/>
+        <result property="imgHeight" column="imgHeight"/>
+        <result property="floorid" column="floorid"/>
+        <result property="svg" column="svg"/>
+        <result property="route" column="route"/>
+        <result property="pathFile" column="pathfile"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="zMap" column="zAnMap"/>
+        <result property="zIosMap" column="zIosMapPath"/>
+        <result property="mapType" column="mapType"/>
+        <result property="zMapPathfile" column="zAnMapPath"/>
+        <result property="fMap" column="zIosMap"/>
+        <association property="store" javaType="StoreModel">
+            <id property="id" column="placeId"/>
+            <result property="name" column="place"/>
+        </association>
+    </resultMap>
+
+    <select id="doqueryByStoreid" resultMap="mapResult">
+        SELECT a.*,b.name place 
+        FROM maps a left join store b on a.placeId = b.id 
+        WHERE a.placeId = #{storeId}
+    </select>
+    
+    <select id="getMapDetail" resultType="MapsModel">
+        SELECT * FROM maps WHERE floorNo = #{value}
+    </select>
+    
+    <select id="getMapName" resultType="String">
+        SELECT path FROM maps WHERE floorNo = #{value} limit 1
+    </select>
+    
+    <select id="getFloorid" resultType="String">
+        SELECT floorid FROM maps WHERE floorNo = #{value} limit 1
+    </select>
+    
+    <insert id="saveMapInfo">
+        INSERT INTO maps(
+            zAnMap,
+            zAnMapPath,
+            zIosMap,
+            zIosMapPath,
+            mapId,
+            floor,
+            xo,
+            yo,
+            scale,
+            coordinate,
+            angle,
+            path,
+            svg,
+            route,
+            pathfile,
+            imgWidth,
+            imgHeight,
+            floorNo,
+            placeId,
+            floorid,
+            mapType,
+            updateTime
+        ) VALUES (
+            #{zMap},
+            #{zMapPathfile},
+            #{fMap},
+            #{zIosMap},
+            #{mapId},
+            #{floor},
+            #{xo},
+            #{yo},
+            #{scale},
+            #{coordinate},
+            #{angle},
+            #{path},
+            #{svg},
+            #{route},
+            #{pathFile},
+            #{imgWidth},
+            #{imgHeight},
+            #{floorNo},
+            #{store.id},
+            #{floorid},
+            #{mapType},
+            #{updateTime}
+        )
+    </insert>
+    
+    <delete id="deleteMapByFloor">
+        DELETE FROM maps where floorNo = #{value}
+    </delete>
+    
+    <select id="getFloors" resultType="MapsModel">
+        select * from maps where placeId = #{value}
+    </select>
+    
+    <select id="getMapDataFromPrru" resultMap="mapResult">
+        SELECT a.*,b.name place 
+        FROM maps a left join store b on a.placeId = b.id 
+        WHERE a.floorNo in (select distinct(floorNo) from prru)
+    </select>
+    
+    <select id="getMapDataFromPrruByStoreid" resultMap="mapResult">
+        SELECT a.*,b.name place 
+        FROM maps a left join store b on a.placeId = b.id 
+        WHERE a.floorNo in (select distinct(floorNo) from prru ) 
+            and a.placeId = #{storeId}
+    </select>
+    
+    <select id="checkByPlace1" resultType="int">
+        SELECT count(*) res 
+        FROM maps 
+        WHERE 
+            placeId = #{placeId} 
+            and floor = #{floor} 
+            and id != #{id}
+    </select>
+    
+    <select id="getFloorByPlaceId" resultType="int">
+        SELECT floorNo FROM maps WHERE placeId = #{value}
+    </select>
+    
+    <select id="getFloorNo" resultType="Map">
+        SELECT floorNo,placeId FROM maps
+    </select>
+    
+    <select id="chekByFloorNo1" resultType="int">
+        SELECT count(*) res 
+        FROM maps 
+        WHERE floorNo = #{floorNo} and id != #{id}
+    </select>
+    
+    <select id="checkByPlace" resultType="int">
+        SELECT count(*) res 
+        FROM maps 
+        WHERE placeId = #{placeId} and floor = #{floor}
+    </select>
+    
+    <select id="chekByFloorNo" resultType="int">
+        SELECT count(*) res 
+        FROM maps 
+        WHERE floorNo = #{floorNo}
+    </select>
+    
+    <update id="updateMap">
+        UPDATE maps 
+        <set>
+            floor = #{floor},
+            xo = #{xo},
+            yo = #{yo},
+            scale = #{scale},
+            coordinate = #{coordinate},
+            angle = #{angle},
+            floorNo = #{floorNo},
+            placeId = #{store.id},
+            floorid = #{floorid},
+            mapType = #{mapType},
+            <if test="path != null">
+                path = #{path},
+                <if test="imgWidth != 0">
+                    imgWidth = #{imgWidth},
+                    imgHeight = #{imgHeight},
+                </if>
+            </if>
+            <if test="mapId != null">mapId = #{mapId},</if>
+            <if test="svg != null">svg = #{svg},</if>
+            <if test="route != null">route = #{route},</if>
+            <if test="pathFile != null">pathfile = #{pathFile},</if>
+            <if test="updateTime != null">updateTime = #{updateTime},</if>
+            <if test="zMap != null">zAnMap = #{zMap},</if>
+            <if test="fMap != null">zIosMap = #{fMap},</if>
+            <if test="zMapPathfile != null">zAnMapPath = #{zMapPathfile},</if>
+            <if test="zIosMap != null">zIosMapPath = #{zIosMap},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    
+    
+    
+    <select id="findUser" resultMap="mapResult">
+        SELECT 
+            a.*,r.name 
+        FROM account a left join role r on  a.roleid = r.id  
+        where username = #{username} and password = #{password}
+    </select>
+    
+    <insert id="saveInfo">
+        INSERT INTO 
+            account(username,password,roleid,updateTime) 
+        VALUES(#{username},#{password},#{role.id},#{updateTime})
+    </insert>
+    
+    <update id="updateInfo">
+        UPDATE account 
+        SET 
+            username = #{username}, 
+            password = #{password},
+            roleid = #{role.id},
+            updateTime = #{updateTime}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM account WHERE id = #{id}
+    </delete>
+    
+    <select id="getFloorByFloorNo" resultType="String">
+        SELECT floor FROM maps WHERE floorNo = #{value} limit 1
+    </select>
+
+    <insert id="saveAllPeople">
+        REPLACE INTO allpeople(
+            time,nowNumber,number,yesterNumber,placeId
+        ) VALUES (
+            #{visiday},#{nowNumber},#{number},#{yesNumber},#{placeId}
+        )
+    </insert>
+    
+    <insert id="saveNowPeople">
+        REPLACE INTO nowpeople(
+            placeId,number,areaName,areaId
+        ) VALUES (
+            #{placeId},#{number},#{areaName},#{areaId}
+        )
+    </insert>
+    
+    <select id="getAllPeopleByPlaceId" resultType="Map">
+        SELECT nowNumber,yesterNumber,number 
+        FROM allpeople 
+        WHERE placeId = #{placeId} and time = #{visiday}
+    </select>
+    
+    <select id="getMapCarData" resultMap="mapResult">
+        SELECT a.*,b.name place FROM maps a left join store b on a.placeId = b.id where a.floorNo = #{value} and a.mapType = 1
+       <!-- SELECT * FROM maps WHERE floorNo = #{value} and mapType = 1  -->
+    </select>
+    
+    <select id="getParkingNumber" resultType="String">
+        SELECT parkingNumber FROM parkinginformation WHERE floorNo = #{value} and isTrue = 0
+    </select>
+    
+</mapper>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.SvaDao">
+
+    <select id="doquery" resultType="SvaModel">
+        SELECT * FROM svalist WHERE status != 2
+    </select>
+    
+    <select id="queryByFloorNo" resultType="SvaModel">
+        SELECT * 
+        FROM 
+            svalist a 
+            join svastoremap b on a.id = b.svaId 
+            join store c on b.storeId = c.id
+            join maps d on c.id = d.placeId 
+        WHERE 
+            d.floorNo = #{value} 
+            and a.status != 2
+    </select>
+    
+    <select id="queryActive" resultType="SvaModel">
+        SELECT * FROM svalist WHERE status = 1 and type != 0
+    </select>
+    
+    <select id="storeBySva" resultType="String">
+        SELECT name 
+        FROM store 
+        WHERE id IN(
+            SELECT storeid 
+            FROM svastoremap 
+            WHERE svaid = #{value}
+        )
+    </select>
+    
+    <select id="storeIdByName" resultType="String">
+        SELECT id FROM store WHERE name = #{value}
+    </select>
+    
+    <select id="doqueryByAll" resultType="SvaModel">
+        SELECT * 
+        FROM 
+            svalist a left join svastoremap b on a.id = b.svaId
+    </select>
+    
+    <select id="queryByStoreId" resultType="SvaModel">
+        SELECT * 
+        FROM 
+            svalist a left join svastoremap b on a.id = b.svaId 
+        WHERE a.status = 1 and a.type != 0 and b.storeId = #{value}
+    </select>
+    
+    <select id="queryByStoreId2" resultType="SvaModel">
+        SELECT * 
+        FROM 
+            svalist a left join svastoremap b on a.id = b.svaId 
+        WHERE a.status = 1 and a.type != 2 and b.storeId = #{value}
+    </select>
+    
+     <select id="getEnabled" resultType="SvaModel">
+        SELECT * FROM svalist WHERE status = 1
+    </select>
+    
+    <insert id="saveSvaInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO 
+            svalist(ip,name,username,password,status,type,idType,tokenPort,brokerPort,managerEmail) 
+        VALUES(
+            #{ip},#{name},#{username},#{password},#{status},#{type},#{idType},#{tokenPort},#{brokerPort},#{managerEmail}
+        )
+    </insert>
+    
+    <update id="updateSvaInfo">
+        UPDATE svalist 
+        SET 
+            ip = #{ip}, 
+            name = #{name}, 
+            username = #{username}, 
+            password = #{password}, 
+            status = #{status}, 
+            type = #{type},
+            idType = #{idType},
+            tokenPort = #{tokenPort},
+            brokerPort = #{brokerPort}, 
+            managerEmail = #{managerEmail}
+        WHERE id = #{id}
+    </update>
+    
+    <update id="udpateSvaStatusCode">
+        UPDATE svalist 
+        SET 
+            statusCode = #{statusCode} 
+        WHERE id = #{id}
+    </update>
+    
+    <update id="disableSva">
+        UPDATE svalist SET status = 0 where id = #{value}
+    </update>
+    
+    <update id="enableSva">
+        UPDATE svalist SET status = 1 where id = #{value}
+    </update>
+    
+    <update id="deleteSvaTemp">
+        UPDATE svalist SET status = 2 where id = #{value}
+    </update>
+    
+    <delete id="deleteMapBySva">
+        DELETE FROM svastoremap WHERE svaId = #{value}
+    </delete>
+    
+    <delete id="deleteSva">
+        DELETE FROM svalist WHERE id = #{value}
+    </delete>
+    
+    <insert id="addMapper">
+        INSERT INTO 
+            svastoremap(svaId,storeId) 
+        VALUES
+        <foreach collection="store" item="item" index="index" separator="," >  
+            (#{id},#{item})  
+        </foreach>
+    </insert>
+    
+    <select id="selectID" resultType="SvaModel">
+        SELECT * FROM svalist WHERE name = #{value}
+    </select>
+    
+    <select id="selectID1" resultType="SvaModel">
+        SELECT * FROM svalist WHERE name = #{svaName} and id != #{id}
+    </select>
+    
+    <select id="checkSvaByName" resultType="int">
+        SELECT count(*) res FROM svalist WHERE name = #{value}
+    </select>
+    
+    <select id="checkSvaByName1" resultType="int">
+        SELECT count(*) res FROM svalist WHERE name = #{svaName} and id != #{id}
+    </select>
+    
+    <select id="getSvaById" resultType="SvaModel">
+        SELECT * FROM svalist a left join svastoremap b on a.id = b.svaId WHERE a.id = #{id} limit 1
+    </select>
+</mapper>
