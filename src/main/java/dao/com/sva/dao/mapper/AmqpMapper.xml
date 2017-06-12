@@ -6,17 +6,21 @@
 
     <insert id="saveAmqpData">
         INSERT INTO ${tableName}
-            (IdType,Timestamp,time_sva,datatype,x,y,z,userid,svaid) 
+            (IdType,Timestamp,time_sva,datatype,x,y,z,userID,mapId,s1apId,openId,mac,rssi) 
         VALUES (
             #{loc.idType},
             #{loc.timestamp},
-            #{loc.timestampSva},
+            #{loc.timeSva},
             #{loc.dataType},
             #{loc.x},
             #{loc.y},
             #{loc.z},
             #{loc.userID},
-            #{loc.svaId}
+            #{loc.mapId},
+            #{loc.s1apId},
+            #{loc.openId},
+            #{loc.mac},
+            #{loc.rssi}
         )
     </insert>
     
@@ -31,7 +35,7 @@
         SET 
             IdType = #{idType}, 
             Timestamp = #{timestamp},
-            time_sva = #{timestampSva},
+            time_sva = #{timeSva},
             datatype = #{dataType},
             x = #{x}, 
             y = #{y},
@@ -41,13 +45,12 @@
     
     <insert id="svaPrru">
         INSERT INTO prrusignal
-            (enbid,userId,gpp,rsrp,timestamp)
+            (enbid,userId,gpp,rsrp)
         VALUES (
             #{enbid},
             #{userId},
             #{gpp},
-            #{rsrp},
-            #{timestamp}
+            #{rsrp}
         )
     </insert>
     

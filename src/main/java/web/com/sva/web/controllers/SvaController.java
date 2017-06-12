@@ -1,14 +1,10 @@
 package com.sva.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sva.common.HttpUtil;
 import com.sva.common.Util;
 import com.sva.common.conf.Params;
-import com.sva.common.email.SimpleMail;
-import com.sva.common.email.SimpleMailSender;
 import com.sva.dao.SvaDao;
 import com.sva.model.SvaModel;
 import com.sva.service.SubscriptionService;
-import com.sva.service.ValidateSVAService;
 
 @Controller
 @RequestMapping(value = "/svalist")
@@ -34,10 +27,7 @@ public class SvaController
     
     @Autowired
     private SubscriptionService service;
-    
-    @Autowired
-    private ValidateSVAService validateSVAService;
-    
+
     @Autowired
     private SvaDao dao;
 
@@ -70,12 +60,10 @@ public class SvaController
             sm.setUsername(l.getUsername());
             sm.setPassword(l.getPassword());
             sm.setStatus(l.getStatus());
-            sm.setStatusCode(l.getStatusCode());
             sm.setType(l.getType());
             sm.setIdType(l.getIdType());
             sm.setTokenPort(l.getTokenPort());
             sm.setBrokerPort(l.getBrokerPort());
-            sm.setManagerEmail(l.getManagerEmail());
             list.add(sm);
         }
         int liSize = list.size();
@@ -363,54 +351,5 @@ public class SvaController
                 return modelMap;
             }
         }
-    }
-    
-    /** 
-     * @Title: svaValidate 
-     * @Description: sva验证(手动) 
-     * @param id
-     * @return 
-     * @author gl
-     */
-    @RequestMapping(value = "/api/svaValidate", method = {RequestMethod.POST})
-    @ResponseBody
-    public Map<String, Object> svaValidate(@RequestParam("id") String id)
-    {
-        LOG.info("Params[id]:" + id);
-
-        Map<String, Object> modelMap = new HashMap<String, Object>(2);
-        Map<String, Object> retMap = validateSVAService.validateSVA(Integer.parseInt(id));
-        SvaModel sva = dao.getSvaById(Integer.parseInt(id));
-        SimpleMail simpleMail = new SimpleMail();
-        String emailTitle = "";
-        boolean isSendEmail = false;
-        if(!(Boolean)retMap.get("status")){
-            // 未修复成功
-            emailTitle = "sva获取location数据获取失败";
-            isSendEmail = true;
-        }else{
-            // 发送邮件（修复成功）
-            if(retMap.get("isRepaired")!= null && (Boolean)retMap.get("isRepaired")){
-                // 修复成功
-                emailTitle = "sva获取location数据获取修复正常";
-                isSendEmail = true;
-            }
-        }
-        String emailContent = (String) retMap.get("msg");
-        simpleMail.setSubject(emailTitle);
-        simpleMail.setContent(emailContent);
-        simpleMail.setToList(Arrays.asList(sva.getManagerEmail()));
-        SimpleMailSender simpleMailSender = new SimpleMailSender(simpleMail);
-        try {
-            if(isSendEmail){
-                simpleMailSender.send(simpleMail);
-                LOG.info("--sva验证--：邮件已发送成功（手动）,收件人是" + simpleMail.getToList().get(0));
-            }
-        } catch (AddressException e) {
-            LOG.error("邮件发送失败", e);
-        } catch (MessagingException e) {
-            LOG.error("邮件发送失败", e);
-        }
-        return modelMap;
     }
 }

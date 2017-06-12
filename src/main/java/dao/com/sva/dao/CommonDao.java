@@ -46,6 +46,4 @@ public interface CommonDao {
     public List<Map<String, Object>> getAreaVisitTime(String areaId);
 
     public int saveVisitiTime(String sql);
-    
-    public int countLocationDataNum(@Param("tableName")String tableName, @Param("begin")long begin, @Param("end")long end, @Param("svaid")int svaid);
 }

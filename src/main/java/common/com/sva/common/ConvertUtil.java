@@ -1,6 +1,5 @@
 package com.sva.common;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,18 +46,17 @@ public class ConvertUtil
         String result = "";
         if (!StringUtils.isEmpty(macOrIp))
         {
-            String macOrIpt = macOrIp.toUpperCase().trim();
-            Logger.getLogger(ConvertUtil.class).debug(macOrIpt+","+macOrIp);
-            if (isMac(macOrIpt))
+            result = macOrIp.toUpperCase();
+            if (isMac(macOrIp))
             {
-                result = convertMac(macOrIpt);
+                result = convertMac(result);
             }
             else
             {
-                result = convertIp(macOrIpt);
+                result = convertIp(result);
             }
         }
-        return result.trim();
+        return result;
     }
 
     /**
@@ -142,27 +140,6 @@ public class ConvertUtil
     {
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         return formatter.format(timestamp);
-    }
-    
-    /**
-     * 时间字符型转个时间戳
-     * 
-     * @param timestamp
-     *            时间戳
-     * @param format
-     *            格式，如：yyyy-MM-dd HH:mm:ss
-     * @return
-     */
-    public static long dateFormatStringtoLong(String data, String format)
-    {
-        SimpleDateFormat formatter = new SimpleDateFormat(format);
-        Date da = null;
-        try {
-           da = formatter.parse(data);
-        } catch (ParseException e) {
-            Logger.getLogger(ConvertUtil.class).info(e);
-        }
-        return da.getTime();
     }
 
     /**

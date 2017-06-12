@@ -104,12 +104,6 @@
                                             <input type="text" datatype="number"  errormsg='<spring:message code="sva_port_tishi" />'   nullmsg='<spring:message code="sva_broker" />' style="width: 56%;height: 15%" class="input-xlarge" name="brokerPort" id="brokerId" maxlength="20" reg="^.{0,20}$" placeholder="<spring:message code="sva_broker" />">
                                         </div>
                                     </div>
-                                    <div class="control-group">
-                                        <label class="control-label" for="managerEmail"><spring:message code="email" /></label>
-                                        <div class="controls">
-                                            <input type="text" datatype="e"  errormsg='<spring:message code="invalid_email_adress" />' nullmsg='<spring:message code="email_is_required" />' style="width: 56%;height: 15%" class="input-xlarge" name="managerEmail" id="managerEmail" maxlength="20" placeholder="<spring:message code="email" />">
-                                        </div>
-                                    </div>
                   				</div>
                  			</div>
                 		</div>
@@ -243,8 +237,6 @@
                             <th><spring:message code="sva_Subscription_type" /></th>
                             <th><spring:message code="sva_id_type" /></th>
                             <th><spring:message code="sva_title_status" /></th>
-                            <th><spring:message code="sva_status_code" /></th>
-                            <th><spring:message code="email" /></th>
                             <th><spring:message code="message_table_title_operation" /></th>
                         </tr>
                     </thead>
@@ -276,7 +268,6 @@
    		i18n_info = '<spring:message code="map_info" />',
    	    i18n_deleteInfo = '<spring:message code="map_delete" />',
         i18n_svaSame = '<spring:message code="map_sva_same" />';
-        i18n_validate = '<spring:message code="valiate_sva" />';
         var i18n_open = '<spring:message code="message_swith_open" />'; 
         var i18n_close = '<spring:message code="message_swith_close" />';
         var i18n_type = '<spring:message code="sva_type_anonymization" />';

@@ -8,9 +8,7 @@ public class LocationModel
 
     private BigDecimal timestamp;
     
-    private BigDecimal timestampSva;
-    
-    private BigDecimal timestampPrru;
+    private BigDecimal timeSva;
 
     private String dataType;
 
@@ -22,7 +20,15 @@ public class LocationModel
 
     private String userID;
     
-    private String svaId;
+    private Integer rssi;
+    
+    private String mac;
+    
+    private String s1apId;
+    
+    private String openId;
+    
+    private int mapId;
 
     private MapsModel maps;
 
@@ -44,22 +50,6 @@ public class LocationModel
     public void setTimestamp(BigDecimal timestamp)
     {
         this.timestamp = timestamp;
-    }
-
-    /**
-     * @return the timestampSva
-     */
-    public BigDecimal getTimestampSva()
-    {
-        return timestampSva;
-    }
-
-    /**
-     * @param timestampSva the timestampSva to set
-     */
-    public void setTimestampSva(BigDecimal timestampSva)
-    {
-        this.timestampSva = timestampSva;
     }
 
     public String getDataType()
@@ -113,22 +103,6 @@ public class LocationModel
     }
 
     /**
-     * @return the svaId
-     */
-    public String getSvaId()
-    {
-        return svaId;
-    }
-
-    /**
-     * @param svaId the svaId to set
-     */
-    public void setSvaId(String svaId)
-    {
-        this.svaId = svaId;
-    }
-
-    /**
      * @return the maps
      */
     public MapsModel getMaps() {
@@ -145,15 +119,85 @@ public class LocationModel
     /**
      * @return the timeLocal
      */
-    public BigDecimal getTimestampPrru() {
-        return timestampPrru;
+    public BigDecimal getTimeSva() {
+        return timeSva;
     }
 
     /**
      * @param timeLocal the timeLocal to set
      */
-    public void setTimestampPrru(BigDecimal timestampPrru) {
-        this.timestampPrru = timestampPrru;
+    public void setTimeSva(BigDecimal timeSva) {
+        this.timeSva = timeSva;
+    }
+
+    /**
+     * @return the rssi
+     */
+    public Integer getRssi() {
+        return rssi;
+    }
+
+    /**
+     * @param rssi the rssi to set
+     */
+    public void setRssi(Integer rssi) {
+        this.rssi = rssi;
+    }
+
+    /**
+     * @return the mac
+     */
+    public String getMac() {
+        return mac;
+    }
+
+    /**
+     * @param mac the mac to set
+     */
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
+
+    /**
+     * @return the s1apId
+     */
+    public String getS1apId() {
+        return s1apId;
+    }
+
+    /**
+     * @param s1apId the s1apId to set
+     */
+    public void setS1apId(String s1apId) {
+        this.s1apId = s1apId;
+    }
+
+    /**
+     * @return the openId
+     */
+    public String getOpenId() {
+        return openId;
+    }
+
+    /**
+     * @param openId the openId to set
+     */
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    /**
+     * @return the mapId
+     */
+    public int getMapId() {
+        return mapId;
+    }
+
+    /**
+     * @param mapId the mapId to set
+     */
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
     }
 
 }

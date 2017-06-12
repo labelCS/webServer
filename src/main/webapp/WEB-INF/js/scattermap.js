@@ -32,7 +32,10 @@
 					role:"角色",
 					send:"发送"
 				}
-		}
+		};
+		
+		// 保存线的数组
+		this.lineObj = {};
 	}
 	
 	ScatterMap.prototype = {
@@ -214,23 +217,46 @@
 				})
 				.attr("cx", function(d,i){return d.x;})
 				.attr("cy", function(d,i){return d.y;})
-				.attr("r", 5);	
+				.attr("r", 5);
+			
+			// 线的初始化
+			for(var i = 0; i< data.length; i++){
+				if(data[i].role == "1"){
+					var userId = data[i].userId;
+					_this.lineObj[userId] = [{id:"0_"+userId,from:{x:data[i].x,y:data[i].y},to:{x:data[i].x,y:data[i].y}}];
+				}
+			}
+			var dataLine = [];
+			for(var k in _this.lineObj){
+				for(kIn in _this.lineObj[k]){
+					dataLine.push(_this.lineObj[k][kIn]);
+				}
+			}
+			this.svg.selectAll("path")
+				.data(dataLine)
+				.enter()
+				.append("path")
+				.attr("d", function(d){console.log(d);return "M"+d.from.x+","+d.from.y+" L"+d.to.x+","+d.to.y})
+				.attr("class", "line");
+				//.transition()
+				//.duration(2000)
+				//.ease(d3.easeLinear);
 			
 			// 冒泡的初始化	
 			var dataPump = _.filter(data, function(d){ return d.role == "2"; });
-			this.svg.selectAll("path")
-				.data(dataPump)
-				.enter()
-				.append("path")
-				.attr("d",function(d){
-					var path = "M"+ (d.x-20)+" "+(d.y-20)+" "+"A28 28,0,1,1 "+(d.x+20)+" "+(d.y-20)+" L"+d.x+" "+d.y+" Z";
-					return path;
-				})
-				.attr("fill","rgba(202,58,58,0.9)")
-				.attr("style","cursor:pointer")
-				.on("click",function(d){
-					_this._popUpMessage(d);
-		        });
+//			this.svg.selectAll("path")
+//				.data(dataPump)
+//				.enter()
+//				.append("path")
+//				.attr("d",function(d){
+//					var path = "M"+ (d.x-20)+" "+(d.y-20)+" "+"A28 28,0,1,1 "+(d.x+20)+" "+(d.y-20)+" L"+d.x+" "+d.y+" Z";
+//					return path;
+//				})
+//				.attr("fill","rgba(202,58,58,0.9)")
+//				.attr("style","cursor:pointer")
+//				.on("click",function(d){
+//					_this._popUpMessage(d);
+//		        });
 			
 			// 特殊角色姓名初始化
 			this.svg.selectAll(".MyText")
@@ -269,8 +295,8 @@
 				.data(data,function(d){return d.userId;});
 			var enter = update.enter(),
 				exit = update.exit();
-			// 渐变时间基于散点图刷新时间+1
-			var timeInterval = this._opt.timeInterval+1000;
+			// 渐变时间基于散点图刷新时间
+			var timeInterval = this._opt.timeInterval;
 			
 			// 更新的改变坐标
 			update.transition()
@@ -307,36 +333,76 @@
 			exit.remove();
 			//------点的更新end------
 			
-			//------冒泡的更新start------
-			var dataPump = _.filter(data, function(d){ return d.role == "2"; });
-			var updatePump = this.svg.selectAll("path")
-				.data(dataPump,function(d){return d.userId;});
-			var enterPump = updatePump.enter(),
-				exitPump = updatePump.exit();
-			
-			// 更新的改变坐标
-			updatePump.transition()
-				.duration(timeInterval)
-				.ease("liner")
-				.attr("d",function(d){
-					var path = "M"+ (d.x-20)+" "+(d.y-20)+" "+"A28 28,0,1,1 "+(d.x+20)+" "+(d.y-20)+" L"+d.x+" "+d.y+" Z";
-					return path;
-				});
+			//------线的更新start------
+			for(var i = 0; i< data.length; i++){
+				if(data[i].role == "1"){
+					var userId = data[i].userId;
+					if(_this.lineObj[userId] != null){
+						var arr = _this.lineObj[userId];
+						var lastPoint = arr[arr.length-1];
+						if(lastPoint.to!=null){
+							var tmp = {id:arr.length+"_"+userId,from:{x:lastPoint.to.x,y:lastPoint.to.y},to:{x:data[i].x,y:data[i].y}};
+							_this.lineObj[userId].push(tmp);
+						}else{
+							lastPoint.to = {x:data[i].x,y:data[i].y};
+						}
+					}else{
+						_this.lineObj[userId] = [{id:"0_"+userId,from:{x:data[i].x,y:data[i].y}}];
+					}
+				}
+			}
+			var dataLine = [];
+			for(var k in _this.lineObj){
+				for(kIn in _this.lineObj[k]){
+					if(_this.lineObj[k][kIn].to != null){
+						dataLine.push(_this.lineObj[k][kIn]);
+					}
+				}
+			}
+			var updateLine = this.svg.selectAll("path")
+				.data(dataLine,function(d){return d.id;});
+			var enterLine = updateLine.enter(),
+				exitLine = updateLine.exit();
 			
 			// 新增的添加
-			enterPump.append("path")
-				.attr("d",function(d){
-					var path = "M"+ (d.x-20)+" "+(d.y-20)+" "+"A28 28,0,1,1 "+(d.x+20)+" "+(d.y-20)+" L"+d.x+" "+d.y+" Z";
-					return path;
-				})
-				.attr("fill","rgba(202,58,58,0.9)")
-				.attr("style","cursor:pointer")
-				.on("click",function(d){
-					_this._popUpMessage(d);
-		        });
-				
+			enterLine.append("path")
+				.attr("class", "line")
+				.attr("d", function(d,i){return "M"+d.from.x+","+d.from.y+" L"+d.to.x+","+d.to.y});
+			
 			// 消失的删除
-			exitPump.remove();			
+			exitLine.remove();	
+			//------线的更新end------
+			
+			//------冒泡的更新start------
+			var dataPump = _.filter(data, function(d){ return d.role == "2"; });
+//			var updatePump = this.svg.selectAll("path")
+//				.data(dataPump,function(d){return d.userId;});
+//			var enterPump = updatePump.enter(),
+//				exitPump = updatePump.exit();
+//			
+//			// 更新的改变坐标
+//			updatePump.transition()
+//				.duration(timeInterval)
+//				.ease("liner")
+//				.attr("d",function(d){
+//					var path = "M"+ (d.x-20)+" "+(d.y-20)+" "+"A28 28,0,1,1 "+(d.x+20)+" "+(d.y-20)+" L"+d.x+" "+d.y+" Z";
+//					return path;
+//				});
+//			
+//			// 新增的添加
+//			enterPump.append("path")
+//				.attr("d",function(d){
+//					var path = "M"+ (d.x-20)+" "+(d.y-20)+" "+"A28 28,0,1,1 "+(d.x+20)+" "+(d.y-20)+" L"+d.x+" "+d.y+" Z";
+//					return path;
+//				})
+//				.attr("fill","rgba(202,58,58,0.9)")
+//				.attr("style","cursor:pointer")
+//				.on("click",function(d){
+//					_this._popUpMessage(d);
+//		        });
+//				
+//			// 消失的删除
+//			exitPump.remove();			
 			//------冒泡的更新end------
 			
 			//------text的更新start------

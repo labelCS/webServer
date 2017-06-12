@@ -13,8 +13,6 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.dao.DataAccessException;
-
-import com.sva.model.ACRModel;
 import com.sva.model.AreaModel;
 import com.sva.model.LocationModel;
 
@@ -105,6 +103,8 @@ public interface AreaDao {
             @Param("allTime")Long allTime, @Param("number")int number, @Param("averageTime")String averageTime);
 
     public List<AreaModel> selectAeareBaShow(String zSel);
+    
+    public List<AreaModel> selectAeareByMapId(String mapId);
 
     public List<AreaModel> getAreaByAreaId(String id);
 
@@ -161,8 +161,4 @@ public interface AreaDao {
 
     public int getAllArea(@Param("area")AreaModel mm, @Param("tableName")String tableName,
             @Param("time")long time);
-    
-    public List<Map<String,Object>>getACRData(@Param("area")AreaModel mm, @Param("tableName")String tableName, @Param("floorNo")int floorNo,@Param("startTime")long startTime,@Param("endTime")long endTime);
-    
-    public int savaACR(@Param("acr")ACRModel acr);
 }

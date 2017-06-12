@@ -97,14 +97,6 @@ public interface SvaDao {
     public int saveSvaInfo(SvaModel mmm); 
 
     public int updateSvaInfo(SvaModel sm);
-    
-    /**
-     * 更新纠错状态码
-     * @param id
-     * @param statusCode
-     * @return 数据库影响条数
-     */
-    public int udpateSvaStatusCode(@Param("id")String id, @Param("statusCode")String statusCode);
 
     /** 
      * @Title: disableSva 
@@ -164,5 +156,5 @@ public interface SvaDao {
     public int checkSvaByName1(@Param("svaName")String svaName, @Param("id")String id);
 
     public SvaModel getSvaById(int id);
-    
+
 }

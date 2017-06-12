@@ -552,7 +552,7 @@ var MsgMng = function () {
         				}
         			});
         		} 
-        		var all_options = ['皮卡丘','鬼斯通','小火龙','绿毛虫','胖丁'];
+        		var all_options = ['皮卡丘','水箭龟','小火龙','超猛'];
         		var option  = document.getElementById("petName").options;
         		 var leng = all_options.length;
         		 for (i=0; i<data.data.length; i++)

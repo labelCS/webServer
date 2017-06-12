@@ -244,7 +244,17 @@
                                 </c:otherwise> 
                             </c:choose>
                                 <a href="<c:url value='/home/contentjing' />"><i class="round" style="background-color: #E64C66;"></i><span><spring:message code="jinjgrong" /></span></a>
-                            </li>                                                                                                          
+                            </li>
+                        <c:choose>
+                            <c:when test="${showParams}">  
+                                <li class="active">
+                            </c:when>  
+                            <c:otherwise>  
+                                <li class="">
+                            </c:otherwise> 
+                        </c:choose>
+                            <a href="<c:url value='/home/showParams' />"><i class="round" style="background-color: #E64C66;"></i><span><spring:message code="menu_show_param" /></span></a>
+                        </li>
                     </ul>
                 </li>
             </c:when>   
@@ -354,6 +364,21 @@
                         <a href="<c:url value='/home/showPositionmap' />">
                             <i class="round" style="background-color: #FFAB00;"></i>
                             <span><spring:message code="menu_customer_analyse_positionmap" /></span>
+                        </a>
+                        </li>
+                    </c:if>
+                    <c:if test = "${fn:contains(menu,'key_apLocation') or fn:contains(menu,'all') }" >
+                        <c:choose>  
+                            <c:when test="${apLocation}">  
+                                <li class="active">
+                            </c:when>  
+                            <c:otherwise>  
+                                <li class="">
+                            </c:otherwise>  
+                        </c:choose>
+                        <a href="<c:url value='/home/showApLocationMap' />">
+                            <i class="round" style="background-color: #FFAB00;"></i>
+                            <span><spring:message code="menu_ap_location" /></span>
                         </a>
                         </li>
                     </c:if>
@@ -535,21 +560,6 @@
                                 <span><spring:message code="message_push" /></span>
                             </a> 
                             </c:if>
-                            <c:if test = "${fn:contains(menu,'key_featureBase') or fn:contains(menu,'all') }" >
-                            <c:choose>  
-                                <c:when test="${featureBase}">  
-                                    <li class="active">
-                                </c:when>  
-                                <c:otherwise>  
-                                    <li class="">
-                                </c:otherwise>
-                            </c:choose>
-                            <a href="<c:url value='/home/showFeatureBase' />">
-                                <i class="round" style="background-color: #FFAB00;"></i>
-                                <span><spring:message code="test_featureBase_menu" /></span>
-                            </a>
-                            </li>
-                        </c:if> 
                             <c:choose>  
                                 <c:when test="${phone}">  
                                     <li class="active">
@@ -657,6 +667,21 @@
                             <a href="<c:url value='/home/showpRRU' />">
                                 <i class="round" style="background-color: #E64C66;"></i>
                                 <span><spring:message code="tools_pRRU" /></span>
+                            </a>
+                            </li>
+                        </c:if>
+                        <c:if test = "${fn:contains(menu,'key_apMapper') or fn:contains(menu,'all') }" >    
+                            <c:choose>
+                                <c:when test="${apMapper}">  
+                                    <li class="active">
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="">
+                                </c:otherwise> 
+                            </c:choose>
+                            <a href="<c:url value='/home/showApMapper' />">
+                                <i class="round" style="background-color: #E64C66;"></i>
+                                <span><spring:message code="menu_tools_ap_mapper" /></span>
                             </a>
                             </li>
                         </c:if>
@@ -799,7 +824,24 @@
                         </a>
                         </li>
                     </c:when>
-                </c:choose>                  
+                </c:choose>
+                <c:choose>
+                    <c:when test="${auth eq 'root'}">
+                        <c:choose>
+                            <c:when test="${baShow}">
+                                <li class="active">
+                            </c:when>
+                            <c:otherwise>
+                                <li class="">
+                            </c:otherwise>
+                        </c:choose>
+                        <a href="<c:url value='/home/showBaShow' />">
+                            <i class="round" style="background-color: #E64C66;"></i>
+                            <span><spring:message code="menu_ba_show" /></span>
+                        </a>
+                        </li>
+                    </c:when>
+                </c:choose>
                                               
                 </ul>
      <!--   <li class="last"><a href="<c:url value='/down/contentShow' />"> <img src="<c:url value='/images/bz.png'/>">

@@ -23,7 +23,7 @@ public class MyRollingFileAppender extends RollingFileAppender{
         private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
         /**
-         * 閲嶅啓鐖剁被鐨勬柟娉�
+         * 重写父类的方法
          */
         public void rollOver() {
 //            String path = System.getProperty("user.dir");
@@ -48,10 +48,10 @@ public class MyRollingFileAppender extends RollingFileAppender{
                                  : fileName);
 
             boolean renameSucceeded = true;
-            /** 濡傛灉maxBackups <= 0锛岄偅涔堟枃浠朵笉鐢ㄩ噸鍛藉悕 **/
+            /** 如果maxBackups <= 0，那么文件不用重命名 **/
             if (maxBackupIndex > 0) {
 
-                /** 鍒犻櫎鏃ф枃浠� **/
+                /** 删除旧文件 **/
                 file = new File(newFileName + '_'
                         + getIndex(maxBackupIndex, maxBackupIndexLeng));
                 if (file.exists()) {
@@ -73,7 +73,7 @@ public class MyRollingFileAppender extends RollingFileAppender{
 
                 if (renameSucceeded) {
 //                    BeginFileData beginFileData = fileMaps.get(fileName);
-                    /** 鍦ㄦ瘡澶╀竴涓棩蹇楃洰褰曠殑鏂瑰紡涓嬶紝妫�娴嬫棩鏈熸槸鍚﹀彉鏇翠簡锛屽鏋滃彉鏇翠簡灏辫鎶婂彉鏇村悗鐨勬棩蹇楁枃浠舵嫹璐濆埌鍙樻洿鍚庣殑鏃ユ湡鐩綍涓嬨�� **/
+                    /** 在每天一个日志目录的方式下，检测日期是否变更了，如果变更了就要把变更后的日志文件拷贝到变更后的日期目录下。 **/
 //                    if (newFileName.indexOf(nowDateString) == -1
 //                            && beginFileData.getFileName().indexOf("yyyyMMdd") != -1) {
 //                        newFileName = beginFileData.getFileName().replace(
@@ -92,14 +92,14 @@ public class MyRollingFileAppender extends RollingFileAppender{
 
                     renameSucceeded = file.renameTo(target);
 
-                    /** 濡傛灉閲嶅懡鍚嶅け璐ワ紝閲嶆柊鎵撳紑鏂囦欢锛屽苟鍦ㄦ枃浠朵笂杩藉姞 **/
+                    /** 如果重命名失败，重新打开文件，并在文件上追加 **/
                     if (!renameSucceeded) {
                         try {
                             FileUtils.copy(file, target);
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
-                        } // 灏嗘棫鏂囦欢鎷疯礉缁欐柊鏂囦欢  
+                        } // 将旧文件拷贝给新文件  
                         emptyFileContent(file); 
                         try {
 
@@ -113,7 +113,7 @@ public class MyRollingFileAppender extends RollingFileAppender{
                 }
             }
 
-            /** 閲嶅懡鍚嶆垚鍔� **/
+            /** 重命名成功 **/
             if (renameSucceeded) {
 
                 try {
@@ -126,7 +126,7 @@ public class MyRollingFileAppender extends RollingFileAppender{
         }
 
         /**
-         * 鏂囦欢涓暟鐨勯暱搴﹁ˉ闆讹紝濡傛灉鏂囦欢涓暟涓�10閭ｄ箞鏂囦欢鐨勪釜鏁伴暱搴﹀氨鏄�2浣嶏紝绗竴涓枃浠跺氨鏄�01锛�02锛�03....
+         * 文件个数的长度补零，如果文件个数为10那么文件的个数长度就是2位，第一个文件就是01，02，03....
          * 
          * @param i
          * @param maxBackupIndexLeng
@@ -142,7 +142,7 @@ public class MyRollingFileAppender extends RollingFileAppender{
         }
 
         /**
-         * 閲嶅啓 RollingFileAppender鐨勬柟娉�
+         * 重写 RollingFileAppender的方法
          * 
          * @since 0.9.0
          */
@@ -167,12 +167,12 @@ public class MyRollingFileAppender extends RollingFileAppender{
             if (fileName != null && qw != null) {
 
 //                String nowDate = sdf.format(new Date());
-//                /** 妫�娴嬫棩鏈熸槸鍚﹀凡缁忓彉鏇翠簡锛屽鏋滃彉鏇翠簡灏辫閲嶅垱寤烘枃浠� **/
+//                /** 检测日期是否已经变更了，如果变更了就要重创建文件 **/
 //                if (!fileMaps.get(fileName).getDate().equals(nowDate)) {
 //                    rollOver();
 //                    return;
 //                }
-                /** 妫�娴嬫枃浠跺ぇ灏忥紝瓒呰繃鎸囧畾澶у皬閲嶆柊鍒涘缓鏂囦欢 **/
+                /** 检测文件大小，超过指定大小重新创建文件 **/
                 long size = ((CountingQuietWriter) qw).getCount();
 //                System.out.println(size);
 //                long size = getFileSize(fileName);
@@ -188,7 +188,7 @@ public class MyRollingFileAppender extends RollingFileAppender{
 //
 //            String nowDate = sdf.format(new Date());
 //
-//            /** 濡傛灉鏂囦欢璺緞鍖呭惈浜嗏�測yyyMMdd鈥濆氨鏄瘡澶╀竴涓棩蹇楃洰褰曠殑鏂瑰紡璁板綍鏃ュ織(绗竴娆＄殑鏃跺��) **/
+//            /** 如果文件路径包含了“yyyyMMdd”就是每天一个日志目录的方式记录日志(第一次的时候) **/
 //            if (fileName.indexOf("yyyyMMdd") != -1) {
 //                String beginFileName = fileName;
 //                fileName = fileName.replace("yyyyMMdd", nowDate);
@@ -196,9 +196,9 @@ public class MyRollingFileAppender extends RollingFileAppender{
 //            }
 //            BeginFileData beginFileData = fileMaps.get(fileName);
 //
-//            /** 妫�娴嬫棩鏈熸槸鍚﹀凡缁忓彉鏇翠簡锛屽鏋滃彉鏇翠簡灏辫鎶婂師濮嬬殑瀛楃涓茬粰fileName鍙橀噺锛屾妸鍙樻洿鍚庣殑鏃ユ湡鍋氫负寮�濮嬫棩鏈� **/
+//            /** 检测日期是否已经变更了，如果变更了就要把原始的字符串给fileName变量，把变更后的日期做为开始日期 **/
 //            if (!beginFileData.getDate().equals(nowDate)) {
-//                /** 鑾峰彇鍑虹涓�娆＄殑鏂囦欢鍚� **/
+//                /** 获取出第一次的文件名 **/
 //                beginFileData.setDate(nowDate);
 //                fileName = beginFileData.getFileName().replace("yyyyMMdd", nowDate);
 //                fileMaps.put(fileName, beginFileData);
@@ -234,7 +234,7 @@ public class MyRollingFileAppender extends RollingFileAppender{
             }
         }
         
-        /** 娓呯┖鏂囦欢鍐呭 */  
+        /** 清空文件内容 */  
         public static void emptyFileContent(File file) {  
             FileOutputStream out = null;  
             try {  
@@ -253,25 +253,25 @@ public class MyRollingFileAppender extends RollingFileAppender{
         }  
         
         public static long getFileSize(String path){
-            //浼犲叆鏂囦欢璺緞
+            //传入文件路径
             File file = new File(path);
             long size = 0;
-            //娴嬭瘯姝ゆ枃浠舵槸鍚﹀瓨鍦�
+            //测试此文件是否存在
             if(file.exists()){
-                //濡傛灉鏄枃浠跺す
-                //杩欓噷鍙娴嬩簡鏂囦欢澶逛腑绗竴灞� 濡傛灉鏈夐渶瑕� 鍙互缁х画閫掑綊妫�娴�
+                //如果是文件夹
+                //这里只检测了文件夹中第一层 如果有需要 可以继续递归检测
                 if(file.isDirectory()){
                     for(File zf : file.listFiles()){
                         if(zf.isDirectory()) continue;
                         size += zf.length();
                     }
-                    System.out.println("鏂囦欢澶� "+file.getName()+" Size: "+(size/1024f)+"kb");
+                    System.out.println("文件夹 "+file.getName()+" Size: "+(size/1024f)+"kb");
                 }else{
                     System.out.println(file.getName()+" Size: "+(file.length()/1024f)+"kb");
                 }
-            //濡傛灉鏂囦欢涓嶅瓨鍦�
+            //如果文件不存在
             }else{
-                System.out.println("姝ゆ枃浠朵笉瀛樺湪");
+                System.out.println("此文件不存在");
             }
             return size;
         }

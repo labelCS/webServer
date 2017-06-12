@@ -64,9 +64,9 @@
     
     <insert id="saveSvaInfo" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO 
-            svalist(ip,name,username,password,status,type,idType,tokenPort,brokerPort,managerEmail) 
+            svalist(ip,name,username,password,status,type,idType,tokenPort,brokerPort) 
         VALUES(
-            #{ip},#{name},#{username},#{password},#{status},#{type},#{idType},#{tokenPort},#{brokerPort},#{managerEmail}
+            #{ip},#{name},#{username},#{password},#{status},#{type},#{idType},#{tokenPort},#{brokerPort}
         )
     </insert>
     
@@ -81,15 +81,7 @@
             type = #{type},
             idType = #{idType},
             tokenPort = #{tokenPort},
-            brokerPort = #{brokerPort}, 
-            managerEmail = #{managerEmail}
-        WHERE id = #{id}
-    </update>
-    
-    <update id="udpateSvaStatusCode">
-        UPDATE svalist 
-        SET 
-            statusCode = #{statusCode} 
+            brokerPort = #{brokerPort} 
         WHERE id = #{id}
     </update>
     

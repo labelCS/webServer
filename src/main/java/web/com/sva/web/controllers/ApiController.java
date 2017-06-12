@@ -56,7 +56,6 @@ import com.sva.dao.RegisterDao;
 import com.sva.dao.StaticAccuracyDao;
 import com.sva.dao.SvaDao;
 import com.sva.dao.TicketDao;
-import com.sva.model.ACRModel;
 import com.sva.model.AccuracyModel;
 import com.sva.model.AreaModel;
 import com.sva.model.CodeModel;
@@ -320,7 +319,7 @@ public class ApiController
         boolean result = true;
         for (SvaModel sva : svaList)
         {
-            service.subscribeSvaPhone(sva,ip);
+            service.subscribeSvaPhone(sva, ip);
         }        
 
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
@@ -340,7 +339,7 @@ public class ApiController
         boolean result = true;
         for (SvaModel sva : svaList)
         {
-            service.unsubscribeSvaPhone(sva,ip);
+            service.unsubscribeSvaPhone(sva, ip);
         }    
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         modelMap.put("error", null);
@@ -2440,65 +2439,6 @@ public Map<String, Object> getDataByFloorNo(@RequestParam("floorNo") String floo
         map.put("result", result);
         map.put("error",errorResult);
         
-        return map;
-        
-    }
-    
-    @RequestMapping(value = "/creatData", method = {RequestMethod.GET})
-    @ResponseBody
-    public Map<String, Object> creatData(@RequestParam("floorNo") int floorNo,@RequestParam("startTime")String startTime,@RequestParam("endTime")String endTime)
-    {
-        
-        //根据楼层号删除添加sql
-        String sql = "delete from acrdata where floorNo ="+floorNo;
-        String insertSql = "insert into acrdata(areaId,floorNo,areaName,userId,timestamp) values ";
-        Map<String, Object> map = new HashMap<String,Object>();
-        List<AreaModel> lis  = null;
-        List<Map<String, Object>> listMap = null;
-        String areaName = null;
-        String areaId = null;
-        String userId = null;
-        String timestamp = null;
-        String tableName = Params.LOCATION + startTime.substring(0, 8);
-        long start = ConvertUtil.dateFormatStringtoLong(startTime, Params.YYYYMMDDHHMMSS1);
-        long end = ConvertUtil.dateFormatStringtoLong(endTime, Params.YYYYMMDDHHMMSS1);
-        LOG.debug("creatData time:"+start+" "+end);
-        //判断楼层号是否为空
-        if ("".equals(floorNo)) {
-            map.put("error", "floorNo is null!");
-            return map;
-        }else
-        {
-            List<String> inputTempList = new ArrayList<String>();
-            //根据楼层号获取所以得区域
-            lis =daoArea.getAreaByFloorNo(floorNo);
-            for (int i = 0; i < lis.size(); i++) {
-                AreaModel area = lis.get(i);
-                areaName = area.getAreaName();
-                areaId = area.getId();
-                //获取某个区域人的userId
-                listMap = daoArea.getACRData(area, tableName, floorNo,start,end);
-                for (int j = 0; j < listMap.size(); j++) {
-                    userId = listMap.get(j).get("userId").toString();
-                    timestamp = ConvertUtil.dateFormat((Long)(listMap.get(j).get("timestamp")),Params.YYYYMMDDHHMMSS);
-                    String temp = "("+areaId+","+floorNo+",'"+areaName+"','"+userId+"','"+timestamp+"')";
-                    inputTempList.add(temp);
-                }
-            
-            }
-            //拼接字符串
-            String acrInsert = insertSql + StringUtils.join(inputTempList, ",");
-            int reslut = 0;
-            //区域人数不为空执行删除插入操作
-            if (inputTempList.size()>0) {
-                comDao.doUpdate(sql);
-                reslut  = comDao.doUpdate(acrInsert);
-            }else
-            {
-                map.put("error", "no people from area");  
-            }
-            map.put("result", reslut);
-        }
         return map;
         
     }

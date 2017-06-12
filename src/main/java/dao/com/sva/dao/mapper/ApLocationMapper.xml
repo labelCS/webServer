@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.ApLocationDao">
+    
+    <select id="getUserMac" resultType="String">
+        SELECT distinct(userID) 
+        FROM ${tableName}
+        WHERE timestamp &gt; #{time}
+    </select>
+    
+    <select id="getUserInfo" resultType="LocationModel">
+        SELECT * 
+        FROM (
+            SELECT l.userID, l.mac, l.rssi,m.lat x, m.lon y
+            FROM ${tableName} l
+            JOIN apMapper m on l.mac = m.mac
+            WHERE
+                timestamp &gt; #{time}
+                and l.mac is not NULL
+                <if test="userId != null and userId != ''">
+	                 and l.userID = #{userId}
+	            </if>
+            ORDER BY timestamp desc
+        ) a 
+        GROUP BY a.userID
+    </select>
+    
+    <insert id="saveApMapper">
+        REPLACE INTO apMapper (mac,lat,lon,update_time) 
+        VALUES(#{mac},#{lat},#{lon},#{updateTime})
+    </insert>
+</mapper>

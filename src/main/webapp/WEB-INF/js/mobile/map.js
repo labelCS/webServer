@@ -38,94 +38,6 @@ var Map = function(){
 		});
 	};
 	
-	var dataFilter = function(data, xo, yo, scale, width, height, coordinate){
-		xo = parseFloat(xo);
-		yo = parseFloat(yo);
-		scale = parseFloat(scale);
-		var point;
-		switch(coordinate){
-		case "ul":
-			point ={
-				x : (data.x/10+xo)*scale,
-				y : (data.y/10+yo)*scale
-			};
-			break;
-		case "ll":
-			point ={
-				x : (data.x/10+xo)*scale,
-				y : height-(data.y/10+yo)*scale
-			};
-			break;
-		case "ur":
-			point ={
-				x : width-(data.x/10+xo)*scale,
-				y : (data.y/10+yo)*scale
-			};
-			break;
-		case "lr":
-			var point ={
-				x : width-(data.x/10+xo)*scale,
-				y : height-(data.y/10+yo)*scale
-			};
-			break;		
-		}
-		
-		return point;
-	};
-	
-	// 消息推送模块
-	var showMessage = function(x, y, mapId){
-		// 取出所处楼层的区域信息
-		var currentAreaInfo = _.filter(areaInfo,function(el){
-			var res = (el.maps.floorNo == mapId) && (x > el.xSpot && x < el.x1Spot && y > el.ySpot && y < el.y1Spot)
-			return res}
-		);
-		// 所处区域的id数组
-		var areaIds = _.pluck(currentAreaInfo, "id");
-		if(!areaIds.length){
-			return;
-		}
-		// 获取所处区域对应的推送消息和电子围栏
-		$.ajax({
-    		url:"/sva/api/getMessages",
-    		type:"post",
-    		data:JSON.stringify({areaId:areaIds}),
-    		contentType:'application/json',
-    		dataType:"json",
-    		success:function(data){
-    			if(data.message && data.message.length > 0){
-    				var show = false;
-    				var msgHtml = "";
-        			for(var i=0; i<data.message.length; i++){
-        				var msg = data.message[i];
-        				var currentTime = new Date().getTime();
-        				if(messageMapper[msg.id] && (messageMapper[msg.id] + msg.timeInterval*60000) > currentTime){
-        					
-        				}else{
-        					show = true;
-        					// 更新时间
-        					messageMapper[msg.id] = currentTime;
-        					// 弹出消息推送
-        					msgHtml += '' +
-        					'<a href="#messagePush'+i+'" data-rel="popup" data-position-to="window" data-transition="fade">'+
-                            	'<img class="popphoto" src="/sva/upload/'+msg.pictruePath+'" style="width:300px;">' +
-        					'</a>' ;//+
-        					//'<div data-role="popup" id="messagePush'+i+'" data-overlay-theme="a" data-theme="d" data-corners="false">' +
-                            //	'<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>' +
-                            //	'<img class="popphoto" src="/sva/upload/'+msg.pictruePath+'" style="max-height:512px;">' +
-                            //'</div>';
-        				}
-        			}
-        			
-        			if(show){
-        				$("#popFromBottom").css("display","inline");
-    					$("#popWrapper").append(msgHtml);
-        			}
-    			}
-    		}
-    	});
-	};
-	
 	var bindClickEvent = function(){
 		// 地点按钮点击事件
 		$("#radioOk").on("click",function(){
@@ -147,16 +59,14 @@ var Map = function(){
 		$("#mapLink").on("click",function(){
 			clearInterval(timer);
 			// 获取地图数据
-			$.post("/sva/mobile/store/api/getInfoByStore", {
+			$.post("/sva/heatmap/api/getFloorsByMarket", {
 				placeId : storeId
 			}, function(data) {
 				if (!data.error) {
-					mapInfo = data.data.maps;
-					areaInfo = data.data.areas;
+					mapInfo = data.data;
 					var sortData = mapInfo.sort(function(a, b) {
 						return a.floor - b.floor;
 					});
-					mapId = sortData[0].floorNo;
 					var len = sortData.length;
 					var divHeight = $("#mapContainer").position().top;
 					var options = '';
@@ -168,19 +78,13 @@ var Map = function(){
 					$(".floorDiv").remove();
 					$("#mapContainer").append(options);
 					mapObj = IndoorMap.init({
-						mapUrl:"/sva/upload/" + sortData[0].svg, 
+						mapUrl:"../upload/" + sortData[0].svg, 
 						containerId:"mapContainer",
-						navToolId:"showNav",
-						hammerId:"hammerCover",
-						mapWidthOrign:screen.width-20,
-						mapHeightOrign:$("#mapContainer").height(),
-						mapId:sortData[0].floorNo,
-						storeId:storeId
+						mapWidthOrign:sortData[0].imgWidth,
+						mapHeightOrign:sortData[0].imgHeight
 					});
-					currentMap = sortData[0];
-					console.log($("#mapContainer").height());
 					$($(".floorDiv")[0]).addClass("active");
-					//IndoorMap.addPoint(mapObj,ipToHex(localIp));
+					IndoorMap.addPoint(mapObj);
 				}
 			});
 		});
@@ -197,59 +101,30 @@ var Map = function(){
 					svgImg = mapInfo[i].svg;
 					mapWidth = mapInfo[i].imgWidth;
 					mapHeight = mapInfo[i].imgHeight;
-					mapId = mapInfo[i].mapId;
-					currentMap = mapInfo[i];
 					break;
 				}
 			}
-			IndoorMap.changeOption(mapObj,{
-				mapUrl:"../upload/" + svgImg,
-				mapWidthOrign:mapWidth,
-				mapHeightOrign:mapHeight,
-				mapId:mapId
-				}
-			);
-			//IndoorMap.addPoint(mapObj,ipToHex(localIp));
-			
+			IndoorMap.changeOption(mapObj,{mapUrl:"../upload/" + svgImg,mapWidthOrign:mapWidth,mapHeightOrign:mapHeight});
+			IndoorMap.addPoint(mapObj);
 		});
 		
 		// 定位按钮点击事件
 		$("#findPosition").on("click",function(){
-			//$("#showNav").popup("open",{x:50,y:50});
-			// 测试
-			localIp = "192.168.10.112";
-			if(!timer){
-				timer = setInterval(function(){
-					$.ajax({
-		        		url:"/sva/api/getData",
-		        		type:"post",
-		        		data:JSON.stringify({ip:localIp}),
-		        		contentType:'application/json',
-		        		dataType:"json",
-		        		success:function(data){
-		        			if(data.data){
-			        			var point = dataFilter(data.data,currentMap.xo, currentMap.yo, currentMap.scale, currentMap.imgWidth, currentMap.imgHeight, currentMap.coordinate);
-			        			IndoorMap.refreshPoint(mapObj,point);
-			        			// 推送消息
-			        			showMessage(data.data.x/10, data.data.y/10, mapId);
-		        			}
-		        		}
-		        	});
-				},1000);
-			}
+			timer = setInterval(function(){
+				$.ajax({
+	        		url:"/sva/api/getData",
+	        		type:"post",
+	        		data:JSON.stringify({ip:localIp}),
+	        		contentType:'application/json',
+	        		dataType:"json",
+	        		success:function(data){
+	        			var originX = data.x,
+	        				originY = data.y;
+	        			IndoorMap.addPoint(mapObj,data.x,data.y);
+	        		}
+	        	});
+			},1000);
 			
-		});
-		
-		// 消息推送弹出框关闭事件
-		$("#closeMessage").on("click",function(e){
-			$("#popFromBottom").css("display","none");
-			$("#popWrapper").empty();
-		});
-		
-		// 取消导航按钮点击事件
-		$("#cancelNav").on("click", function(e){
-			IndoorMap.clear(mapObj);
-			$("#cancelNav").css("display","none");
 		});
 	};
 	

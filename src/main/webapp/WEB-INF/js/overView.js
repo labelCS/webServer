@@ -47,8 +47,8 @@ var Heatmap = function() {
 		}, function(data) {
 			if (!data.error) {
 				$(".chartArea").show();
-				$("#total").text(data.allcount);
-				$("#maxDay").text(data.cout);
+				$("#total").text(data.cout);
+				$("#maxDay").text(data.allcount);
 				var val;
 				if (data.yesterdayAllcount>0&&data.allcount>0) {
 					val= (data.allcount/data.yesterdayAllcount)*100;	
@@ -274,8 +274,8 @@ var Heatmap = function() {
 			}, function(data) {
 				if (!data.error) {
 					$(".chartArea").show();
-					$("#total").text(data.allcount);
-					$("#maxDay").text(data.cout);
+					$("#total").text(data.cout);
+					$("#maxDay").text(data.allcount);
 					var val;
 					if (data.yesterdayAllcount>0&&data.allcount>0) {
 						val= (data.allcount/data.yesterdayAllcount)*100;	

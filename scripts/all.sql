@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `store` (
   `createTime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 导出  表 sva.maps 结构
 CREATE TABLE `maps` (
@@ -45,7 +45,8 @@ CREATE TABLE `maps` (
     CONSTRAINT `FK_maps_store` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 )
 COMMENT='地图信息'
-COLLATE='utf8_unicode_ci';
+COLLATE='utf8_unicode_ci'
+ENGINE=InnoDB;
 
 
 
@@ -57,8 +58,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `createTime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`) USING BTREE
-) DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- 导出  表 sva.role 结构
 CREATE TABLE IF NOT EXISTS `role` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `role` (
   `updateTime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index 2` (`name`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 INSERT INTO `role` (`id`, `name`, `menukey`, `menus`, `storesid`, `stores`, `updateTime`) VALUES
 	(1, '1', '1', '1', '1', '1', '2016-06-25 05:28:33');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   UNIQUE KEY `Index 3` (`username`),
   KEY `fk_account_role` (`roleid`) USING BTREE,
   CONSTRAINT `fk_roleid` FOREIGN KEY (`roleid`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- 正在导出表  sva.account 的数据：~1 rows (大约)
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `accuracy` (
   `count_10p` int(11) NOT NULL,
   `detail` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.accuracy 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `accuracy` DISABLE KEYS */;
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `allpeople` (
   `placeId` int(11) NOT NULL,
   `number` int(11) NOT NULL,
   PRIMARY KEY (`time`,`placeId`)
-) DEFAULT CHARSET=latin1 COMMENT='每分钟更新今日人数和昨日人数';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='每分钟更新今日人数和昨日人数';
 
 -- 正在导出表  sva.allpeople 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `allpeople` DISABLE KEYS */;
@@ -157,7 +157,8 @@ CREATE TABLE IF NOT EXISTS `area` (
 	CONSTRAINT `area_ibfk_2` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`) ON UPDATE CASCADE ON DELETE CASCADE,
 	CONSTRAINT `area_ibfk_3` FOREIGN KEY (`categoryid`) REFERENCES `category` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 )
-COLLATE='utf8_general_ci';
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
 
 
 -- 正在导出表  sva.area 的数据：~0 rows (大约)
@@ -181,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `bluemix` (
   `tokenPort` int(11) NOT NULL,
   `brokerPort` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.bluemix 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `bluemix` DISABLE KEYS */;
@@ -218,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `bzprames` (
   KEY `fk_place2` (`placeId2`) USING BTREE,
   KEY `fk_floorId2sp` (`floorNo2sp`),
   KEY `fk_floorId3sp` (`floorNo3sp`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 正在导出表  sva.bzprames 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `bzprames` DISABLE KEYS */;
@@ -230,7 +231,7 @@ CREATE TABLE IF NOT EXISTS `bzprames` (
 CREATE TABLE IF NOT EXISTS `code` (
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `password` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.code 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `code` DISABLE KEYS */;
@@ -251,7 +252,7 @@ CREATE TABLE IF NOT EXISTS `district_during` (
   `userID` varchar(50) NOT NULL,
   `loc_count` bigint(20) DEFAULT NULL,
   `departure_time` bigint(20) DEFAULT '0'
-) DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.district_during 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `district_during` DISABLE KEYS */;
@@ -277,7 +278,7 @@ CREATE TABLE IF NOT EXISTS `dynamicaccuracy` (
   `detail` text COLLATE utf8_unicode_ci,
   `triggerIp` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.dynamicaccuracy 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `dynamicaccuracy` DISABLE KEYS */;
@@ -301,7 +302,7 @@ CREATE TABLE IF NOT EXISTS `electronic` (
   CONSTRAINT `FK_electronic_area` FOREIGN KEY (`shopId`) REFERENCES `area` (`id`),
   CONSTRAINT `FK_electronic_maps` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`),
   CONSTRAINT `FK_electronic_store` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.electronic 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `electronic` DISABLE KEYS */;
@@ -325,7 +326,7 @@ CREATE TABLE IF NOT EXISTS `estimatedev` (
   KEY `FK_estimatedev_maps` (`floorNo`),
   CONSTRAINT `FK_estimatedev_maps` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_estimatedev_store` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='预估偏差';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='预估偏差';
 
 -- 正在导出表  sva.estimatedev 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `estimatedev` DISABLE KEYS */;
@@ -341,7 +342,7 @@ CREATE TABLE IF NOT EXISTS `geofencing` (
   `zoneid` bigint(20) NOT NULL,
   `enter` varchar(50) NOT NULL,
   `Timestamp` bigint(20) NOT NULL
-) DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.geofencing 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `geofencing` DISABLE KEYS */;
@@ -357,7 +358,7 @@ CREATE TABLE IF NOT EXISTS `locationdelay` (
   `positionDelay` double DEFAULT NULL,
   `updateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.locationdelay 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `locationdelay` DISABLE KEYS */;
@@ -368,14 +369,17 @@ CREATE TABLE IF NOT EXISTS `locationdelay` (
 CREATE TABLE IF NOT EXISTS `locationphone` (
   `idType` varchar(50) DEFAULT NULL,
   `timestamp` bigint(20) DEFAULT NULL,
-  `time_sva` bigint(20) DEFAULT NULL,
+  `time_begin` bigint(20) DEFAULT NULL,
+  `time_local` bigint(20) DEFAULT NULL,
+  `during` bigint(20) NOT NULL DEFAULT '0',
   `dataType` varchar(50) DEFAULT NULL,
   `x` decimal(10,0) DEFAULT NULL,
   `y` decimal(10,0) DEFAULT NULL,
   `z` decimal(10,0) DEFAULT NULL,
   `userID` varchar(50) NOT NULL,
+  `loc_count` bigint(20) NOT NULL DEFAULT '1',
   PRIMARY KEY (`userID`)
-) DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.locationphone 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `locationphone` DISABLE KEYS */;
@@ -393,7 +397,7 @@ CREATE TABLE IF NOT EXISTS `locationtemp` (
   `userID` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
   KEY `Index 1` (`userID`),
   KEY `Index 2` (`timestamp`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
 
@@ -406,7 +410,7 @@ CREATE TABLE IF NOT EXISTS `menu` (
   `type` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '0',
   `sort` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- 正在导出表  sva.menu 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `menu` DISABLE KEYS */;
@@ -419,7 +423,7 @@ CREATE TABLE IF NOT EXISTS `menuenglish` (
   `keyEN` varchar(1000) COLLATE utf8_bin DEFAULT NULL,
   `name` varchar(50) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) AUTO_INCREMENT=110 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- 正在导出表  sva.menuenglish 的数据：~28 rows (大约)
 /*!40000 ALTER TABLE `menuenglish` DISABLE KEYS */;
@@ -462,7 +466,7 @@ CREATE TABLE IF NOT EXISTS `menuname` (
   `keyZH` varchar(1000) COLLATE utf8_bin DEFAULT NULL,
   `name` varchar(50) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) AUTO_INCREMENT=84 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- 正在导出表  sva.menuname 的数据：~28 rows (大约)
 /*!40000 ALTER TABLE `menuname` DISABLE KEYS */;
@@ -522,7 +526,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   KEY `FK_message_store` (`placeId`),
   CONSTRAINT `FK_message_maps` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_message_store` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.message 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `message` DISABLE KEYS */;
@@ -542,7 +546,7 @@ CREATE TABLE IF NOT EXISTS `messagepush` (
   `isRigth` int(11) DEFAULT NULL,
   `updateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.messagepush 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `messagepush` DISABLE KEYS */;
@@ -580,7 +584,7 @@ CREATE TABLE IF NOT EXISTS `mwcprames` (
   `id` int(11) NOT NULL DEFAULT '0',
   `periodSel` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.mwcprames 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `mwcprames` DISABLE KEYS */;
@@ -595,7 +599,7 @@ CREATE TABLE IF NOT EXISTS `nowpeople` (
   `number` int(11) NOT NULL,
   PRIMARY KEY (`areaId`,`placeId`),
   CONSTRAINT `area_name` FOREIGN KEY (`areaId`) REFERENCES `area` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 正在导出表  sva.nowpeople 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `nowpeople` DISABLE KEYS */;
@@ -618,7 +622,7 @@ CREATE TABLE IF NOT EXISTS `param` (
   `filterPeakError` double(20,2) NOT NULL,
   `peakWidth` double(20,2) NOT NULL,
   PRIMARY KEY (`id`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- 正在导出表  sva.param 的数据：~1 rows (大约)
 /*!40000 ALTER TABLE `param` DISABLE KEYS */;
@@ -633,7 +637,7 @@ CREATE TABLE IF NOT EXISTS `phonenumber` (
   `phoneNumber` varchar(50) DEFAULT NULL,
   `timestamp` bigint(20) NOT NULL,
   UNIQUE KEY `Index 1` (`ip`,`phoneNumber`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 正在导出表  sva.phonenumber 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `phonenumber` DISABLE KEYS */;
@@ -655,7 +659,7 @@ CREATE TABLE IF NOT EXISTS `prru` (
   KEY `FK_prru_store` (`placeId`),
   CONSTRAINT `FK_prru_maps` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_prru_store` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.prru 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `prru` DISABLE KEYS */;
@@ -681,6 +685,7 @@ CREATE TABLE IF NOT EXISTS `register` (
 	INDEX `id` (`id`)
 )
 COLLATE='utf8_general_ci'
+ENGINE=InnoDB
 AUTO_INCREMENT=6;
 
 
@@ -702,7 +707,7 @@ CREATE TABLE IF NOT EXISTS `seller` (
   KEY `FK_seller_maps` (`floorNo`),
   CONSTRAINT `FK_seller_maps` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_seller_store` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.seller 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `seller` DISABLE KEYS */;
@@ -718,12 +723,12 @@ CREATE TABLE IF NOT EXISTS `staticaccuracy` (
   `destination` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `start_date` datetime NOT NULL,
   `end_date` datetime NOT NULL,
-  `avgeOffset` decimal(10,2) NOT NULL,
+  `avgeOffset` decimal(10,0) NOT NULL,
   `maxOffset` decimal(10,2) NOT NULL,
   `staicAccuracy` decimal(10,2) NOT NULL,
   `offsetCenter` decimal(10,2) NOT NULL,
   `offsetNumber` decimal(10,2) NOT NULL,
-  `stability` decimal(10,2) NOT NULL,
+  `stability` decimal(10,0) NOT NULL,
   `count_3` int(11) NOT NULL,
   `count_5` int(11) NOT NULL,
   `count_10` int(11) NOT NULL,
@@ -731,7 +736,7 @@ CREATE TABLE IF NOT EXISTS `staticaccuracy` (
   `detail` text COLLATE utf8_unicode_ci,
   `triggerIp` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.staticaccuracy 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `staticaccuracy` DISABLE KEYS */;
@@ -747,7 +752,7 @@ CREATE TABLE IF NOT EXISTS `staticvisit` (
   `averageTime` bigint(20) NOT NULL,
   PRIMARY KEY (`areaId`,`time`),
   CONSTRAINT `areaId` FOREIGN KEY (`areaId`) REFERENCES `area` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.staticvisit 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `staticvisit` DISABLE KEYS */;
@@ -761,7 +766,7 @@ CREATE TABLE IF NOT EXISTS `statisticarea` (
   `areaId` int(11) NOT NULL,
   `number` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.statisticarea 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `statisticarea` DISABLE KEYS */;
@@ -775,7 +780,7 @@ CREATE TABLE IF NOT EXISTS `statisticareaday` (
   `areaId` int(11) NOT NULL,
   `number` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.statisticareaday 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `statisticareaday` DISABLE KEYS */;
@@ -788,7 +793,7 @@ CREATE TABLE IF NOT EXISTS `statisticday` (
   `time` datetime NOT NULL,
   `number` int(11) DEFAULT NULL,
   PRIMARY KEY (`placeId`,`time`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.statisticday 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `statisticday` DISABLE KEYS */;
@@ -802,7 +807,7 @@ CREATE TABLE IF NOT EXISTS `statisticfloor` (
   `z` decimal(10,0) NOT NULL,
   PRIMARY KEY (`userID`,`time`,`z`),
   KEY `index` (`z`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.statisticfloor 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `statisticfloor` DISABLE KEYS */;
@@ -815,7 +820,7 @@ CREATE TABLE IF NOT EXISTS `statistichour` (
   `time` datetime NOT NULL,
   `number` int(11) DEFAULT NULL,
   PRIMARY KEY (`placeId`,`time`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.statistichour 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `statistichour` DISABLE KEYS */;
@@ -829,7 +834,7 @@ CREATE TABLE IF NOT EXISTS `statisticlinetemp` (
   `time` datetime DEFAULT NULL,
   `number` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 正在导出表  sva.statisticlinetemp 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `statisticlinetemp` DISABLE KEYS */;
@@ -842,7 +847,7 @@ CREATE TABLE IF NOT EXISTS `statistictemp` (
   `name` varchar(50) DEFAULT '0',
   `number` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 正在导出表  sva.statistictemp 的数据：~0 rows (大约)
 
@@ -860,11 +865,9 @@ CREATE TABLE IF NOT EXISTS `svalist` (
   `idType` VARCHAR(50) NOT NULL COMMENT 'IP,MAC,MSISDN' COLLATE 'utf8_unicode_ci',
   `tokenPort` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `brokerPort` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `statusCode` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
-  `managerEmail` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='sva列表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='sva列表';
 
 -- 正在导出表  sva.svalist 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `svalist` DISABLE KEYS */;
@@ -881,7 +884,7 @@ CREATE TABLE IF NOT EXISTS `svastoremap` (
   KEY `FK_svastoremap_store` (`storeId`),
   CONSTRAINT `FK_svastoremap_store` FOREIGN KEY (`storeId`) REFERENCES `store` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_svastoremap_svalist` FOREIGN KEY (`svaId`) REFERENCES `svalist` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `shprames` (
 	`floorNo1` DECIMAL(10,2) NULL DEFAULT NULL,
@@ -899,7 +902,8 @@ CREATE TABLE IF NOT EXISTS `shprames` (
 	`periodSel` INT(11) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`)
 )
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 
 CREATE TABLE IF NOT EXISTS `shpramesjing` (
@@ -921,7 +925,8 @@ CREATE TABLE IF NOT EXISTS `shpramesjing` (
     `periodSel` INT(11) NULL DEFAULT NULL,
     PRIMARY KEY (`id`)
 )
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `pushmsg` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
@@ -931,6 +936,7 @@ CREATE TABLE IF NOT EXISTS `pushmsg` (
 )
 COMMENT='服务器端推送消息，一个userid对应多条消息'
 COLLATE='utf8_general_ci'
+ENGINE=InnoDB
 AUTO_INCREMENT=4;
 
 CREATE TABLE IF NOT EXISTS `ticket` (
@@ -941,6 +947,7 @@ CREATE TABLE IF NOT EXISTS `ticket` (
 	PRIMARY KEY (`id`)
 )
 COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB
 AUTO_INCREMENT=9;
 
 CREATE TABLE IF NOT EXISTS `website_visit` (
@@ -953,7 +960,8 @@ CREATE TABLE IF NOT EXISTS `website_visit` (
 	`androidCount` INT(11) NULL DEFAULT '0',
 	`webCount` INT(11) NULL DEFAULT '0'
 )
-COLLATE='latin1_swedish_ci'; 
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB; 
 
 CREATE TABLE `petlocation` (
     `x` DECIMAL(10,2) NOT NULL,
@@ -968,7 +976,8 @@ CREATE TABLE `petlocation` (
     `status` INT(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
 )
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 CREATE TABLE `petsproperties` (
     `probability` DECIMAL(10,0) NULL DEFAULT NULL,
@@ -980,7 +989,8 @@ CREATE TABLE `petsproperties` (
     PRIMARY KEY (`id`)
 )
 COMMENT='宠物属性表'
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 
 CREATE TABLE `acquisitionpoint` (
@@ -1005,7 +1015,8 @@ CREATE TABLE `acquisitionpoint` (
     `storeId` INT(11) NULL DEFAULT NULL
 )
 COMMENT='坐标采集点'
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 
 CREATE TABLE `info_cgi_mapper` (
@@ -1017,7 +1028,8 @@ CREATE TABLE `info_cgi_mapper` (
     CONSTRAINT `FK_info_cgi_mapper_svalist` FOREIGN KEY (`svaId`) REFERENCES `svalist` (`id`)
 )
 COMMENT='获取定位信息表'
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 CREATE TABLE `info_register` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -1026,7 +1038,8 @@ CREATE TABLE `info_register` (
     `ils_url` VARCHAR(300) NOT NULL,
     INDEX `Index 1` (`id`)
 )
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 CREATE TABLE `parkinginformation` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -1044,7 +1057,8 @@ CREATE TABLE `parkinginformation` (
     INDEX `Index 1` (`id`)
 )
 COMMENT='0:空车位  1：非空车位'
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 CREATE TABLE `prrufeature` (
     `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
@@ -1058,7 +1072,8 @@ CREATE TABLE `prrufeature` (
     PRIMARY KEY (`id`)
 )
 COMMENT='prru特征库\r\n'
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 
 CREATE TABLE `prrufeaturedetail` (
@@ -1069,7 +1084,8 @@ CREATE TABLE `prrufeaturedetail` (
     PRIMARY KEY (`id`)
 )
 COMMENT='详细的特征值信息'
-COLLATE='latin1_swedish_ci';
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 
 CREATE TABLE `prrusignal` (
     `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
@@ -1081,16 +1097,16 @@ CREATE TABLE `prrusignal` (
     PRIMARY KEY (`id`)
 )
 COMMENT='prru信号数据'
-COLLATE='utf8_unicode_ci';
+COLLATE='utf8_unicode_ci'
+ENGINE=InnoDB;
 
-CREATE TABLE `acrdata` (
-    `floorNo` DECIMAL(10,2) NULL DEFAULT NULL,
-    `areaName` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_bin',
-    `userId` VARCHAR(100) NULL DEFAULT NULL COLLATE 'utf8_bin',
+CREATE TABLE `apmapper` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `areaId` INT(11) NOT NULL DEFAULT '0',
-    `timestamp` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_bin',
-    INDEX `Index 1` (`id`)
+    `lat` DECIMAL(10,2) NULL DEFAULT NULL,
+    `lon` DECIMAL(10,2) NULL DEFAULT NULL,
+    `mac` INT(11) NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
 )
-COLLATE='utf8_bin';
+COMMENT='ap级定位，ap与经纬度映射'
+COLLATE='utf8_general_ci';
 

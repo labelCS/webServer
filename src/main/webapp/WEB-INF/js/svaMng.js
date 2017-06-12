@@ -122,16 +122,8 @@ var SvaMng = function () {
     	                        return html;
     	                      }
     	                },
-    	                { 
-    						"aTargets": [10],
-    						"mData": "statusCode"
-    					},
-    					{ 
-    						"aTargets": [11],
-    						"mData": "managerEmail"
-    					},
     					{
-    	                    "aTargets": [12],
+    	                    "aTargets": [10],
     	                    "bSortable": false,
     	                    "bFilter": false,
     	                    "mData": function(source, type, val) {
@@ -142,7 +134,6 @@ var SvaMng = function () {
 	    	            		if(full.status == "1"){
 	    	            				html = '<input type=button data-type="stop" style="width:62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_disable+'" class="btn btn-mini" />' +
 	    	        				'&nbsp;<input type=button data-type="edt" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_edit+'" class="btn btn-mini" />';
-	    	            				html+='<input type=button data-type="validate" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_validate+'" class="btn btn-mini" />';
 	    	        			}else{
 	    	        				html = '<input type=button data-type="recover" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_enable+'" class="btn btn-mini" />'+
 	    	        				'&nbsp;<input type=button data-type="edt" style="width: 62px;height:32px;font-size: 13px;font-family:inherit;" data-id="'+full.id+'" value="'+i18n_edit+'" class="btn btn-mini" />';
@@ -189,15 +180,6 @@ var SvaMng = function () {
     return {
     	
     	bindClickEvent: function(){
-    		
-    		$("input[data-type='validate']").live("click",function(e){
-        		var id = $(this).data("id");
-        		$.post("/sva/svalist/api/svaValidate",{id:id},function(data){
-        			if(!data.error){
-        				refreshTable();
-        			}
-        		});
-           });
 
             $("input[data-type='stop']").live("click",function(e){
             	if (confirm(i18n_status)) {
@@ -253,7 +235,6 @@ var SvaMng = function () {
 	           	 	status = rowObj.childNodes[8].innerHTML,
 	           	    type = rowObj.childNodes[6].innerHTML,
 	           	    idType = rowObj.childNodes[7].innerHTML;
-	           		managerEmail = rowObj.childNodes[10].innerHTML;
 	           			
 	           	       
 				$("input[name='ip']").val(ip);
@@ -264,7 +245,6 @@ var SvaMng = function () {
 	           	$("#tokenId").val(token);
 	           	$("#brokerId").val(broker);
 	           	$("input[name='id']").val(id);
-	           	$("#managerEmail").val(managerEmail);
 	           	if (type==i18n_type) {
 		           	$("#subscriptionId").val(1);
 					$("#typename1").hide();
@@ -342,9 +322,7 @@ var SvaMng = function () {
             	
             	if(check){
 //            	$("#jiazai").show();
-            		// gaolu begin
-            		$(".demoform").submit();
-            		// gaolu end
+            		
               	  $.post("/sva/svalist/api/checkName",param,function(data){
               		  var b = data.data;
               		  if (data.ip) 

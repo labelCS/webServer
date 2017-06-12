@@ -28,13 +28,12 @@ import com.sva.dao.LinemapDao;
 import com.sva.dao.LocationDao;
 import com.sva.dao.MapsDao;
 import com.sva.dao.MessageDao;
-import com.sva.dao.PetLocationDao;
 import com.sva.dao.StoreDao;
 import com.sva.model.AreaInputModel;
 import com.sva.model.AreaModel;
 import com.sva.model.MessageModel;
 import com.sva.model.StoreModel;
-import com.sva.service.ValidateSVAService;
+import com.sva.service.SubscriptionService;
 
 public class QuartzJob {
 
@@ -63,13 +62,7 @@ public class QuartzJob {
     private LocationDao locDao;
     
     @Autowired
-    private ValidateSVAService validateSVAService;
-    
-    @Autowired
-    private PetLocationDao pet;
-    
-    @Value("${reflashTime}")
-    private String reflashTime;
+    private SubscriptionService service;
 
     @Value("${mysql.db}")
     private String db;
@@ -595,10 +588,10 @@ public class QuartzJob {
     /** 
      * @Title: checkSvaIsEnabled 
      * @Description: 启动数据库中为启动状态的sva  
-     * @author gl
      */
     public void checkSvaIsEnabled(){
-        validateSVAService.validateActiveSVA();
+        // 批量订阅启动状态的sva（指定用户订阅除外）
+        service.subscribeSvaInBatch();
     }
 
     public void saveVisitiTime() {
@@ -665,13 +658,8 @@ public class QuartzJob {
             randNumberY = -randNumberY;
         }
         //获取系统时间
-        
         long petTime = System.currentTimeMillis();
-        long tempTiem = 60000*Long.valueOf(reflashTime);
-        long updataTime = pet.getMaxPetTime();
-        if (updataTime+tempTiem<=petTime) {
-            String sql = "update petlocation set status=0, actualPositionX = x+"+randNumberX+",actualPositionY=y+"+randNumberY+",petRefreshTime="+petTime+";";
-            dao.doUpdate(sql);
-        }
+        String sql = "update petlocation set status=0, actualPositionX = x+"+randNumberX+",actualPositionY=y+"+randNumberY+",petRefreshTime="+petTime+";";
+        dao.doUpdate(sql);
     }   
 }

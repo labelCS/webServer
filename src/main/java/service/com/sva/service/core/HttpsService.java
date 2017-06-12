@@ -103,7 +103,7 @@ public abstract class HttpsService {
             throws NoSuchAlgorithmException, KeyManagementException,
             IOException
     {
-    	log.debug("httpsPost url:" + url+" count:"+content);
+    	log.debug("httpsPost url:" + url);
         Map<String,String> result = new HashMap<String,String>();
         String returnVal = "";
         URL console = new URL(url);
@@ -129,7 +129,7 @@ public abstract class HttpsService {
 
         // 写入参数
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
-        out.write(content.getBytes(charset));
+        out.write(content.getBytes("UTF-8"));
         out.flush();
         out.close();
         // 接受响应并返回
@@ -144,9 +144,8 @@ public abstract class HttpsService {
                 outStream.write(buffer, 0, len);
             }
             is.close();
-            returnVal = outStream.toString(charset);
-            log.debug(returnVal+" "+charset);
-            
+            returnVal = outStream.toString();
+            log.debug(result);
         }
         con.disconnect();
         

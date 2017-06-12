@@ -62,6 +62,12 @@
 	    height: 274px;
 		background-image:url("../images/scatter_pop.png");
 	}
+	
+	.line {
+                fill: none;
+                stroke: #000;
+                stroke-width: 1.5px;
+            }
    </style>
    
    <link rel="shortcut icon" href="favicon.ico" />

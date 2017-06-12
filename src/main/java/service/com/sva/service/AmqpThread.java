@@ -164,8 +164,8 @@ public class AmqpThread extends Thread {
                         byte[] keyBytes = new byte[length];
                         tm.readBytes(keyBytes);
                         String messages = new String(keyBytes);
-                        saveSvaData(messages, Integer.parseInt(sva.getStoreId()), sva.getType(), sva.getIp(), sva.getId());
                         LOG.debug("SVA Data:"+messages);
+                        saveSvaData(messages, Integer.parseInt(sva.getStoreId()), sva.getType(), sva.getIp());
                         mylog.other("SVA Data:"+messages);
                     }else{
                         LOG.debug("Get zero length message");
@@ -208,7 +208,7 @@ public class AmqpThread extends Thread {
      * @param type: 订阅类型
      * @throws   
      */ 
-    private void saveSvaData(String jsonStr, int storeId, int type, String ip, String svaId){
+    private void saveSvaData(String jsonStr, int storeId, int type, String ip){
         if(StringUtils.isEmpty(jsonStr)){
             LOG.warn("No data from SVA!");
             mylog.location("No data from SVA!");
@@ -216,11 +216,11 @@ public class AmqpThread extends Thread {
             JSONObject result = JSONObject.fromObject(jsonStr);
             // 非匿名化订阅
             if(result.containsKey("locationstream")){
-                saveLocationstream(result, storeId, type, svaId);
+                saveLocationstream(result, storeId, type);
             }
             // 匿名化订阅
             else if(result.containsKey("locationstreamanonymous")){
-                saveLocationstreamAnonymous(result, storeId, svaId);
+                saveLocationstreamAnonymous(result, storeId);
             }
             // 网络信息订阅
             else if(result.containsKey("networkinfo")){
@@ -242,15 +242,14 @@ public class AmqpThread extends Thread {
      * @param result
      * @param storeId
      * @param type 
-     * @param svaId
      */
-    private void saveLocationstream(JSONObject result, int storeId, int type, String svaId)
+    private void saveLocationstream(JSONObject result, int storeId, int type)
     {
         JSONArray list = result.getJSONArray("locationstream");
         for(int i = 0; i<list.size();i++){
             LocationModel lm = new LocationModel();
             JSONObject loc = list.getJSONObject(i);
-            if(!parseLocation(loc, storeId, lm, svaId)){
+            if(!parseLocation(loc, storeId, lm)){
                 continue;
             }
             // 全量订阅
@@ -280,16 +279,15 @@ public class AmqpThread extends Thread {
      * @Description: 匿名化订阅位置信息入库
      * @param result
      * @param storeId 
-     * @param svaId
      */
-    private void saveLocationstreamAnonymous(JSONObject result, int storeId, String svaId)
+    private void saveLocationstreamAnonymous(JSONObject result, int storeId)
     {
         JSONArray list = result.getJSONArray("locationstreamanonymous");
         
         for(int i = 0; i<list.size();i++){
             LocationModel lm = new LocationModel();
             JSONObject loc = list.getJSONObject(i);
-            if(!parseLocation(loc, storeId, lm, svaId)){
+            if(!parseLocation(loc, storeId, lm)){
                 continue;
             }
             
@@ -313,14 +311,12 @@ public class AmqpThread extends Thread {
         String userid = jsonAll.getString("userid");
         String enbid = jsonAll.getJSONObject("lampsiteinfo").getString("enbid");
         JSONArray jsonList = jsonAll.getJSONObject("lampsiteinfo").getJSONArray("prrusignal");
-        long timestamp = jsonAll.getLong("timestamp");
-        long localTimes = System.currentTimeMillis();
         for(int i = 0; i<jsonList.size(); i++){
             JSONObject temp = jsonList.getJSONObject(i);
             String gpp = temp.getString("gpp");
             String rsrp = temp.getString("rsrp");
             mylog.prru("prru data: enbid:"+enbid+" userid:"+userid+" gpp"+gpp+" rsrp:"+rsrp);
-            dao.svaPrru(enbid,userid,gpp,rsrp,ip,timestamp);
+            dao.svaPrru(enbid,userid,gpp,rsrp,ip);
         }
     }
     
@@ -361,24 +357,25 @@ public class AmqpThread extends Thread {
      * @param loc
      * @param storeId
      * @param lm
-     * @param svaId
      * @return：boolean       
      * @throws   
      */ 
-    private boolean parseLocation(JSONObject loc, int storeId, LocationModel lm, String svaId){
+    private boolean parseLocation(JSONObject loc, int storeId, LocationModel lm){
         // 当前时间戳
         long timeLocal = System.currentTimeMillis();
-        lm.setTimestamp(new BigDecimal(timeLocal));
         // 设置LocationModel
-        JSONObject location = loc.getJSONObject("location");
-        lm.setSvaId(svaId);
-        lm.setIdType(loc.getString("IdType"));
-        lm.setTimestamp(BigDecimal.valueOf(System.currentTimeMillis()));
-        lm.setTimestampSva(BigDecimal.valueOf(loc.getLong("Timestamp")));
         lm.setDataType(loc.getString("datatype"));
-        lm.setX(BigDecimal.valueOf(location.getInt("x")));
-        lm.setY(BigDecimal.valueOf(location.getInt("y")));
-        int z = location.getInt("z");
+        lm.setTimestamp(new BigDecimal(timeLocal));
+        lm.setTimeSva(BigDecimal.valueOf(loc.getLong("Timestamp")));
+        lm.setIdType(loc.getString("IdType"));
+        // datatype为invalid时，不带location字段
+        if(!loc.getString("datatype").equals("invalid")){
+            JSONObject location = loc.getJSONObject("location");
+            lm.setX(BigDecimal.valueOf(location.getInt("x")));
+            lm.setY(BigDecimal.valueOf(location.getInt("y")));
+            lm.setZ(BigDecimal.valueOf(location.getInt("z")));
+            lm.setMapId(loc.getJSONObject("map").getInt("mapid"));
+        }
         JSONArray useridList = loc.getJSONArray("userid");
         // 用户存在多个的情况，目前只取第一个；若用户为空则不作处理
         if(useridList.size()>0){
@@ -386,13 +383,18 @@ public class AmqpThread extends Thread {
         }else{
             return false;
         }
-        // 楼层号转换
-        if(z > 0){
-            z += storeId*10000;
-        }else{
-            z = Math.abs(z) + 5000 + storeId*10000;
+        
+        // 可选数据
+        if(loc.containsKey("s1apid")){
+            lm.setS1apId(loc.getString("s1apid"));
         }
-        lm.setZ(BigDecimal.valueOf(z));
+        if(loc.containsKey("openid")){
+            lm.setOpenId(loc.getString("openid"));
+        }
+        if(loc.containsKey("apinfo")){
+            lm.setMac(loc.getJSONObject("apinfo").getString("mac"));
+            lm.setRssi(loc.getJSONObject("apinfo").getInt("rssi"));
+        }
         
         return true;
     }

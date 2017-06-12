@@ -323,6 +323,10 @@
         SELECT * FROM area where floorNo = #{value}
     </select>
     
+    <select id="selectAeareByMapId" resultType="AreaModel">
+        SELECT * FROM area where mapId = #{value}
+    </select>
+    
     <select id="getAreaByAreaId" resultType="AreaModel">
         SELECT * FROM area where id = #{value}
     </select>
@@ -449,26 +453,4 @@
     <select id="getAverageTimeByAreaId1" resultType="java.util.Map">
         select * from district_during where district_id = #{areaId} and timestamp &gt; #{time}
     </select>
-    
-    <select id="getACRData" resultType="java.util.Map">
-       select max(timestamp) timestamp,userId from
-        (select userID,timestamp from 
-             ${tableName} 
-             where z = #{floorNo} 
-             and idType = 'ACR' 
-             and x  &gt; #{area.xSpot}*10 
-             and x  &lt; #{area.x1Spot}*10 
-             and y &gt; #{area.ySpot}*10 
-             and y &lt; #{area.y1Spot}*10
-             and timestamp &gt; #{startTime}
-             and timestamp &lt; #{endTime}
-          ) acr group by userId
-    </select>
-
-    <insert id="saveACR">
-        insert into 
-            acrdata(areaName,floorNo,areaId,userId) 
-        valuse(#{acr.floorNo},#{acr.areaName},#{acr.areaId},#{acr.userId})
-    </insert>    
-          
 </mapper>

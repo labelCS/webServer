@@ -237,6 +237,36 @@ public class HomeController
         return "home/positionMap";
     }
     
+    /** 
+     * @Title: showApMapper 
+     * @Description: AP级定位映射文件上传页面
+     * @param model
+     * @return 
+     */
+    @AuthPassport
+    @RequestMapping(value = "/showApMapper", method = {RequestMethod.GET})
+    public String showApMapper(Model model)
+    {
+        model.addAttribute("tools", true);
+        model.addAttribute("apMapper", true);
+        return "tool/apMapperUpload";
+    }
+    
+    /** 
+     * @Title: showApLocationMap 
+     * @Description: AP级定位显示页面
+     * @param model
+     * @return 
+     */
+    @AuthPassport
+    @RequestMapping(value = "/showApLocationMap", method = {RequestMethod.GET})
+    public String showApLocationMap(Model model)
+    {
+        model.addAttribute("customerStat", true);
+        model.addAttribute("apLocation", true);
+        return "home/apLocation";
+    }
+    
     @AuthPassport
     @RequestMapping(value = "/showCodeMng", method = {RequestMethod.GET})
     public String showCodeMng(Model model,
@@ -294,21 +324,6 @@ public class HomeController
         model.addAttribute("locTest", true);
         model.addAttribute("locationdelay", true);
         return "home/locationdelay";
-    }
-    
-    /** 
-     * @Title: showFeatureBase 
-     * @Description: 特征库下载页面
-     * @param model
-     * @return 
-     */
-    @AuthPassport
-    @RequestMapping(value = "/showFeatureBase", method = {RequestMethod.GET})
-    public String showFeatureBase(Model model)
-    {
-        model.addAttribute("locTest", true);
-        model.addAttribute("featureBase", true);
-        return "home/featureBase";
     }
 
     @AuthPassport
@@ -483,6 +498,22 @@ public class HomeController
     }
     
     @AuthPassport
+    @RequestMapping(value = "/showParams", method = {RequestMethod.GET})
+    public String showParam (Model model)
+    {
+        model.addAttribute("infoMng", true);
+        model.addAttribute("showParams", true);
+        return "manage/showParams";
+    }
+    
+    @RequestMapping(value = "/showBaShow", method = {RequestMethod.GET})
+    public String showBaShow (Model model)
+    {
+        model.addAttribute("baShow", true);
+        return "show/showBarcelona";
+    }
+    
+    @AuthPassport
     @RequestMapping(value = "/pet", method = {RequestMethod.GET})
     public String pet(Model model)
     {
@@ -522,14 +553,6 @@ public class HomeController
         return "redirect:" + str;
     }
 
-    @RequestMapping(value = "/showLeshan", method = {RequestMethod.GET})
-    public String showLeshan(Model model)
-    {
-        model.addAttribute("customerStat", true);
-        model.addAttribute("linemap", true);
-        return "home/leshan";
-    }
-    
     @RequestMapping(value = "/notfound")
     public ModelAndView notfound()
     {

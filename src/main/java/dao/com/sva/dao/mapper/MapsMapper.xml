@@ -256,6 +256,5 @@
     
     <select id="getParkingNumber" resultType="String">
         SELECT parkingNumber FROM parkinginformation WHERE floorNo = #{value} and isTrue = 0
-    </select>
-    
+    </select>          
 </mapper>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sva.dao.ShowParamsDao">
+
+    <select id="getTableData" resultType="ShowParamsModel">
+        SELECT 
+            a.storeId1,
+            a.storeId2,
+            a.storeId3,
+            a.storeId4,
+            a.storeId5,
+            a.storeId6,
+            a.storeId7,
+            a.storeId8,
+            a.mapId1,
+            a.mapId2,
+            a.mapId3,
+            a.mapId4,
+            a.mapId5,
+            a.mapId6,
+            a.mapId7,
+            a.mapId8,
+            a.densitySel1,
+            a.densitySel2,
+            a.densitySel3,
+            a.densitySel4,
+            a.densitySel5,
+            a.densitySel6,
+            a.densitySel7,
+            a.densitySel8,
+            a.radiusSel1,
+            a.radiusSel2,
+            a.radiusSel3,
+            a.radiusSel4,
+            a.radiusSel5,
+            a.radiusSel6,
+            a.radiusSel7,
+            a.radiusSel8,
+            a.id,
+            a.update_time updateTime,
+            a.custom_param customParam,
+            a.start_statistic_time startStatisticTime,
+            a.show_id showId,
+            a.fake_ratio fakeRatio,
+            a.period_heatmap periodHeatmap,
+            s1.name storeName1, 
+            s2.name storeName2, 
+            s3.name storeName3, 
+            s4.name storeName4, 
+            s5.name storeName5, 
+            s6.name storeName6, 
+            s7.name storeName7, 
+            s8.name storeName8,
+            m1.floor floorName1,
+            m2.floor floorName2,
+            m3.floor floorName3,
+            m4.floor floorName4,
+            m5.floor floorName5,
+            m6.floor floorName6,
+            m7.floor floorName7,
+            m8.floor floorName8
+        FROM 
+            show_params a 
+            left join store s1 on a.storeId1 = s1.id 
+            left join store s2 on a.storeId2 = s2.id 
+            left join store s3 on a.storeId3 = s3.id 
+            left join store s4 on a.storeId4 = s4.id 
+            left join store s5 on a.storeId5 = s5.id 
+            left join store s6 on a.storeId6 = s6.id 
+            left join store s7 on a.storeId7 = s7.id 
+            left join store s8 on a.storeId8 = s8.id 
+            left join maps m1 on a.mapId1 = m1.mapId
+            left join maps m2 on a.mapId2 = m2.mapId
+            left join maps m3 on a.mapId3 = m3.mapId
+            left join maps m4 on a.mapId4 = m4.mapId
+            left join maps m5 on a.mapId5 = m5.mapId
+            left join maps m6 on a.mapId6 = m6.mapId
+            left join maps m7 on a.mapId7 = m7.mapId
+            left join maps m8 on a.mapId8 = m8.mapId
+        GROUP BY a.id
+    </select>
+    
+    <insert id="addData">
+        INSERT INTO 
+            show_params(
+                storeId1,
+                storeId2,
+                storeId3,
+                storeId4,
+                storeId5,
+                storeId6,
+                storeId7,
+                storeId8,
+                mapId1,
+                mapId2,
+                mapId3,
+                mapId4,
+                mapId5,
+                mapId6,
+                mapId7,
+                mapId8,
+                densitySel1,
+                densitySel2,
+                densitySel3,
+                densitySel4,
+                densitySel5,
+                densitySel6,
+                densitySel7,
+                densitySel8,
+                radiusSel1,
+                radiusSel2,
+                radiusSel3,
+                radiusSel4,
+                radiusSel5,
+                radiusSel6,
+                radiusSel7,
+                radiusSel8,
+                update_time,
+                custom_param,
+                start_statistic_time,
+                show_id,
+                fake_ratio,
+                period_heatmap
+            ) 
+        VALUES(
+                #{storeId1},
+                #{storeId2},
+                #{storeId3},
+                #{storeId4},
+                #{storeId5},
+                #{storeId6},
+                #{storeId7},
+                #{storeId8},
+                #{mapId1},
+                #{mapId2},
+                #{mapId3},
+                #{mapId4},
+                #{mapId5},
+                #{mapId6},
+                #{mapId7},
+                #{mapId8},
+                #{densitySel1},
+                #{densitySel2},
+                #{densitySel3},
+                #{densitySel4},
+                #{densitySel5},
+                #{densitySel6},
+                #{densitySel7},
+                #{densitySel8},
+                #{radiusSel1},
+                #{radiusSel2},
+                #{radiusSel3},
+                #{radiusSel4},
+                #{radiusSel5},
+                #{radiusSel6},
+                #{radiusSel7},
+                #{radiusSel8},
+                #{updateTime},
+                #{customParam},
+                #{startStatisticTime},
+                #{showId},
+                #{fakeRatio},
+                #{periodHeatmap}
+        )
+    </insert>
+    
+    <update id="updateData">
+        UPDATE show_params 
+        SET 
+            storeId1 = #{storeId1},
+            storeId2 = #{storeId2},
+            storeId3 = #{storeId3},
+            storeId4 = #{storeId4},
+            storeId5 = #{storeId5},
+            storeId6 = #{storeId6},
+            storeId7 = #{storeId7},
+            storeId8 = #{storeId8},
+            mapId1 = #{mapId1},
+            mapId2 = #{mapId2},
+            mapId3 = #{mapId3},
+            mapId4 = #{mapId4},
+            mapId5 = #{mapId5},
+            mapId6 = #{mapId6},
+            mapId7 = #{mapId7},
+            mapId8 = #{mapId8},
+            densitySel1 = #{densitySel1},
+            densitySel2 = #{densitySel2},
+            densitySel3 = #{densitySel3},
+            densitySel4 = #{densitySel4},
+            densitySel5 = #{densitySel5},
+            densitySel6 = #{densitySel6},
+            densitySel7 = #{densitySel7},
+            densitySel8 = #{densitySel8},
+            radiusSel1 = #{radiusSel1},
+            radiusSel2 = #{radiusSel2},
+            radiusSel3 = #{radiusSel3},
+            radiusSel4 = #{radiusSel4},
+            radiusSel5 = #{radiusSel5},
+            radiusSel6 = #{radiusSel6},
+            radiusSel7 = #{radiusSel7},
+            radiusSel8 = #{radiusSel8},
+            update_time = #{updateTime},
+            custom_param = #{customParam},
+            start_statistic_time = #{startStatisticTime},
+            show_id = #{showId},
+            fake_ratio = #{fakeRatio},
+            period_heatmap = #{periodHeatmap}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteData">
+        DELETE from show_params WHERE id = #{id}
+    </delete>
+    
+    <select id="getParamsByShowId" resultType="ShowParamsModel">
+        SELECT 
+            *,
+            update_time updateTime,
+            custom_param customParam,
+            show_id showId,
+            start_statistic_time startStatisticTime,
+            fake_ratio fakeRatio,
+            period_heatmap periodHeatmap
+        FROM show_params WHERE show_id = #{value}
+    </select>
+    
+</mapper>

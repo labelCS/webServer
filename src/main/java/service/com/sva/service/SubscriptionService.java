@@ -83,11 +83,11 @@ public class SubscriptionService extends HttpsService {
      * @param phoneIp: 手机ip
      */
     public void subscribeSvaPhone(SvaModel sva, String phoneIp){
-//        mylog.location("subscribeSvaPhone started:"
-//                + "svaId:" + sva.getId() 
-//                + ",ip:" + sva.getIp() 
-//                + ",port:" + sva.getTokenPort()
-//                + ",phoneIp:" + phoneIp);
+        mylog.location("subscribeSvaPhone started:"
+                + "svaId:" + sva.getId() 
+                + ",ip:" + sva.getIp() 
+                + ",port:" + sva.getTokenPort()
+                + ",phoneIp:" + phoneIp);
         LOG.debug("subscribeSvaPhone started:"
                 + "svaId:" + sva.getId() 
                 + ",ip:" + sva.getIp() 
@@ -131,7 +131,7 @@ public class SubscriptionService extends HttpsService {
                     + ",\"useridlist\":[\""
                     + ConvertUtil.convertMacOrIp(phoneIp)
                     + "\"]}";
-            LOG.debug("subscribeSvaPhone param:"+content);
+            
             // 获取订阅ID
             Map<String,String> subResult = this.httpsPost(url, content, charset,"POST", tokenResult.get("token"),svaSSLVersion);
             LOG.debug("subscribeSvaPhone result:" + subResult.get("result"));
@@ -277,10 +277,6 @@ public class SubscriptionService extends HttpsService {
             
             // 是否需要在订阅参数中加idType
             String idTypeString = "";
-            String isIpMac = "0a0a0a0a";
-            if (("MAC").equals(sva.getIdType())) {
-                isIpMac = "C01ADA2E2BC0";
-            }
             if(FLAG1.equals(hasIdType)){
                 idTypeString = ",\"idType\":\""+sva.getIdType()+"\"";
             }
@@ -305,11 +301,15 @@ public class SubscriptionService extends HttpsService {
             // 指定用户订阅
             else if (sva.getType() == 2)
             {
+                String userId = "0a0a0a0a";
+                if("MAC".equals(sva.getIdType())){
+                    userId = "0a0a0a0a0a0a";
+                }
                 url = "https://" + sva.getIp() + ":" + sva.getTokenPort()
                         + "/enabler/catalog/locationstreamreg/json/v1.0";
                 content = "{\"APPID\":\"" + sva.getUsername()+ "\""
                         + idTypeString
-                        + ",\"useridlist\":[\""+isIpMac+"\"]}";
+                        + ",\"useridlist\":[\"" + userId + "\"]}";
             }
             LOG.debug("subscription param:"+content);
             // 获取订阅ID
@@ -415,6 +415,14 @@ public class SubscriptionService extends HttpsService {
                 Map<String,String> subResultAnonymous = this.httpsPost(url, content,charset, "DELETE", token, svaSSLVersion);
                 LOG.debug("[unsubscribe]anonymous result:" + subResultAnonymous.get("result"));
                 mylog.location("[unsubscribe]anonymous result:" + subResultAnonymous.get("result"));
+            }else if(sva.getType() == 2){
+                // 指定用户取消订阅
+                url = "https://" + sva.getIp() + ":" + sva.getTokenPort()
+                        + "/enabler/catalog/locationstreamunreg/json/v1.0";
+                content = "{\"APPID\":\"" + sva.getUsername()+ "\""+idTypeString+"}";
+                Map<String,String> subSpecResult = this.httpsPost(url, content,charset, "DELETE", token, svaSSLVersion);
+                LOG.debug("[unsubscribe]specific result:" + subSpecResult.get("result"));
+                mylog.location("[unsubscribe]specific result:" + subSpecResult.get("result"));
             }
             
             // 关闭amqp连接

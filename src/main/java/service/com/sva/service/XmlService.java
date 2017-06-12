@@ -109,62 +109,6 @@ public class XmlService {
     }
     
     /**   
-     * @Title: createStandardPathFile   
-     * @Description: 生成标准版的xml
-     * @param fileName
-     * @param jsonObject
-     * @param optParam
-     * @return：int       
-     * @throws   
-     */ 
-    public int createStandardPathFile(String fileName, JSONObject jsonObject, JSONObject optParam){
-        LOG.debug("待生成的文件名称："+fileName);
-        // 创建document
-        Element root = DocumentHelper.createElement("root");  
-        Document document = DocumentHelper.createDocument(root);  
-        
-        // 写入参数
-        Element elInit = root.addElement("initialize");
-        elInit.addAttribute("widthPx", jsonObject.getString("width"))
-            .addAttribute("widthGL", optParam.getString("width3D"))
-            .addAttribute("heightGL", optParam.getString("height3D"))
-            .addAttribute("left_upGL_x", optParam.getString("upperLeftX3D"))
-            .addAttribute("left_upGL_y", optParam.getString("upperLeftY3D"))
-            .addAttribute("widthMi", jsonObject.getString("widthReal"));
-        
-        // 组装数据
-        JSONArray pointArray = (JSONArray) jsonObject.get("point");
-        JSONArray dataArray = (JSONArray) jsonObject.get("data");
-        
-        // 遍历map，写入关系element
-        for(int i = 0; i<dataArray.size(); i++){
-            JSONArray lineArray = dataArray.getJSONArray(i);
-            String from = lineArray.getString(0);
-            String to = lineArray.getString(1);
-            String distance = calcDistanceBetweenPoints(from, to, pointArray);
-            
-            Element el = root.addElement("line");
-            el.addAttribute("from", from);
-            el.addAttribute("to", to);
-            el.addText(distance);  
-        }
-        
-        // 遍历点的数组，写入点element
-        for(int i = 0; i<pointArray.size(); i++){
-            JSONObject p = (JSONObject) pointArray.get(i);
-            String id = p.getString("id");
-            String x = p.getString("x");
-            String y = p.getString("y");
-            Element el = root.addElement("points");
-            el.addAttribute("id", id);
-            el.addAttribute("x", x);
-            el.addAttribute("y", y);
-        }
-        
-        return createXml(document, fileName);
-    }
-    
-    /**   
      * @Title: readSimplePathFile   
      * @Description: 从简化版的xml中读取数据
      * @param fileName
@@ -235,68 +179,6 @@ public class XmlService {
         data.put("point", pointData);
         data.put("data", lineData);
         result.put("data", data);
-        return result;
-    }
-    
-    /** 
-     * @Title: readStandardPathFile 
-     * @Description: 读取标准路径规划配置文件
-     * @param fileName
-     * @return 
-     */
-    public Map<String, Object> readStandardPathFile(String fileName){
-        Map<String, Object> result = new HashMap<String,Object>();
-        
-        // 获取根节点
-        Element root = getRootElement(fileName);
-        // 读取异常，返回
-        if(root == null){
-            result.put("error", "read xml failed,Check if file existed!");
-            return result;
-        }
-        // 参数节点
-        Element optParam = root.element("initialize");
-        String width3D = optParam.attribute("widthGL").getText();
-        String height3D = optParam.attribute("heightGL").getText();
-        String upperLeftX3D = optParam.attribute("left_upGL_x").getText();
-        String upperLeftY3D = optParam.attribute("left_upGL_y").getText();
-        result.put("width3D", width3D);
-        result.put("height3D", height3D);
-        result.put("upperLeftX3D", upperLeftX3D);
-        result.put("upperLeftY3D", upperLeftY3D);
-        
-        // 点节点
-        @SuppressWarnings("unchecked")
-        List<Element> points = root.elements("points");
-        List<Map<String, Object>> pointData = new ArrayList<Map<String, Object>>();
-        Iterator<Element> it = points.iterator();
-        while(it.hasNext()){
-            Element point = (Element) it.next();
-            Map<String, Object> temp = new HashMap<String, Object>();
-            temp.put("id", point.attribute("id").getText());
-            temp.put("x", point.attribute("x").getText());
-            temp.put("y", point.attribute("y").getText());
-            pointData.add(temp);
-        }
-        
-        // 线节点
-        @SuppressWarnings("unchecked")
-        List<Element> nodes = root.elements("line");
-        // 线
-        List<Map<String, Object>> lineData = new ArrayList<Map<String, Object>>();
-        it = nodes.iterator();
-        while (it.hasNext()) {
-            Element line = (Element) it.next();
-            Map<String, Object> temp = new HashMap<String, Object>();
-            temp.put("from", line.attribute("from").getText());
-            temp.put("to", line.attribute("to").getText());
-            temp.put("distance", line.getText());
-            // fromId已经统计结束，在mapper上注册
-            lineData.add(temp);
-        }
-        
-        result.put("point", pointData);
-        result.put("line", lineData);
         return result;
     }
     
@@ -376,30 +258,5 @@ public class XmlService {
             result.deleteCharAt(result.length()-1);
         }
         return result.toString();
-    }
-    
-    private String calcDistanceBetweenPoints(String from, String to, JSONArray pointArray){
-        // from点的坐标
-        double x1 = 0;
-        double y1 = 0;
-        // to点的坐标
-        double x2 = 0;
-        double y2 = 0;
-        // 遍历数据，找出from和to对应的坐标
-        for(int i = 0; i<pointArray.size(); i++){
-            JSONObject p = (JSONObject) pointArray.get(i);
-            String id = p.getString("id");
-            if(id.equals(from)){
-                x1 = Double.parseDouble(p.getString("x"));
-                y1 = Double.parseDouble(p.getString("y"));
-            }else if(id.equals(to)){
-                x2 = Double.parseDouble(p.getString("x"));
-                y2 = Double.parseDouble(p.getString("y"));
-            }
-        }
-        // 计算距离
-        double result = Math.sqrt(Math.pow((x1 - x2),2) + Math.pow((y1 - y2),2));
-        // 返回字符串
-        return "" + result;
     }
 }

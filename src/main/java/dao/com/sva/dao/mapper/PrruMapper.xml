@@ -10,15 +10,12 @@
     
     <insert id="saveInfo">
         INSERT INTO 
-            prru(floorNo,x,y,pRRUid,name,placeId,neCode,eNodeBid,cellId) 
-        VALUES(#{floorNo},#{x},#{y},#{neId},#{neName},#{placeId},#{neCode},#{eNodeBid},#{cellId})
+            prru(floorNo,x,y,pRRUid,name,placeId,neCode) 
+        VALUES(#{floorNo},#{x},#{y},#{neId},#{neName},#{placeId},#{neCode})
     </insert>
     
     <delete id="deleteInfo">
-        DELETE from prru  WHERE floorNo = #{floorNo}
-        <if test="eNodeBid != ''">
-    		and eNodeBid=#{eNodeBid} 
-    	</if>
+        DELETE from prru  WHERE floorNo = #{value}
     </delete>
     
     <select id="checkByFloorNo" resultType="int">
@@ -37,17 +34,4 @@
         SELECT * FROM prrusignal where timestamp = (select max(timestamp) from prrusignal where userId = #{userId} and timestamp > #{time}  )
     </select>
     
-    <select id="getPrruInfo" resultType="PrruModel">
-    	select DISTINCT eNodeBid,cellId from prru where floorNo=#{floorNo} and eNodeBid=#{eNodeBid}
-    </select>
-    
-    <select id="getPrruInfoByfloorNo" resultType="PrruModel">
-    	SELECT * from pRRU where floorNo=#{floorNo}
-    	<if test="eNodeBid != ''">
-    		and eNodeBid=#{eNodeBid} 
-    	</if>
-    	<if test="cellId != ''">
-    		and cellId=#{cellId}
-    	</if>
-    </select>
 </mapper>

@@ -73,7 +73,7 @@ public interface AmqpDao {
      * @throws   
      */ 
     public int svaPrru(@Param("enbid")String enbid,@Param("userId")String userId,@Param("gpp")String gpp,
-            @Param("rsrp")String rsrp,@Param("ip")String ip,@Param("timestamp")long timestamp);
+            @Param("rsrp")String rsrp,@Param("ip")String ip);
     
     /**   
      * @Title: svaGeofencing   
