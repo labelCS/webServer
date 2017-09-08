@@ -76,6 +76,16 @@ public interface PrruSignalDao {
      * @param userId
      * @return 
      */
+    public List<PrruSignalModel> getCurrentSignalsByUserIdTime(
+            @Param("userId")String userId, @Param("timestamp")long timestamp, @Param("type")String type);
+    
+    /** 
+     * @Title: getCurrentSignalsByUserIdTime 
+     * @Description: 获取当前指定用户的信号数据
+     * @param userId
+     * @return 
+     */
+    
     public List<PrruSignalModel> getTwoSignalByUserId(@Param("userId")String userId, @Param("type")String type);
     
     /** 
@@ -86,6 +96,13 @@ public interface PrruSignalDao {
      */
     public List<PrruFeatureModel> getRelativeFeature(@Param("gpps")List<String> gpps, @Param("floorNo")String floorNo);
     
+    /** 
+     * @Title: getRelativeFeatureWithoutFloorNo 
+     * @Description: 获取相关的特征库 
+     * @param gpps
+     * @return 
+     */
+    public List<PrruFeatureModel> getRelativeFeatureWithoutFloorNo(@Param("gpps")List<String> gpps);
     /** 
      * @Title: deleteSignal 
      * @Description: 清空信号表

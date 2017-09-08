@@ -9,7 +9,9 @@
 package com.sva.model;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /** 
  * @ClassName: PrruFeatureModel 
@@ -32,6 +34,11 @@ public class PrruFeatureModel {
     private String eNodeBid;
     private long timestamp;
     List<PrruFeatureDetailModel> featureValues;
+    List<PrruFeatureDetailModel> featureValuesWifi;
+    List<PrruFeatureDetailModel> featureValuesBlue;
+    Map<String, BigDecimal> lteGppToFeatureValue;
+    Map<String, BigDecimal> wifiGppToFeatureValue;
+    Map<String, BigDecimal> blueGppToFeatureValue;
     /**
      * @return the id
      */
@@ -134,6 +141,35 @@ public class PrruFeatureModel {
     public List<PrruFeatureDetailModel> getFeatureValues() {
         return featureValues;
     }
+    
+    /**
+     * @return the featureValuesLst
+     */
+    public Map<String, BigDecimal> getFeatureValuesByType(String type) {
+        if(type=="1"){
+        	return lteGppToFeatureValue;
+        }
+        else if(type=="2"){
+        	return wifiGppToFeatureValue;
+        }
+        
+    	return blueGppToFeatureValue;
+    }
+    /**
+     * @param featureValuesByType the featureValues to set
+     */
+    public void setFeatureValuesByType(Map<String, BigDecimal> featureValues,String type) {
+        if(type=="1"){
+        	this.lteGppToFeatureValue = featureValues;
+        }
+        else if(type=="2"){
+        	this.wifiGppToFeatureValue = featureValues;
+        }
+        else{
+        	this.blueGppToFeatureValue = featureValues;
+        }
+    }
+    
     /**
      * @param featureValues the featureValues to set
      */

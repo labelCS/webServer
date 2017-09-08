@@ -177,6 +177,23 @@ public class ApiPhoneController {
     }
     
     /** 
+     * @Title: getMixData 
+     * @Description: 混合特征库定位接口
+     * @param userId
+     * @return 
+     */
+    @RequestMapping(value = "/getMixData", method = {RequestMethod.POST})
+    @ResponseBody
+    public Map<String, Object> getMixData(String userId, String switchLTE, 
+    		String switchWifi, String switchBlue,
+    		@RequestParam(value="floorNo", required=false)String floorNo)
+    {
+
+        LOG.debug("ID:" + userId+",switchLTE:"+switchLTE+",switchWifi:"+switchWifi+",switchBlue:"+switchBlue+",floorNo:"+floorNo);
+        return prruService.getLocationMixPrru(userId,switchLTE,switchWifi,switchBlue,floorNo);
+    }
+    
+    /** 
      * @Title: getCurrentPrruWithRsrp 
      * @Description: 获取当前的prru及对应的信号强度
      * @param userId

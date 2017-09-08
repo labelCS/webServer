@@ -80,7 +80,7 @@ public class CollectThread extends Thread {
     /** 
      * @Fields DEFAULT_VALUE : 首条LTE信号超时时间的默认值
      */ 
-    private static final long FIRST_TIME_OUT = 5L;
+    private static final long FIRST_TIME_OUT = 20L;
     
     /** 
      * @Fields DEFAULT_VALUE : 首条LTE信号超时时间的默认值
@@ -95,7 +95,7 @@ public class CollectThread extends Thread {
     /** 
      * @Fields THRESHOLD : 特征值的阈值
      */ 
-    private static final BigDecimal THRESHOLD = new BigDecimal(-1300);
+    private static final BigDecimal THRESHOLD = new BigDecimal(-4500);
     
     public CollectThread(PrruFeatureApiModel bean, PrruSignalDao dao){
         this.params = bean;
@@ -120,13 +120,19 @@ public class CollectThread extends Thread {
         
         // 取得当前时间戳，作为任务起始时间
         long beginTimestamp = System.currentTimeMillis();
+        lineBeginTime = beginTimestamp;
         
         try{
         	if(params.getSwitchLTE()!=0){
+        		List<PrruSignalModel> prruSignals;
+        		int count = 0;
+        		do {
+        			prruSignals = prruSignalDao.getSignalByUserIdTime(params.getUserId(), beginTimestamp, "1");
+        			sleep(2000);
+        			count++;
+				} while (prruSignals.isEmpty() && count < 10);
         		
-        		sleep(FIRST_TIME_OUT*1000);
-        		List<PrruSignalModel> prruSignals = prruSignalDao.getSignalByUserIdTime(params.getUserId(), beginTimestamp, "1");
-                // 如果未找到prru信号数据，说明对接AE出现问题
+        		 // 如果未找到prru信号数据，说明对接AE出现问题
                 if(prruSignals.isEmpty()){
                     LOG.error("未收到prru信号数据，请确定sva通道是否正常!");
                     runState = 1;
@@ -145,9 +151,9 @@ public class CollectThread extends Thread {
         	}
         }catch(InterruptedException e){
             // 线程中断
-            LOG.info(e);            
+            LOG.error("CollectThread:" + e.getMessage());            
         }catch(Exception e){
-            LOG.error(e);
+        	LOG.error("CollectThread:" + e.getMessage());
         }finally{
             // 任务线程最终要从线程池中移除
             GlobalConf.removePrruThreadPool(params.getUserId());
@@ -284,7 +290,7 @@ public class CollectThread extends Thread {
                 @SuppressWarnings("unchecked")
                 Map<String, BigDecimal> tempData = (Map<String, BigDecimal>) entity.get("data");
                 if(!contiueSignal && !(continueCheck(lastEntity,entity))){
-                	runState = 3;
+                	runState = 2;
                 	return runState;
                 }
                 lastEntity = entity;
@@ -442,7 +448,6 @@ public class CollectThread extends Thread {
     }
     
     private boolean samplingLine(long beginTimestamp) throws InterruptedException{
-    	lineBeginTime = beginTimestamp;
     	sleep(LINE_TIME_OUT*1000);
     	if(!isLineFinished){
     		runState = 6;
@@ -497,9 +502,6 @@ public class CollectThread extends Thread {
         long lastTimestamp = 0L;
     	// 任务挂起一段时间，等待prruSignal信息采集入库
         long sleepTime = 2*params.getLength()*1000;
-        if(params.getSwitchLTE()!=0){
-        	sleepTime = (sleepTime - FIRST_TIME_OUT*1000);
-        }
         sleep(sleepTime);
         // 从数据库取出已收集到的prru信号信息
         List<PrruSignalModel> prruSignals = prruSignalDao.getSignalByUserIdTime(params.getUserId(), beginTimestamp, "1");
@@ -575,7 +577,9 @@ public class CollectThread extends Thread {
         		blueFormatedList = blueFormatedList.subList(0, params.getLength());
         	}
         }
-
+        if(formatedList.size() > params.getLength()){
+        	formatedList = formatedList.subList(0, params.getLength());
+        }
         boolean merged = mergeSignals(formatedList, wifiFormatedList, blueFormatedList);
         //融合失败
         if(!merged){
@@ -601,7 +605,9 @@ public class CollectThread extends Thread {
     		mergeTwoSignals(lteDatas, bluedatas);
     	}
     	else {
-    		mergeTwoSignals(wifiDatas, bluedatas);
+    		if(params.getSwitchWIFI()!=0 && !wifiDatas.isEmpty()){
+    			mergeTwoSignals(wifiDatas, bluedatas);
+    		}
     	}
     	return wifiMerged;
     	
@@ -615,8 +621,8 @@ public class CollectThread extends Thread {
      * @return 
      */
     private boolean mergeTwoSignals(List<Map<String, Object>> baseDatas, List<Map<String, Object>> beMergedDatas){
-    	if(baseDatas.isEmpty() || beMergedDatas.isEmpty()){
-    		return false;
+    	if(!baseDatas.isEmpty() && beMergedDatas.isEmpty()){
+    		return true;
     	}
     	else {
     		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();

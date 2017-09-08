@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -71,6 +72,72 @@ public class PrruService {
      * @Fields MULTIPLE10 : 倍数10
      */ 
     private static final BigDecimal MULTIPLE10 = new BigDecimal(10);
+    
+    /** 
+     * @Fields LTE_MIX_3_1 : 0.2
+     */ 
+    private static final BigDecimal LTE_MIX_3_1 = new BigDecimal(0.2);
+    /** 
+     * @Fields WIFI_MIX_3_1 : 0.4
+     */ 
+    private static final BigDecimal WIFI_MIX_3_1 = new BigDecimal(0.4);
+    /** 
+     * @Fields BLUE_MIX_3_1 : 0.4
+     */ 
+    private static final BigDecimal BLUE_MIX_3_1 = new BigDecimal(0.4);
+    /** 
+     * @Fields LTE_WIFI_2_1 : 0.3
+     */ 
+    private static final BigDecimal LTE_WIFI_2_1 = new BigDecimal(0.3);
+    /** 
+     * @Fields WIFI_LTE_2_1 : 0.7
+     */ 
+    private static final BigDecimal WIFI_LTE_2_1 = new BigDecimal(0.7);
+    /** 
+     * @Fields LTE_BLUE_2_1 : 0.3
+     */ 
+    private static final BigDecimal LTE_BLUE_2_1 = new BigDecimal(0.3);
+    /** 
+     * @Fields BLUE_LTE_2_1 : 0.7
+     */ 
+    private static final BigDecimal BLUE_LTE_2_1 = new BigDecimal(0.7);
+    
+    /** 
+     * @Fields WIFI_BLUE_2_1 : 0.5
+     */ 
+    private static final BigDecimal WIFI_BLUE_2_1 = new BigDecimal(0.5);
+    /** 
+     * @Fields BLUE_WIFI_2_1 : 0.5
+     */ 
+    private static final BigDecimal BLUE_WIFI_2_1 = new BigDecimal(0.5);
+    
+    /** 
+     * @Fields LTEDelay : 5s
+     */ 
+    private static final long LteDelay = 5L;
+    
+    /** 
+     * @Fields LTERatio : 0.7
+     */ 
+    private static final double LteRatio = 0.7;
+    /** 
+     * @Fields WifiRatio : 0.5
+     */ 
+    private static final double WifiRatio = 0.5;
+    /** 
+     * @Fields BlueRatio : 0.5
+     */ 
+    private static final double BlueRatio = 0.5;
+    
+    /** 
+     * @Fields TOP_K : 3
+     */ 
+    private static final int TOP_K = 3;
+    
+    /** 
+     * @Fields TOP_N : 20
+     */ 
+    private static final int TOP_N = 20;
     
     /** 
      * @Fields prruSignalDao : prruSignal数据库操作DAO
@@ -245,6 +312,525 @@ public class PrruService {
         result.put("data", data);
         return result;
     }
+    /** 
+     * @Title: getGppS 
+     * @Description: 按gpp去重
+     * @param validSignals
+     * @param GppS 
+     */
+    private List<String> getGppS(List<PrruSignalModel> signals){
+    	List<String> gpps = new ArrayList<String>();
+        for(PrruSignalModel item : signals){
+            gpps.add(item.getGpp());
+            LOG.debug("用户的信号信息："+item.toString());
+        }
+		return gpps;
+    }
+    /** 
+     * @Title: preProcessPrruSignals 
+     * @Description: 按gpp去重
+     * @param validSignals
+     * @param validGpp 
+     */
+    private void preProcessPrruSignals(List<PrruSignalModel> signals){
+ 
+    	Map<Long, BigDecimal> rsrpAvg = new HashMap<Long, BigDecimal>();
+        Map<Long, BigDecimal> rsrpCount = new HashMap<Long, BigDecimal>();
+        // 遍历
+        for(int i = 0;i<signals.size();i++){
+            // 时间戳
+            long timestamp = signals.get(i).getTimestamp();
+            // 不存在就创建
+            if(rsrpAvg.get(timestamp) == null){
+                rsrpAvg.put(timestamp, signals.get(i).getRsrp());
+                rsrpCount.put(timestamp, new BigDecimal(1));
+            }else{
+                // 存在，则相加
+                BigDecimal rsrpTemp = signals.get(i).getRsrp().add(rsrpAvg.get(timestamp));
+                rsrpAvg.put(timestamp, rsrpTemp);
+                rsrpCount.put(timestamp, rsrpCount.get(timestamp).add(new BigDecimal(1)));
+            }
+        }
+        // 取平均值,计算checkValue
+        Iterator<Entry<Long, BigDecimal>> it = rsrpAvg.entrySet().iterator();
+        while(it.hasNext())
+        {
+            Map.Entry<Long, BigDecimal> entity = (Entry<Long, BigDecimal>) it.next();
+            Long key = entity.getKey();
+            BigDecimal value = entity.getValue();
+            entity.setValue(value.divide(rsrpCount.get(key),2));
+        }
+        // 修正rsrp，得到data值
+        for(PrruSignalModel p:signals){
+            long timestamp = p.getTimestamp();
+            p.setRsrp(p.getRsrp().subtract(rsrpAvg.get(timestamp)));
+        }       
+    }
+    
+    /** 
+     * @Title: formatFeatureValue 
+     * @Description: 将特征库数据转换格式，便于接下来计算 
+     * @param datas：源数据
+     * @return 
+     */
+    private void formatFeatureValue(List<PrruFeatureModel> datas, Map<Integer,PrruFeatureModel> result, String type, Boolean check){
+        // 转换中间格式
+        //Map<Integer,PrruFeatureModel> result = new HashMap<Integer,PrruFeatureModel>();
+        // 遍历list，格式化
+        for(PrruFeatureModel item:datas){
+            // 如果结构里已存在该定位点的特征信息，则将特征值加入
+            if(result.get(item.getId())!=null){
+            	if(result.get(item.getId()).getFeatureValuesByType(type)!=null){
+            		result.get(item.getId()).getFeatureValuesByType(type).put(item.getGpp(),item.getFeatureValue());
+            	}
+            	else{
+            		Map<String, BigDecimal> features = new HashMap<String,BigDecimal>();
+            		features.put(item.getGpp(),item.getFeatureValue());
+            		result.get(item.getId()).setFeatureValuesByType(features,type);
+            	}
+            }
+            // 否则，初始化该定位点的特征信息
+            else{ 
+            	if(check)
+            	{
+            		LOG.debug("该指纹id不存在：!"+item.getId());
+            		continue;
+            	}
+            	Map<String, BigDecimal> features = new HashMap<String,BigDecimal>();
+                features.put(item.getGpp(),item.getFeatureValue());
+                item.setFeatureValuesByType(features, type);
+                result.put(item.getId(), item);
+            }
+        }
+    }
+    /** 
+     * @Title: getSignalWithProcess 
+     * @Description: 将特征库数据转换格式，便于接下来计算 
+     * @param datas：源数据
+     * @return 
+     */
+    private List<PrruSignalModel> getSignalWithProcess(Map<Integer,PrruFeatureModel> featureResult,String userId,
+    		long timestamp, String type, 
+    		String floorNo, Boolean check){
+    	List<PrruSignalModel> Signals = prruSignalDao.getCurrentSignalsByUserIdTime(ConvertUtil.convertMacOrIp(userId),timestamp,type); 
+		if(!Signals.isEmpty()){
+			List<String> Gpps = getGppS(Signals);
+			// 取出与用户信号prru有交集的特征库
+            List<PrruFeatureModel> features;
+            if(floorNo == null || "null".equals(floorNo)){
+            	features = prruSignalDao.getRelativeFeatureWithoutFloorNo(Gpps);
+            }
+            else{
+            	features = prruSignalDao.getRelativeFeature(Gpps,floorNo);
+            }
+	        formatFeatureValue(features, featureResult, type, check);
+		}
+		return Signals;
+    }
+    /** 
+     * @Title: checkIntersection 
+     * @Description: 根据信号类型，交集比例检查交集是否满足
+     * @return 
+     */
+    public boolean checkIntersection(List<PrruSignalModel> signals,
+    		PrruFeatureModel featureModel,String type, double ratio){
+    	if(featureModel.getFeatureValuesByType(type)==null){
+    		return false;
+    	}
+    	double userSignalSize = (double)signals.size();
+    	double featureSignalSize = (double)featureModel.getFeatureValuesByType(type).size();
+		return (featureSignalSize>=(userSignalSize*ratio));	
+    }
+    /** 
+     * @Title: calLocation3 
+     * @Description: 根据用户上报信号，匹配特征库，获取定位信息
+     * @return 
+     */
+    public Map<String, Object> calLocation3(List<PrruSignalModel> lteSignals,List<PrruSignalModel> wifiSignals,List<PrruSignalModel> blueSignals,
+    		Map<Integer,PrruFeatureModel> featureResult, String floorNo){
+    	if(lteSignals.isEmpty()){
+    		LOG.error("当前用户无Lte数据上报!");
+    		return calLocationWifiBlue(wifiSignals,blueSignals,featureResult,floorNo);
+    	}
+    	else if(wifiSignals.isEmpty()){
+    		LOG.error("当前用户无wifi数据上报!");
+    		return calLocationLteBlue(lteSignals,blueSignals,featureResult,floorNo);
+    	}
+    	else if(blueSignals.isEmpty()){
+    		LOG.error("当前用户无蓝牙数据上报!");
+    		return calLocationLteWifi(lteSignals,wifiSignals,featureResult,floorNo);
+    	}
+    	LOG.debug("3种信号混合定位用户所在楼层："+floorNo+"lte信号个数："+lteSignals.size()+"wifi信号个数："+wifiSignals.size()+"蓝牙信号个数："+blueSignals.size());
+    
+    	Map<BigDecimal, Integer> distanceFeature = new TreeMap<BigDecimal, Integer>();
+    	// 遍历map，计算各个特征半径
+        Iterator<Entry<Integer, PrruFeatureModel>> it = featureResult.entrySet().iterator();  
+        while(it.hasNext()){
+            Entry<Integer, PrruFeatureModel> entity = it.next();
+            int id = entity.getKey();
+            PrruFeatureModel featureModel = entity.getValue();
+            if(checkIntersection(lteSignals,featureModel,"1",LteRatio) && checkIntersection(wifiSignals,featureModel,"2",WifiRatio) && checkIntersection(blueSignals,featureModel,"3",BlueRatio)){
+            	BigDecimal lteDistance = calSignalDistance(lteSignals,featureModel,"1");
+            	BigDecimal wifiDistance = calSignalDistance(wifiSignals,featureModel,"2");
+            	BigDecimal blueDistance = calSignalDistance(blueSignals,featureModel,"3");
+            	BigDecimal temDistance = lteDistance.multiply(LTE_MIX_3_1).add((wifiDistance.multiply(WIFI_MIX_3_1)));
+            	BigDecimal signalDistance = blueDistance.multiply(BLUE_MIX_3_1).add(temDistance);
+            	distanceFeature.put(signalDistance, id);
+            }
+        }
+        return KNNMatch(distanceFeature, featureResult);
+    }
+    /** 
+     * @Title: calLocationLteWifi 
+     * @Description: 根据用户上报Lte和Wifi信号，匹配特征库，获取定位信息
+     * @return 
+     */
+    public Map<String, Object> calLocationLteWifi(List<PrruSignalModel> lteSignals,List<PrruSignalModel> wifiSignals,
+    		Map<Integer,PrruFeatureModel> featureResult, String floorNo){
+    	if(lteSignals.isEmpty()){
+    		LOG.error("当前用户无Lte数据上报!");
+    		return calLocation1(wifiSignals,featureResult,floorNo,WifiRatio,"2");
+    	}
+    	else if(wifiSignals.isEmpty()){
+    		LOG.error("当前用户无wifi数据上报!");
+    		return calLocation1(lteSignals,featureResult,floorNo,LteRatio,"1");
+    	}
+    	LOG.debug("Lte和Wifi信号混合定位，用户所在楼层："+floorNo+"lte信号个数："+lteSignals.size()+"wifi信号个数："+wifiSignals.size());
+    	Map<BigDecimal, Integer> distanceFeature = new TreeMap<BigDecimal, Integer>();
+    	// 遍历map，计算各个特征半径
+        Iterator<Entry<Integer, PrruFeatureModel>> it = featureResult.entrySet().iterator(); 
+    	while(it.hasNext()){
+            Entry<Integer, PrruFeatureModel> entity = it.next();
+            int id = entity.getKey();
+            PrruFeatureModel featureModel = entity.getValue();
+            if(checkIntersection(lteSignals,featureModel,"1",LteRatio) && checkIntersection(wifiSignals,featureModel,"2",WifiRatio)){
+            	BigDecimal lteDistance = calSignalDistance(lteSignals,featureModel,"1");
+            	BigDecimal wifiDistance = calSignalDistance(wifiSignals,featureModel,"2");
+            	BigDecimal signalDistance = lteDistance.multiply(LTE_WIFI_2_1).add((wifiDistance.multiply(WIFI_LTE_2_1)));
+            	distanceFeature.put(signalDistance, id);
+            }
+        }
+    	return KNNMatch(distanceFeature, featureResult);
+    }
+    /** 
+     * @Title: calSignalDistance 
+     * @Description: 根据用户上报信号值，计算rsrp距离
+     * @return 
+     */
+    public BigDecimal calSignalDistance(List<PrruSignalModel> signals,
+    		PrruFeatureModel featureModel, String type){
+    	// rsrp距离
+        BigDecimal dis = new BigDecimal("0.000");
+        int m = 0;
+        Map<String, BigDecimal> featureValue = featureModel.getFeatureValuesByType(type);
+        for(PrruSignalModel p:signals){
+        	String gpp = p.getGpp();
+        	if(featureValue.containsKey(gpp)){
+        		m++;
+        		BigDecimal rsrp = p.getRsrp();
+        		BigDecimal featureRsrp = featureValue.get(gpp);
+        		dis = dis.add(rsrp.subtract(featureRsrp).pow(2));
+        	}
+        }
+        if(m>0){
+        	dis = dis.divide(new BigDecimal(m),2,6);
+        }
+        return dis;
+    }
+    /** 
+     * @Title: calLocationLteBlue 
+     * @Description: 根据用户上报Lte和蓝牙信号，匹配特征库，获取定位信息
+     * @return 
+     */
+    public Map<String, Object> calLocationLteBlue(List<PrruSignalModel> lteSignals,List<PrruSignalModel> blueSignals,
+    		Map<Integer,PrruFeatureModel> featureResult, String floorNo){
+    	
+    	if(lteSignals.isEmpty()){
+    		LOG.error("当前用户无Lte数据上报!");
+    		return calLocation1(blueSignals,featureResult,floorNo,BlueRatio,"3");
+    	}
+    	else if(blueSignals.isEmpty()){
+    		LOG.error("当前用户无蓝牙数据上报!");
+    		return calLocation1(lteSignals,featureResult,floorNo,LteRatio,"1");
+    	}
+    	LOG.debug("Lte和蓝牙信号混合定位，用户所在楼层："+floorNo+"lte信号个数："+lteSignals.size()+"蓝牙信号个数："+blueSignals.size());
+    	Map<BigDecimal, Integer> distanceFeature = new TreeMap<BigDecimal, Integer>();
+    	// 遍历map，计算各个特征半径
+        Iterator<Entry<Integer, PrruFeatureModel>> it = featureResult.entrySet().iterator(); 
+    	while(it.hasNext()){
+            Entry<Integer, PrruFeatureModel> entity = it.next();
+            int id = entity.getKey();
+            PrruFeatureModel featureModel = entity.getValue();
+            if(checkIntersection(lteSignals,featureModel,"1",LteRatio) && checkIntersection(blueSignals,featureModel,"3",BlueRatio)){
+            	BigDecimal lteDistance = calSignalDistance(lteSignals,featureModel,"1");
+            	BigDecimal blueDistance = calSignalDistance(blueSignals,featureModel,"3");
+            	BigDecimal signalDistance = lteDistance.multiply(LTE_BLUE_2_1).add((blueDistance.multiply(BLUE_LTE_2_1)));
+            	distanceFeature.put(signalDistance, id);
+            }
+        }
+    	return KNNMatch(distanceFeature, featureResult);
+    }
+    /** 
+     * @Title: KNNMatch 
+     * @Description: 根据各个指纹点的匹配度，匹配特征库，获取定位信息
+     * @return 
+     */
+    public Map<String, Object> KNNMatch(Map<BigDecimal, Integer> distanceFeature,
+    		Map<Integer,PrruFeatureModel> featureResult){
+    	Map<String, Object> result = new HashMap<String,Object>();
+    	if(featureResult.isEmpty()){
+    		LOG.debug("指纹点为空");
+            // 返回
+            result.put("error", "没有获取到匹配的指纹点");
+    		return result;
+    	}
+    	int k = 0;
+    	BigDecimal delta = new BigDecimal(0.0001);
+    	BigDecimal sum = new BigDecimal(0.000);
+    	BigDecimal one = new BigDecimal(1.000);
+    	String FloorNum = "";
+    	//第一次遍历获取TOP_K的加权系数
+    	for (Entry<BigDecimal, Integer> entry: distanceFeature.entrySet()) {
+    		if(k<TOP_K){
+    			int featureId = entry.getValue();
+    			String curFloorNum = featureResult.get(featureId).getFloorNo();
+    			if(k==0){
+    				FloorNum = curFloorNum;
+        			BigDecimal postDistance = one.divide((entry.getKey().add(delta)),2,6);
+	    			sum = sum.add(postDistance);
+	    			k++;
+        		}
+    			else if(curFloorNum.equals(FloorNum)){
+    					BigDecimal postDistance = one.divide((entry.getKey().add(delta)),2,6);
+    	    			sum = sum.add(postDistance);
+    	    			k++;
+    				}
+    		}
+    		else{
+    			break;
+    		}
+    	}
+    	k=0;
+    	BigDecimal pos_x = new BigDecimal(0.000);
+    	BigDecimal pos_y = new BigDecimal(0.000);
+    	//第二次遍历获取TOP_K的加权坐标
+    	for (Entry<BigDecimal, Integer> entry: distanceFeature.entrySet()) {
+    		if(k<TOP_K){
+    			int featureId = entry.getValue();
+    			String curFloorNum = featureResult.get(featureId).getFloorNo();
+    			if(!curFloorNum.equals(FloorNum)){
+    				continue;
+    			}
+    			BigDecimal upDistance = one.divide((entry.getKey().add(delta)),2,6);
+    			String x = featureResult.get(featureId).getX();
+    			String y = featureResult.get(featureId).getY();
+    			pos_x = pos_x.add(upDistance.divide(sum,2,6).multiply(new BigDecimal(x)));
+    			pos_y = pos_y.add(upDistance.divide(sum,2,6).multiply(new BigDecimal(y)));
+    			k++;
+    		}
+    		else{
+    			break;
+    		}
+    	}
+    	k=0;
+    	int minFeatureId = 0;
+    	BigDecimal minDistance = new BigDecimal(0.000);
+    	//第三次遍历匹配TOP_N中与加权坐标欧式距离最小的指纹点
+    	for (Entry<BigDecimal, Integer> entry: distanceFeature.entrySet()) {
+    		if(k<TOP_N){
+    			int featureId = entry.getValue();
+    			String curFloorNum = featureResult.get(featureId).getFloorNo();
+    			if(!curFloorNum.equals(FloorNum)){
+    				continue;
+    			}
+    			String x = featureResult.get(featureId).getX();
+    			String y = featureResult.get(featureId).getY();
+    			BigDecimal distanceX = pos_x.subtract((new BigDecimal(x))).pow(2);
+    			BigDecimal distanceY = pos_y.subtract((new BigDecimal(y))).pow(2);
+    			BigDecimal tmpDistance = distanceX.add(distanceY);
+    			if(k==0 || tmpDistance.compareTo(minDistance)<0){
+    				minDistance = tmpDistance;
+        			minFeatureId = featureId;
+        			FloorNum = featureResult.get(featureId).getFloorNo();
+    			}
+    			k++;
+    		}
+    		else{
+    			break;
+    		}
+    	}
+    	//根据指纹点
+    	String x = featureResult.get(minFeatureId).getX();
+		String y = featureResult.get(minFeatureId).getY();
+		//数据格式转换
+        LocationModel data = new LocationModel();   
+        data.setX(new BigDecimal(x).multiply(MULTIPLE10));
+        data.setY(new BigDecimal(y).multiply(MULTIPLE10));
+        data.setZ(new BigDecimal(FloorNum));
+        data.setUserID(featureResult.get(minFeatureId).getUserId());
+        data.setTimestamp(new BigDecimal(System.currentTimeMillis()));
+        data.setTimestampPrru(new BigDecimal(featureResult.get(minFeatureId).getTimestamp()));
+        LOG.debug("返回的点：x-"+data.getX()+",y-"+data.getY()+",z-"+FloorNum);
+        // 返回
+        result.put("data", data);
+		return result;
+    }
+    /** 
+     * @Title: calLocationWifiBlue 
+     * @Description: 根据用户上报的Wifi和蓝牙信号，匹配特征库，获取定位信息
+     * @return 
+     */
+    public Map<String, Object> calLocationWifiBlue(List<PrruSignalModel> wifiSignals,List<PrruSignalModel> blueSignals,
+    		Map<Integer,PrruFeatureModel> featureResult, String floorNo){
+    	
+    	if(wifiSignals.isEmpty()){
+    		LOG.error("当前用户无wifi数据上报!");
+    		return calLocation1(blueSignals,featureResult,floorNo,BlueRatio,"3");
+    	}
+    	else if(blueSignals.isEmpty()){
+    		LOG.error("当前用户无蓝牙数据上报!");
+    		return calLocation1(wifiSignals,featureResult,floorNo,WifiRatio,"2");
+    	}
+    	LOG.debug("wifi和蓝牙信号混合定位，用户所在楼层："+floorNo+"wifi信号个数："+wifiSignals.size()+"蓝牙信号个数："+blueSignals.size());
+    	Map<BigDecimal, Integer> distanceFeature = new TreeMap<BigDecimal, Integer>();
+    	// 遍历map，计算各个特征半径
+        Iterator<Entry<Integer, PrruFeatureModel>> it = featureResult.entrySet().iterator(); 
+    	while(it.hasNext()){
+            Entry<Integer, PrruFeatureModel> entity = it.next();
+            int id = entity.getKey();
+            PrruFeatureModel featureModel = entity.getValue();
+            if(checkIntersection(wifiSignals,featureModel,"2",WifiRatio) && checkIntersection(blueSignals,featureModel,"3",BlueRatio)){
+            	BigDecimal wifiDistance = calSignalDistance(wifiSignals,featureModel,"2");
+            	BigDecimal blueDistance = calSignalDistance(blueSignals,featureModel,"3");
+            	BigDecimal signalDistance = wifiDistance.multiply(WIFI_BLUE_2_1).add((blueDistance.multiply(BLUE_WIFI_2_1)));
+            	distanceFeature.put(signalDistance, id);            	
+            }
+        }
+    	
+		return KNNMatch(distanceFeature, featureResult);
+    }
+    /** 
+     * @Title: calLocationWifiBlue 
+     * @Description: 根据用户上报信号，匹配特征库，获取定位信息
+     * @return 
+     */
+    public Map<String, Object> calLocation1(List<PrruSignalModel> signals,
+    		Map<Integer,PrruFeatureModel> featureResult, String floorNo, double setRatio, String type){
+    	Map<String, Object> result = new HashMap<String,Object>();
+    	if(signals.isEmpty()){
+    		LOG.error("当前无用户数据上报!");
+    		result.put("error", "当前无用户数据上报");
+            return result;
+    	}
+    	LOG.debug("单信号定位，用户所在楼层："+floorNo+"信号个数："+signals.size()+"信号类型："+type);
+    	Map<BigDecimal, Integer> distanceFeature = new TreeMap<BigDecimal, Integer>();
+    	// 遍历map，计算各个特征半径
+        Iterator<Entry<Integer, PrruFeatureModel>> it = featureResult.entrySet().iterator(); 
+    	while(it.hasNext()){
+            Entry<Integer, PrruFeatureModel> entity = it.next();
+            int id = entity.getKey();
+            PrruFeatureModel featureModel = entity.getValue();
+            if(checkIntersection(signals,featureModel,type,setRatio)){
+            	BigDecimal signalDistance = calSignalDistance(signals,featureModel,type);
+            	distanceFeature.put(signalDistance, id);
+            }
+        }
+    	return KNNMatch(distanceFeature, featureResult);
+    }
+    /** 
+     * @Title: getLocationMixPrru 
+     * @Description: 根据用户id，匹配特征库，获取定位信息
+     * @param userId：用户id
+     * @param x 上一次定位点x坐标
+     * @param y 上一次定位点y坐标
+     * @return 
+     */
+    public Map<String, Object> getLocationMixPrru(String userId, String switchLTE, String switchWifi, String switchBlue, String floorNo){
+        LOG.debug("用户id："+userId);
+        // 结果
+        Map<String, Object> result = new HashMap<String,Object>();
+        if (StringUtils.isEmpty(userId))
+        {
+            LOG.error("用户id为空!");
+            result.put("error", "用户id为空!");
+            return result;
+        }
+        LOG.debug("定位开始，用户所在楼层："+floorNo+"LTE开关："+switchLTE+"Wifi开关："+switchWifi+"Blue开关："+switchBlue);
+        long LTETimes = System.currentTimeMillis()-LteDelay*1000;
+        boolean check = false;
+        Map<Integer,PrruFeatureModel> featureResult = new HashMap<Integer,PrruFeatureModel>();
+        if(switchLTE.equals("1")){
+        	//LTE打开
+        	List<PrruSignalModel> signals = prruSignalDao.getCurrentSignalsByUserIdTime(ConvertUtil.convertMacOrIp(userId),LTETimes,"1");
+        	// 修改gpp的值,添加enbId
+            editGpp(signals);
+            List<String> gpps = getGppS(signals);
+            preProcessPrruSignals(signals);
+            // 如果未找到信号数据，返回错误信息
+            if(signals.isEmpty()){
+                LOG.error("用户信号数据为空");
+                result.put("error", "用户信号数据为空");
+                return result;
+            }
+            // 取出与用户信号prru有交集的特征库
+            List<PrruFeatureModel> prruFeatures;
+            if(floorNo == null || "null".equals(floorNo)){
+            	prruFeatures = prruSignalDao.getRelativeFeatureWithoutFloorNo(gpps);
+            }
+            else{
+            	prruFeatures = prruSignalDao.getRelativeFeature(gpps,floorNo);
+            }
+     
+            // 如果没有匹配的特征库，返回错误信息
+            if(prruFeatures.isEmpty()){
+                LOG.error("用户信号没有匹配的特征库");
+                result.put("error", "用户信号没有匹配的特征库");
+                return result;
+            }
+            // 格式转换
+            formatFeatureValue(prruFeatures, featureResult, "1",check);
+            check = !(featureResult.isEmpty());
+        	if(switchWifi.equals("1")){
+        		List<PrruSignalModel> wifiSignals = getSignalWithProcess(featureResult,userId,LTETimes,"2",floorNo,check);
+                if(switchBlue.equals("1"))
+        		{
+                	check = (featureResult.isEmpty());
+        			//LTE,Wifi,蓝牙三种信号混合定位
+        			List<PrruSignalModel> blueSignals = getSignalWithProcess(featureResult,userId,LTETimes,"3",floorNo,check);
+        			return calLocation3(signals,wifiSignals,blueSignals,featureResult,floorNo);
+        		}
+        		//LTE,Wifi两种信号混合定位
+                return calLocationLteWifi(signals,wifiSignals,featureResult,floorNo);
+        	}
+        	else if(switchBlue.equals("1")){
+        		//LTE，蓝牙两种信号混合定位
+        		List<PrruSignalModel> blueSignals = getSignalWithProcess(featureResult,userId,LTETimes,"3",floorNo,check);
+        		return calLocationLteBlue(signals,blueSignals,featureResult,floorNo);
+        	}
+        	return calLocation1(signals,featureResult,floorNo,LteRatio,"1");
+        }
+        else if(switchWifi.equals("1"))
+        {
+        	check = false;
+        	List<PrruSignalModel> wifiSignals = getSignalWithProcess(featureResult,userId,LTETimes,"2",floorNo,check);
+        	if(switchBlue.equals("1"))
+        	{
+        		check = (!featureResult.isEmpty());
+        		//Wifi,蓝牙两种信号混合定位
+        		List<PrruSignalModel> blueSignals = getSignalWithProcess(featureResult,userId,LTETimes,"3",floorNo,check);
+        		return calLocationWifiBlue(wifiSignals,blueSignals,featureResult,floorNo);
+        	}
+        	return calLocation1(wifiSignals,featureResult,floorNo,WifiRatio,"2");
+        }
+        else if(switchBlue.equals("1")){
+        	//蓝牙一种信号进行定位
+        	List<PrruSignalModel> blueSignals = getSignalWithProcess(featureResult,userId,LTETimes,"3",floorNo,false);
+        	return calLocation1(blueSignals,featureResult,floorNo,BlueRatio,"3");
+        }
+        LOG.debug("用户信号使能开关未打开");
+        result.put("error", "用户信号使能开关未打开");
+        return result;
+    }
     
     /** 
      * @Title: getLocationPrru 
@@ -350,20 +936,29 @@ public class PrruService {
     
     public Map<String, Object> finishCollectPrru(PrruFeatureApiModel requestModel)
     {
-        CollectThread t = (CollectThread) GlobalConf.getPrruThread(requestModel.getUserId());
-        int state = 0;
-        if(t != null){
-        	// 取得当前时间戳，作为任务起始时间
-            long finishTimestamp = System.currentTimeMillis();
-            state = t.finishLineSampling(finishTimestamp);
-            t.stopThread();
-        }
-        else{
-        	state = 1;
-        }
+    	long startTime = System.currentTimeMillis();
+    	int state = 0;
+    	try {
+            CollectThread t = (CollectThread) GlobalConf.getPrruThread(requestModel.getUserId());
+            if(t != null){
+            	// 取得当前时间戳，作为任务起始时间
+                long finishTimestamp = System.currentTimeMillis();
+                state = t.finishLineSampling(finishTimestamp);
+                t.stopThread();
+            }
+            else{
+            	state = 1;
+            }
+		} catch (Exception e) {
+			LOG.error("FinishCollectPrru:" + e.getMessage());;
+		}
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("state", state);
         result.put("data", getStateString(state));
+        LOG.debug("State:" + state);
+        LOG.debug("data:" + getStateString(state));
+        long endTime = System.currentTimeMillis();
+        LOG.debug("time:" + (endTime - startTime));
         return result;
     }
     /** 
@@ -397,7 +992,7 @@ public class PrruService {
             // radius为null说明异常中断，否则采集完成
             if (radius==null) {
             	result.put("state", 1);
-                result.put("data", "AE信号无上报"); 
+                result.put("data", "生成指纹失败"); 
             }else 
             {
                 // 无效的 需要删除，否则采集数据有效
@@ -698,10 +1293,12 @@ public class PrruService {
     private void getAvgPrruSignals(List<PrruSignalModel> signals, List<String> gpps){
         Map<Long, BigDecimal> rsrpAvg = new HashMap<Long, BigDecimal>();
         Map<Long, BigDecimal> rsrpCount = new HashMap<Long, BigDecimal>();
+        gpps.clear();
         // 遍历
         for(int i = 0;i<signals.size();i++){
             // 时间戳
             long timestamp = signals.get(i).getTimestamp();
+            gpps.add(signals.get(i).getGpp());
             // 不存在就创建
             if(rsrpAvg.get(timestamp) == null){
                 rsrpAvg.put(timestamp, signals.get(i).getRsrp());
@@ -729,6 +1326,7 @@ public class PrruService {
         }
         
         Map<String, PrruSignalModel> temp = new HashMap<String, PrruSignalModel>();
+        
         // 遍历
         for(int i = 0;i<gpps.size();i++){
             String s = gpps.get(i);
