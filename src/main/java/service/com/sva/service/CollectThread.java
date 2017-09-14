@@ -116,6 +116,7 @@ public class CollectThread extends Thread {
     @Override
     public void run(){
         // 开始之前将任务线程加入线程池
+    	isLineFinished = false;
         GlobalConf.addPrruThreadPool(params.getUserId(), this);
         
         // 取得当前时间戳，作为任务起始时间
