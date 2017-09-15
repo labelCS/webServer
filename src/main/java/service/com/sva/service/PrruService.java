@@ -435,6 +435,7 @@ public class PrruService {
     public boolean checkIntersection(List<PrruSignalModel> signals,
     		PrruFeatureModel featureModel,String type, double ratio){
     	if(featureModel.getFeatureValuesByType(type)==null){
+    		LOG.error("未找到對應指紋點!");
     		return false;
     	}
     	double userSignalSize = (double)signals.size();
@@ -533,6 +534,9 @@ public class PrruService {
         	}
         }
         if(m>0){
+        	if(type.equals("1")){
+        		m=m*100;
+        	}
         	dis = dis.divide(new BigDecimal(m),2,6);
         }
         return dis;
@@ -586,7 +590,7 @@ public class PrruService {
     	}
     	int k = 0;
     	BigDecimal delta = new BigDecimal(0.0001);
-    	BigDecimal sum = new BigDecimal(0.000);
+    	BigDecimal sum = new BigDecimal(0.0001);
     	BigDecimal one = new BigDecimal(1.000);
     	String FloorNum = "";
     	//第一次遍历获取TOP_K的加权系数
@@ -610,6 +614,7 @@ public class PrruService {
     			break;
     		}
     	}
+    	LOG.debug("TOP_K的加权系数獲取完畢："+sum.doubleValue());
     	k=0;
     	BigDecimal pos_x = new BigDecimal(0.000);
     	BigDecimal pos_y = new BigDecimal(0.000);
@@ -632,6 +637,7 @@ public class PrruService {
     			break;
     		}
     	}
+    	LOG.debug("TOP_K的加权坐标完畢！");
     	k=0;
     	int minFeatureId = 0;
     	BigDecimal minDistance = new BigDecimal(0.000);
@@ -659,6 +665,7 @@ public class PrruService {
     			break;
     		}
     	}
+    	LOG.debug("歐式距離最小的指紋點："+minFeatureId);
     	//根据指纹点
     	String x = featureResult.get(minFeatureId).getX();
 		String y = featureResult.get(minFeatureId).getY();
@@ -667,7 +674,9 @@ public class PrruService {
         data.setX(new BigDecimal(x).multiply(MULTIPLE10));
         data.setY(new BigDecimal(y).multiply(MULTIPLE10));
         data.setZ(new BigDecimal(FloorNum));
+        LOG.debug("floorNum："+FloorNum);
         data.setUserID(featureResult.get(minFeatureId).getUserId());
+        //LOG.debug("userid："+featureResult.get(minFeatureId).getUserId());
         data.setTimestamp(new BigDecimal(System.currentTimeMillis()));
         data.setTimestampPrru(new BigDecimal(featureResult.get(minFeatureId).getTimestamp()));
         LOG.debug("返回的点：x-"+data.getX()+",y-"+data.getY()+",z-"+FloorNum);
@@ -723,19 +732,29 @@ public class PrruService {
             return result;
     	}
     	LOG.debug("单信号定位，用户所在楼层："+floorNo+"信号个数："+signals.size()+"信号类型："+type);
-    	Map<BigDecimal, Integer> distanceFeature = new TreeMap<BigDecimal, Integer>();
-    	// 遍历map，计算各个特征半径
-        Iterator<Entry<Integer, PrruFeatureModel>> it = featureResult.entrySet().iterator(); 
-    	while(it.hasNext()){
-            Entry<Integer, PrruFeatureModel> entity = it.next();
-            int id = entity.getKey();
-            PrruFeatureModel featureModel = entity.getValue();
-            if(checkIntersection(signals,featureModel,type,setRatio)){
-            	BigDecimal signalDistance = calSignalDistance(signals,featureModel,type);
-            	distanceFeature.put(signalDistance, id);
-            }
+    	try{
+    		Map<BigDecimal, Integer> distanceFeature = new TreeMap<BigDecimal, Integer>();
+    		// 遍历map，计算各个特征半径
+    		Iterator<Entry<Integer, PrruFeatureModel>> it = featureResult.entrySet().iterator(); 
+    		while(it.hasNext()){
+    			Entry<Integer, PrruFeatureModel> entity = it.next();
+    			int id = entity.getKey();
+    			PrruFeatureModel featureModel = entity.getValue();
+    			if(checkIntersection(signals,featureModel,type,setRatio)){
+    				BigDecimal signalDistance = calSignalDistance(signals,featureModel,type);
+    				distanceFeature.put(signalDistance, id);
+    			}
+    		}
+    		LOG.debug("单信号定位，距離集合大小："+distanceFeature.size()+"信号类型："+type);
+    		return KNNMatch(distanceFeature, featureResult);
+    	}catch(Exception e){
+            LOG.error("KNN ERROR:"+e.getMessage());
+        }finally{
+        	result.put("error", "KNN MATCH ERROR");
+        	//return result;
         }
-    	return KNNMatch(distanceFeature, featureResult);
+    	return result;
+    	
     }
     /** 
      * @Title: getLocationMixPrru 
@@ -944,7 +963,9 @@ public class PrruService {
             	// 取得当前时间戳，作为任务起始时间
                 long finishTimestamp = System.currentTimeMillis();
                 state = t.finishLineSampling(finishTimestamp);
-                t.stopThread();
+                if(state!=7){
+                	t.stopThread();
+                }
             }
             else{
             	state = 1;

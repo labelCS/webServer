@@ -116,7 +116,6 @@ public class CollectThread extends Thread {
     @Override
     public void run(){
         // 开始之前将任务线程加入线程池
-    	isLineFinished = false;
         GlobalConf.addPrruThreadPool(params.getUserId(), this);
         
         // 取得当前时间戳，作为任务起始时间
@@ -152,9 +151,9 @@ public class CollectThread extends Thread {
         	}
         }catch(InterruptedException e){
             // 线程中断
-            LOG.error("CollectThread:" + e.getMessage());            
+            LOG.error("CollectThread1:" + e.getMessage());            
         }catch(Exception e){
-        	LOG.error("CollectThread:" + e.getMessage());
+        	LOG.error("CollectThread2:" + e.getMessage());
         }finally{
             // 任务线程最终要从线程池中移除
             GlobalConf.removePrruThreadPool(params.getUserId());
@@ -266,7 +265,7 @@ public class CollectThread extends Thread {
     {
     	if(lineBeginTime<=0L || finishTimestamp<lineBeginTime || isLineFinished){
     		LOG.error("Time传输错误，请检查开始时间和结束时间!");
-    		return runState;
+    		return 7;
     	}
     	isLineFinished = true;
     	// 从数据库取出已收集到的prru信号信息
@@ -280,6 +279,7 @@ public class CollectThread extends Thread {
         List<Map<String,Object>> blueFormatedList = formatPrruSignals(blueSignals,lineBeginTime);
         List<Map<String,Object>> formatedList = formatPrruSignals(prruSignals,lineBeginTime);
         boolean contiueSignal = Math.abs((finishTimestamp-lineBeginTime)/2-prruSignals.size())<=2;
+        LOG.debug("prruSignals:" + prruSignals.size() + ";wifiSignals:" + wifiSignals.size() + ";blueSignals:" + blueSignals.size());
         // 进行格式转换
         if(params.getSwitchLTE()!=0){
             // 遍历数据，计算dataCheckValue
@@ -313,13 +313,16 @@ public class CollectThread extends Thread {
         	formatedList.clear();
         }
         boolean merged = mergeSignals(formatedList, wifiFormatedList, blueFormatedList);
+        LOG.debug("merged:" + merged);
         if(!merged){
         	runState = 4;
         	return runState;
         }
-     // 如果线程未被终止，执行特征值解析入库操作
+        LOG.debug("isStop:" + isStop);
+        // 如果线程未被终止，执行特征值解析入库操作
         if(!isStop){
         	int mixLength = getLineLength(formatedList, wifiFormatedList, blueFormatedList);
+        	LOG.debug("mixLength:" + mixLength);
         	if(mixLength>1){
         		saveLineFeautreValue(formatedList, wifiFormatedList,blueFormatedList, mixLength);
         	}
@@ -393,44 +396,49 @@ public class CollectThread extends Thread {
         BigDecimal finalX = params.getFinalx();
         BigDecimal finalY = params.getFinaly();
         List<Map<String, Object>> baseDatas = getBaseSignals(datas, wifiDatas, blueDatas, mixLength);
-        while(i<=mixLength){
-        	//计算每个时间点的坐标
-        	BigDecimal x = oriX;
-        	BigDecimal y = oriY;
-        	if(i==mixLength){
-        		x = finalX;
-        		y = finalY;
-        	}
-        	else if(i>1){
-        		double left = (double)(mixLength-i)/(double)(mixLength-1);
-            	double right = (double)(i-1)/(double)(mixLength-1);
-            	BigDecimal x1 = oriX.multiply(new BigDecimal(left));
-            	BigDecimal x2 = finalX.multiply(new BigDecimal(right));
-            	x = (x1.add(x2)).setScale(2, BigDecimal.ROUND_HALF_UP);
-            	BigDecimal y1 = oriY.multiply(new BigDecimal(left));
-            	BigDecimal y2 = finalY.multiply(new BigDecimal(right));
-            	y = (y1.add(y2)).setScale(2, BigDecimal.ROUND_HALF_UP);
-        	}
-        	
-        	Map<String, Object> entity = baseDatas.get(i-1);
-        	long timeStamp = (long) entity.get("time");
-        	// 数据入库
-            PrruFeatureModel featureModel = new PrruFeatureModel();
-            featureModel.setFeatureRadius(new BigDecimal(0));
-            featureModel.setCheckValue(new BigDecimal(0));
-            featureModel.setX(x.toString());
-            featureModel.setY(y.toString());
-            featureModel.setFloorNo(params.getFloorNo().toString());
-            featureModel.setTimestamp(timeStamp);
-            featureModel.setUserId(params.getUserId());
-            prruSignalDao.savePrruFeature(featureModel);
-            int id = featureModel.getId();
-            List<Map<String, BigDecimal>> allfeaturemap = getAllFeatureMap(datas, wifiDatas, blueDatas, i);
-            // 生成特征值bean，然后入库
-            List<PrruFeatureDetailModel> detailList = generatePrruFeatureDetail(allfeaturemap,id);
-            prruSignalDao.savePrruFeatureDetail(detailList);
-            i++;
-        }      
+        try {
+	        while(i<=mixLength){
+	        	//计算每个时间点的坐标
+	        	BigDecimal x = oriX;
+	        	BigDecimal y = oriY;
+	        	if(i==mixLength){
+	        		x = finalX;
+	        		y = finalY;
+	        	}
+	        	else if(i>1){
+	        		double left = (double)(mixLength-i)/(double)(mixLength-1);
+	            	double right = (double)(i-1)/(double)(mixLength-1);
+	            	BigDecimal x1 = oriX.multiply(new BigDecimal(left));
+	            	BigDecimal x2 = finalX.multiply(new BigDecimal(right));
+	            	x = (x1.add(x2)).setScale(2, BigDecimal.ROUND_HALF_UP);
+	            	BigDecimal y1 = oriY.multiply(new BigDecimal(left));
+	            	BigDecimal y2 = finalY.multiply(new BigDecimal(right));
+	            	y = (y1.add(y2)).setScale(2, BigDecimal.ROUND_HALF_UP);
+	        	}
+	        	
+	        	Map<String, Object> entity = baseDatas.get(i-1);
+	        	long timeStamp = (long) entity.get("time");
+	        	// 数据入库
+	            PrruFeatureModel featureModel = new PrruFeatureModel();
+	            featureModel.setFeatureRadius(new BigDecimal(0));
+	            featureModel.setCheckValue(new BigDecimal(0));
+	            featureModel.setX(x.toString());
+	            featureModel.setY(y.toString());
+	            featureModel.setFloorNo(params.getFloorNo().toString());
+	            featureModel.setTimestamp(timeStamp);
+	            featureModel.setUserId(params.getUserId());
+	            prruSignalDao.savePrruFeature(featureModel);
+	            int id = featureModel.getId();
+	            List<Map<String, BigDecimal>> allfeaturemap = getAllFeatureMap(datas, wifiDatas, blueDatas, i);
+	            // 生成特征值bean，然后入库
+	            List<PrruFeatureDetailModel> detailList = generatePrruFeatureDetail(allfeaturemap,id);
+	            prruSignalDao.savePrruFeatureDetail(detailList);
+	            i++;
+	        } 
+		} catch (Exception e) {
+			LOG.error(e);  
+		}
+
     }
     /** 
      * @Title: getLineLength 
