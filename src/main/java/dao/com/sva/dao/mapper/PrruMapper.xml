@@ -50,4 +50,8 @@
     		and cellId=#{cellId}
     	</if>
     </select>
+    
+    <delete id="deletePrruFeature">
+        DELETE prrufeature,prrufeaturedetail from prrufeature,prrufeaturedetail  WHERE floorNo = #{floorNo} and prrufeaturedetail.featureId = prrufeature.id
+    </delete>
 </mapper>

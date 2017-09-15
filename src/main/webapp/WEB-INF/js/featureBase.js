@@ -20,6 +20,20 @@ var featureBase = function () {
 		$('#' + renderId + ' .addoption').remove().trigger("liszt:updated");
 	};
 	
+	
+	var delFeatureClickEvent = function(){
+		$("#delte").click(function(e){
+			var placeId = $("#marketSel").val();
+			if(!placeId){
+				alert('请选择要删除数据的商场');
+				return;
+			}
+			$.get("/sva/pRRU/api/delPrruFeature?placeId="+placeId+"&t="+Math.random(),function(data){
+				alert('删除成功');
+			});
+		});
+	};
+	
 	// excel导出按钮点击事件
 	var bindExcelClickEvent = function(){
 		// 导出excel点击
@@ -133,6 +147,7 @@ var featureBase = function () {
 		bindEvent : function(){
 			bindExcelClickEvent();
 			bindConfirmClickEvent();
+			delFeatureClickEvent();
 		}
     
     };
