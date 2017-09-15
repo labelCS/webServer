@@ -39,17 +39,16 @@
         WHERE userid = #{userID}
     </update>
     
-    <insert id="svaPrru">
-        INSERT INTO prrusignal
-            (enbid,userId,gpp,rsrp,timestamp)
+    <insert id="svaPrru">INSERT INTO prrusignal
+            (enbid,userId,gpp,rsrp,timestamp,type)
         VALUES (
             #{enbid},
             #{userId},
             #{gpp},
             #{rsrp},
-            #{timestamp}
-        )
-    </insert>
+            #{timestamp},
+            #{type}
+        )</insert>
     
     <insert id="svaGeofencing">
         INSERT INTO geofencing

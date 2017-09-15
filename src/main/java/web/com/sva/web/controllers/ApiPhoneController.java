@@ -11,6 +11,7 @@ package com.sva.web.controllers;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,10 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.sva.common.conf.GlobalConf;
 import com.sva.service.CollectThread;
 import com.sva.service.PrruService;
+import com.sva.web.models.PhoneSignalModel;
 import com.sva.web.models.PrruFeatureApiModel;
+
 
 /** 
  * @ClassName: ApiPhoneController 
@@ -57,6 +61,20 @@ public class ApiPhoneController {
     }
     
     /** 
+     * @Title: uploadPhoneSignal 
+     * @Description: 手机测量信号上传
+     * @param requestModel
+     * @return 
+     */
+    @RequestMapping(value = "/uploadPhoneSignal", method = {RequestMethod.POST})
+    @ResponseBody
+    public Map<String, Object> uploadPhoneSignal(@RequestBody PhoneSignalModel requestModel)
+    {
+        LOG.debug("Upload Phone Signal");
+        return prruService.savePhoneSignal(requestModel);
+    }
+    
+    /** 
      * @Title: getCollectResult 
      * @Description: 查询采集结果请求接口 
      * @param requestModel
@@ -68,6 +86,20 @@ public class ApiPhoneController {
     {
         LOG.debug("Get result.ip:" + requestModel.getUserId());
         return prruService.checkIsFinished(requestModel);
+    }
+    
+    /** 
+     * @Title: finishCollectPrru 
+     * @Description: 完成线路采集请求接口 
+     * @param requestModel
+     * @return 
+     */
+    @RequestMapping(value = "/finishCollectPrru", method = {RequestMethod.POST})
+    @ResponseBody
+    public Map<String, Object> finishCollectPrru(@RequestBody PrruFeatureApiModel requestModel)
+    {
+        LOG.debug("Get result.ip:" + requestModel.getUserId());
+        return prruService.finishCollectPrru(requestModel);
     }
     
     /** 
@@ -142,6 +174,23 @@ public class ApiPhoneController {
         }
         LOG.debug("ID:" + userId+",x:"+x+",y:"+y+",x1:"+x1+",y1:"+y1+",floorNo:"+floorNo);
         return prruService.getLocationPrru(userId,x,y,x1,y1,floorNo);
+    }
+    
+    /** 
+     * @Title: getMixData 
+     * @Description: 混合特征库定位接口
+     * @param userId
+     * @return 
+     */
+    @RequestMapping(value = "/getMixData", method = {RequestMethod.POST})
+    @ResponseBody
+    public Map<String, Object> getMixData(String userId, String switchLTE, 
+    		String switchWifi, String switchBlue,
+    		@RequestParam(value="floorNo", required=false)String floorNo)
+    {
+
+        LOG.debug("ID:" + userId+",switchLTE:"+switchLTE+",switchWifi:"+switchWifi+",switchBlue:"+switchBlue+",floorNo:"+floorNo);
+        return prruService.getLocationMixPrru(userId,switchLTE,switchWifi,switchBlue,floorNo);
     }
     
     /** 

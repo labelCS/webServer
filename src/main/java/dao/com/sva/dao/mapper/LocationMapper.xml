@@ -52,11 +52,11 @@
                         FROM ${tableName} lb join (
                             SELECT distinct(timestamp) 
                             FROM ${tableName} 
-	                        WHERE z = #{floorNo} and timestamp &gt; #{time} 
-	                        ORDER BY timestamp desc 
-	                        LIMIT 4
-	                    ) t on lb.timestamp = t.timestamp 
-	                    WHERE z = #{floorNo} 
+                            WHERE z = #{floorNo} and timestamp &gt; #{time} 
+                            ORDER BY timestamp desc 
+                            LIMIT 4
+                        ) t on lb.timestamp = t.timestamp 
+                        WHERE z = #{floorNo} 
                     ) a 
                     GROUP BY a.userID
                 ) b 

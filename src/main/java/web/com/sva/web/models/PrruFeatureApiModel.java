@@ -21,7 +21,7 @@ import com.sva.common.ConvertUtil;
  */
 public class PrruFeatureApiModel {
     /** 
-     * @Fields length : 采集prru的最大条数
+     * @Fields length : 采集信号的最大条数
      */ 
     private int length;
     
@@ -34,6 +34,27 @@ public class PrruFeatureApiModel {
      * @Fields userId : 执行采集任务的用户id
      */ 
     private String userId;
+    
+    /** 
+     * @Fields type : 采集类型 1:定点采集；2：线路采集
+     */ 
+    private int type;
+    
+    /** 
+     * @Fields switchLTE : 0关闭，1打开
+     */ 
+    private int switchLTE;
+    
+    /** 
+     * @Fields switchWIFI : 0关闭，1打开
+     */ 
+    private int switchWIFI;
+    
+    /** 
+     * @Fields switchBlue : 0关闭，1打开
+     */ 
+    private int switchBlue;
+    
     
     /** 
      * @Fields x : 采集点坐标x
@@ -55,6 +76,69 @@ public class PrruFeatureApiModel {
      */ 
     private BigDecimal radius;
 
+    
+    /** 
+     * @Fields x : 采集终点坐标x
+     */ 
+    private BigDecimal finalx;
+    
+    /** 
+     * @Fields y : 采集终点坐标y 
+     */ 
+    private BigDecimal finaly;
+    
+    /**
+     * @return the switchLTE
+     */
+    public int getSwitchLTE() {
+        return switchLTE;
+    }
+    /**
+     * @return the switchWIFI
+     */
+    public int getSwitchWIFI() {
+        return switchWIFI;
+    }
+    /**
+     * @return the switchWIFI
+     */
+    public int getSwitchBlue() {
+        return switchBlue;
+    }
+    
+    /**
+     * @return the switchLTE
+     */
+    public void setSwitchLTE(int switchLTE) {
+        this.switchLTE = switchLTE;
+    }
+    /**
+     * @return the switchWIFI
+     */
+    public void setSwitchWIFI(int switchWIFI) {
+        this.switchWIFI = switchWIFI;
+    }
+    /**
+     * @return the switchWIFI
+     */
+    public void setSwitchBlue(int switchBlue) {
+        this.switchBlue = switchBlue;
+    }
+    
+    /**
+     * @return the type
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
+    
     /**
      * @return the length
      */
@@ -125,6 +209,33 @@ public class PrruFeatureApiModel {
         this.y = y;
     }
 
+    /**
+     * @return the x
+     */
+    public BigDecimal getFinalx() {
+        return finalx;
+    }
+
+    /**
+     * @param x the x to set
+     */
+    public void setFinalx(BigDecimal x) {
+        this.finalx = x;
+    }
+
+    /**
+     * @return the y
+     */
+    public BigDecimal getFinaly() {
+        return finaly;
+    }
+
+    /**
+     * @param final_y the y to set
+     */
+    public void setFinaly(BigDecimal y) {
+        this.finaly = y;
+    }
     /**
      * @return the floorNo
      */

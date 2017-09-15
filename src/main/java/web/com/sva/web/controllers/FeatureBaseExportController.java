@@ -82,7 +82,8 @@ public class FeatureBaseExportController {
                 "featureRadius", 
                 "userId", 
                 "gpp", 
-                "featureValue", 
+                "featureValue",
+                "type",
                 "timestamp", 
                 "formatDate" 
         };

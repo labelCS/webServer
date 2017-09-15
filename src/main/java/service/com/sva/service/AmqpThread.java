@@ -320,7 +320,7 @@ public class AmqpThread extends Thread {
             String gpp = temp.getString("gpp");
             String rsrp = temp.getString("rsrp");
             mylog.prru("prru data: enbid:"+enbid+" userid:"+userid+" gpp"+gpp+" rsrp:"+rsrp);
-            dao.svaPrru(enbid,userid,gpp,rsrp,ip,timestamp);
+            dao.svaPrru(enbid,userid,gpp,rsrp,ip,localTimes,"1");
         }
     }
     

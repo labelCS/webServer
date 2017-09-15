@@ -17,8 +17,8 @@
     <delete id="deleteInfo">
         DELETE from prru  WHERE floorNo = #{floorNo}
         <if test="eNodeBid != ''">
-    		and eNodeBid=#{eNodeBid} 
-    	</if>
+            and eNodeBid=#{eNodeBid} 
+        </if>
     </delete>
     
     <select id="checkByFloorNo" resultType="int">
@@ -38,16 +38,20 @@
     </select>
     
     <select id="getPrruInfo" resultType="PrruModel">
-    	select DISTINCT eNodeBid,cellId from prru where floorNo=#{floorNo} and eNodeBid=#{eNodeBid}
+        select DISTINCT eNodeBid,cellId from prru where floorNo=#{floorNo} and eNodeBid=#{eNodeBid}
     </select>
     
     <select id="getPrruInfoByfloorNo" resultType="PrruModel">
-    	SELECT * from pRRU where floorNo=#{floorNo}
-    	<if test="eNodeBid != ''">
-    		and eNodeBid=#{eNodeBid} 
-    	</if>
-    	<if test="cellId != ''">
-    		and cellId=#{cellId}
-    	</if>
+        SELECT * from pRRU where floorNo=#{floorNo}
+        <if test="eNodeBid != ''">
+            and eNodeBid=#{eNodeBid} 
+        </if>
+        <if test="cellId != ''">
+            and cellId=#{cellId}
+        </if>
     </select>
+    
+    <delete id="deletePrruFeature">
+        DELETE prrufeature,prrufeaturedetail from prrufeature,prrufeaturedetail  WHERE floorNo = #{floorNo} and prrufeaturedetail.featureId = prrufeature.id
+    </delete>
 </mapper>

@@ -10,7 +10,9 @@ package com.sva.dao;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
+
 import com.sva.model.FeatureBaseExportModel;
 import com.sva.model.PrruFeatureDetailModel;
 import com.sva.model.PrruFeatureModel;
@@ -33,7 +35,22 @@ public interface PrruSignalDao {
      * @return 
      */
     public List<PrruSignalModel> getSignalByUserIdTime(
-            @Param("userId")String userId, @Param("timestamp")long timestamp);
+            @Param("userId")String userId, @Param("timestamp")long timestamp, @Param("type")String type);
+    
+    
+    /**   
+     * @Title: savePhoneSignal   
+     * @Description: 手机测量信号（wifi，蓝牙）入库逻辑   
+     * @param enbid（复用prru表，当wifi时值为“wifi”，蓝牙时值为“blueteath”）
+     * @param userId
+     * @param gpp
+     * @param rsrp
+     * @param ip
+     * @param type      
+     * @throws   
+     */ 
+    public int savePhoneSignal(@Param("enbid")String enbid,@Param("userId")String userId,@Param("gpp")String gpp,
+            @Param("rsrp")String rsrp,@Param("ip")String ip,@Param("timestamp")long timestamp, @Param("type")String type);
     
     /** 
      * @Title: getOneSignalByUserIdTime 
@@ -43,7 +60,7 @@ public interface PrruSignalDao {
      * @return 
      */
     public List<PrruSignalModel> getOneSignalByUserIdTime(
-            @Param("userId")String userId, @Param("timestamp")long timestamp);
+            @Param("userId")String userId, @Param("timestamp")long timestamp, @Param("type")String type);
     
     /** 
      * @Title: getCurrentSignalByUserId 
@@ -51,7 +68,7 @@ public interface PrruSignalDao {
      * @param userId
      * @return 
      */
-    public List<PrruSignalModel> getCurrentSignalByUserId(@Param("userId")String userId);
+    public List<PrruSignalModel> getCurrentSignalByUserId(@Param("userId")String userId, @Param("type")String type);
     
     /** 
      * @Title: getCurrentSignalByUserId 
@@ -59,7 +76,17 @@ public interface PrruSignalDao {
      * @param userId
      * @return 
      */
-    public List<PrruSignalModel> getTwoSignalByUserId(@Param("userId")String userId);
+    public List<PrruSignalModel> getCurrentSignalsByUserIdTime(
+            @Param("userId")String userId, @Param("timestamp")long timestamp, @Param("type")String type);
+    
+    /** 
+     * @Title: getCurrentSignalsByUserIdTime 
+     * @Description: 获取当前指定用户的信号数据
+     * @param userId
+     * @return 
+     */
+    
+    public List<PrruSignalModel> getTwoSignalByUserId(@Param("userId")String userId, @Param("type")String type);
     
     /** 
      * @Title: getRelativeFeature 
@@ -69,6 +96,13 @@ public interface PrruSignalDao {
      */
     public List<PrruFeatureModel> getRelativeFeature(@Param("gpps")List<String> gpps, @Param("floorNo")String floorNo);
     
+    /** 
+     * @Title: getRelativeFeatureWithoutFloorNo 
+     * @Description: 获取相关的特征库 
+     * @param gpps
+     * @return 
+     */
+    public List<PrruFeatureModel> getRelativeFeatureWithoutFloorNo(@Param("gpps")List<String> gpps);
     /** 
      * @Title: deleteSignal 
      * @Description: 清空信号表

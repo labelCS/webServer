@@ -31,6 +31,7 @@ public class FeatureBaseExportModel {
     private String userId;
     private String gpp;
     private BigDecimal featureValue;
+    private String type;
     private long timestamp;
     private String formatDate;
     /**
@@ -44,6 +45,18 @@ public class FeatureBaseExportModel {
      */
     public void setId(int id) {
         this.id = id;
+    }
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+    /**
+     * @param type the id to set
+     */
+    public void setType(String type) {
+        this.type = type;
     }
     /**
      * @return the x

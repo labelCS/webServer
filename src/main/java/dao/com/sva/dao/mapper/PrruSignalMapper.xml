@@ -5,13 +5,14 @@
 <mapper namespace="com.sva.dao.PrruSignalDao">
 
     <select id="getSignalByUserIdTime" resultType="PrruSignalModel">
-        SELECT * FROM prruSignal WHERE timestamp &gt; #{timestamp} and userId = #{userId} order by timestamp
+        SELECT * FROM prruSignal WHERE timestamp &gt; #{timestamp} and userId = #{userId} and type = #{type} order by timestamp
     </select>
 
     <select id="getOneSignalByUserIdTime" resultType="PrruSignalModel">
         SELECT * FROM prruSignal 
         WHERE 
             userId = #{userId}
+            and type = #{type}
             and timestamp = (
                 SELECT timestamp 
                 FROM prruSignal 
@@ -25,6 +26,7 @@
         SELECT * FROM prruSignal 
         WHERE 
             userId = #{userId} 
+            and type = #{type}
             and timestamp = (
                 SELECT timestamp 
                 FROM prruSignal 
@@ -34,12 +36,37 @@
             )
     </select>
     
+    <select id="getCurrentSignalsByUserIdTime" resultType="PrruSignalModel">
+        SELECT * FROM prruSignal 
+        WHERE 
+            userId = #{userId} 
+            and type = #{type}
+            and timestamp = (
+                SELECT timestamp 
+                FROM prruSignal 
+                WHERE timestamp &gt; #{timestamp} and userId = #{userId}
+                ORDER BY timestamp desc 
+                LIMIT 1     
+            )
+    </select>    
+    
+    <insert id="savePhoneSignal">INSERT INTO prrusignal
+            (enbid,userId,gpp,rsrp,timestamp,type)
+        VALUES (
+            #{enbid},
+            #{userId},
+            #{gpp},
+            #{rsrp},
+            #{timestamp},
+            #{type}
+        )</insert>
+     
     <select id="getTwoSignalByUserId" resultType="PrruSignalModel">
         SELECT prruSignal.* 
         FROM prruSignal join (
                 SELECT distinct(timestamp) 
                 FROM prruSignal 
-                WHERE userId = #{userId} 
+                WHERE userId = #{userId} and type = #{type}
                 ORDER BY timestamp desc 
                 LIMIT 2
             ) a
@@ -60,21 +87,34 @@
         WHERE a.floorNo = #{floorNo};
     </select>
     
+    <select id="getRelativeFeatureWithoutFloorNo" resultType="PrruFeatureModel">
+        SELECT a.*,b.gpp,b.featureValue 
+        FROM prruFeature a join (
+                SELECT * 
+                FROM prruFeatureDetail 
+                WHERE gpp in
+                <foreach item="item" index="index" collection="gpps"
+                    open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            ) b on a.id = b.featureId
+    </select>
+        
     <delete id="deleteSignal">
         DELETE FROM prrusignal
     </delete>
     
     <insert id="savePrruFeature" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO 
-            prrufeature(x,y,floorNo,checkValue,featureRadius,userId,timestamp,eNodeBid) 
-        VALUES (#{x},#{y},#{floorNo},#{checkValue},#{featureRadius},#{userId},#{timestamp},#{eNodeBid})
+            prrufeature(x,y,floorNo,checkValue,featureRadius,userId,timestamp) 
+        VALUES (#{x},#{y},#{floorNo},#{checkValue},#{featureRadius},#{userId},#{timestamp})
     </insert>
     
     <insert id="savePrruFeatureDetail" useGeneratedKeys="true" parameterType="java.util.List">
-        INSERT INTO prruFeatureDetail(featureId,gpp,featureValue) 
+        INSERT INTO prruFeatureDetail(featureId,gpp,featureValue,type) 
         VALUES 
         <foreach collection="list" item="item" index="index" separator="," >
-            (#{item.featureId},#{item.gpp},#{item.featureValue})
+            (#{item.featureId},#{item.gpp},#{item.featureValue},#{item.type})
         </foreach>
     </insert>
     
@@ -86,7 +126,7 @@
     </select>
     
     <select id="getFeatureBaseData" resultType="FeatureBaseExportModel">
-        SELECT a.*,b.gpp,b.featureValue,c.floorid,c.mapId 
+        SELECT a.*,b.gpp,b.featureValue,b.type,c.floorid,c.mapId 
         FROM prruFeature a 
             join prruFeatureDetail b on a.id = b.featureId
             left join maps c on a.floorNo = c.floorNo
@@ -120,11 +160,11 @@
         from prrufeature LEFT JOIN prrufeaturedetail on prrufeature.id = prrufeaturedetail.featureId 
         where prrufeature.userId = 'simulate'
         <if test="floorNo != ''">
-    		and prrufeature.floorNo=#{floorNo} 
-    	</if>
-    	<if test="eNodeBid != ''">
-    		and prrufeature.eNodeBid=#{eNodeBid}
-    	</if>
+            and prrufeature.floorNo=#{floorNo} 
+        </if>
+        <if test="eNodeBid != ''">
+            and prrufeature.eNodeBid=#{eNodeBid}
+        </if>
     </delete>
     
 </mapper>

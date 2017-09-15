@@ -32,37 +32,37 @@
     .btn-upload .input-text{ width:auto;}
     .form-group .upload-btn{ margin-left:-1px}
     .demo-wrapper {
-		position: relative;
-	}
-	
-	.icon-question-sign
-	{
-		background-position: 16px 16px;
-	}
-	div.point {
-		position: absolute;
-		background-color: #0CD4F7;
-		border-radius: 3px;
-		width: 6px;
-		height: 6px;
-	}
-	
-	div.svgCotainer {
-		position: absolute;
-	}
-	
-	#mapPloy {
-		position: absolute;
-	}
-	
-	.preview_size_fake { /* 该对象只用来在IE下获得图片的原始尺寸，无其它用途 */
-		filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=image
-			);
-		height: 1px;
-		visibility: hidden;
-		overflow: hidden;
-		display: none;
-	}
+        position: relative;
+    }
+    
+    .icon-question-sign
+    {
+        background-position: 16px 16px;
+    }
+    div.point {
+        position: absolute;
+        background-color: #0CD4F7;
+        border-radius: 3px;
+        width: 6px;
+        height: 6px;
+    }
+    
+    div.svgCotainer {
+        position: absolute;
+    }
+    
+    #mapPloy {
+        position: absolute;
+    }
+    
+    .preview_size_fake { /* 该对象只用来在IE下获得图片的原始尺寸，无其它用途 */
+        filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=image
+            );
+        height: 1px;
+        visibility: hidden;
+        overflow: hidden;
+        display: none;
+    }
     </style>
 </head>
 <!-- END HEAD -->
@@ -86,7 +86,7 @@
             <div>
                <!-- BEGIN PAGE TITLE & BREADCRUMB
                <h3 class="page-title">
-					<spring:message code="message_title" />
+                    <spring:message code="message_title" />
                </h3>-->
                <ul class="page-breadcrumb breadcrumb">
                   <li>
@@ -109,8 +109,8 @@
                         <div id="info"></div>
                  </div>
               </div>
-         	<form class="form-horizontal demoform" onkeydown= "if(event.keyCode==13)return false;" action="/sva/message/api/saveData" enctype="multipart/form-data" method="post" >
-         		 <div id="editBox" class="portlet light-grey hide">
+            <form class="form-horizontal demoform" onkeydown= "if(event.keyCode==13)return false;" action="/sva/message/api/saveData" enctype="multipart/form-data" method="post" >
+                 <div id="editBox" class="portlet light-grey hide">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="icon-edit icon-large" style="background: none"></i><spring:message code="bluemix_config" />
@@ -166,38 +166,38 @@
                             <input type="hidden" name = "id" id="idid" style="width: 56%; height: 15%;">
                        </div>
                      </div>                       
-			<!-- 		<div class="control-group">
-						<label class="control-label" for="xId"><spring:message code="map_choose_posistion" /></label>
-						<a data-toggle="modal" data-type="point" 
-								href="#myModal1" role="button" class="btn"
-								disabled="disabled" style="width: 10%;margin: 0 0 5px 20px;"><spring:message code="map_choose_dian" /></a>
-						<div class="controls" style="border: 1px solid #DDD;border-radius: 3px;width: 46%;padding: 10px 10px 0 0;">
-		                   	<div class="control-group">
-		                        <label class="control-label" style="width:120px;" for="xSpotId"><spring:message code="message_table_title_x" /></label>
-	                          	<div class="controls" style="margin-left:140px;">
-	                               	<input type="text" style="width: 66%;height: 15%;"  maxlength="10" datatype="n3" errormsg='<spring:message code="message_dingweidian_x" />'  nullmsg='<spring:message code="map_x" />'  class="input-xlarge" name="xSpot" id="xSpotId"
-	                               onchange="estimateOnkeyup(this)" onkeyup="estimateOnkeyup(this)"/>
-	                          	</div>
-		                   	</div>
-		                   	<div class="control-group">
-								<label class="control-label" style="width:120px;" for="ySpotId"><spring:message code="message_table_title_y" /></label>
-		                        <div class="controls" style="margin-left:140px;">
-		                            <input type="text" style="width: 66%;height: 15%;" datatype="n3" errormsg='<spring:message code="message_dingweidian_y" />'  nullmsg='<spring:message code="map_y" />'  maxlength="10" class="input-xlarge" name="ySpot" id="ySpotId"
-		                               onchange="estimateOnkeyup(this)" onkeyup="estimateOnkeyup(this)"/>
-		                        </div>
-		                   	</div>
-		                   	<div class="control-group">
-	                        	<label class="control-label" style="width:120px;" for="rangeSpotId"><spring:message code="message_table_title_range" /></label>
-	                          	<div class="controls" style="margin-left:140px;">
-	                               	<input type="text" style="width: 66%;height: 15%;" datatype="n3" errormsg='<spring:message code="message_dingweidian_fanwei" />'  nullmsg='<spring:message code="msg_fanwei" />'  maxlength="10" class="input-xlarge" name="rangeSpot" id="rangeSpotId"
-		                               onchange="estimateOnkeyup(this)" onkeyup="estimateOnkeyup(this)"/>
-	                          	</div>
-		                   	</div> 
-						</div>
-					</div>
-						  -->
+            <!--        <div class="control-group">
+                        <label class="control-label" for="xId"><spring:message code="map_choose_posistion" /></label>
+                        <a data-toggle="modal" data-type="point" 
+                                href="#myModal1" role="button" class="btn"
+                                disabled="disabled" style="width: 10%;margin: 0 0 5px 20px;"><spring:message code="map_choose_dian" /></a>
+                        <div class="controls" style="border: 1px solid #DDD;border-radius: 3px;width: 46%;padding: 10px 10px 0 0;">
+                            <div class="control-group">
+                                <label class="control-label" style="width:120px;" for="xSpotId"><spring:message code="message_table_title_x" /></label>
+                                <div class="controls" style="margin-left:140px;">
+                                    <input type="text" style="width: 66%;height: 15%;"  maxlength="10" datatype="n3" errormsg='<spring:message code="message_dingweidian_x" />'  nullmsg='<spring:message code="map_x" />'  class="input-xlarge" name="xSpot" id="xSpotId"
+                                   onchange="estimateOnkeyup(this)" onkeyup="estimateOnkeyup(this)"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" style="width:120px;" for="ySpotId"><spring:message code="message_table_title_y" /></label>
+                                <div class="controls" style="margin-left:140px;">
+                                    <input type="text" style="width: 66%;height: 15%;" datatype="n3" errormsg='<spring:message code="message_dingweidian_y" />'  nullmsg='<spring:message code="map_y" />'  maxlength="10" class="input-xlarge" name="ySpot" id="ySpotId"
+                                       onchange="estimateOnkeyup(this)" onkeyup="estimateOnkeyup(this)"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" style="width:120px;" for="rangeSpotId"><spring:message code="message_table_title_range" /></label>
+                                <div class="controls" style="margin-left:140px;">
+                                    <input type="text" style="width: 66%;height: 15%;" datatype="n3" errormsg='<spring:message code="message_dingweidian_fanwei" />'  nullmsg='<spring:message code="msg_fanwei" />'  maxlength="10" class="input-xlarge" name="rangeSpot" id="rangeSpotId"
+                                       onchange="estimateOnkeyup(this)" onkeyup="estimateOnkeyup(this)"/>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                          -->
                     
-  						  
+                          
                   </div>
                  </div>
                 </div>
@@ -260,9 +260,9 @@
                      </div>
                     </div>
                     </form>
-            <div><button id="add" type="button" class="btn btn-primary" onclick="addMap()"><spring:message code="common_add" /></button></div>          			
-			<table id="table" class="table table-bordered">
-			      <thead>
+            <div><button id="add" type="button" class="btn btn-primary" onclick="addMap()"><spring:message code="common_add" /></button></div>                      
+            <table id="table" class="table table-bordered">
+                  <thead>
                         <tr>
                             <th style=""><spring:message code="message_table_title_location" /></th>
                             <th style=""><spring:message code="message_table_title_floor" /></th>
@@ -276,87 +276,87 @@
                             <th style=""><spring:message code="message_table_title_enable" /></th>
                             <th style="width:278px"><spring:message code="message_table_title_operation" /></th>
                         </tr>
-                 </thead>			
-			</table>
-			
+                 </thead>           
+            </table>
+            
          </div>
     
       </div>
       <!-- END PAGE -->
    </div>
    <!-- END CONTAINER -->
-   		<!-- BEGIN FOOTER -->
-   		<%@ include file="../shared/pageFooter.jsp"%>
-   		
-		<div class="modal hide fade" id="myModal">
-	       	<div class="modal-body">
-	       		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	       		<div class="bs-docs-example">
-	       			<ul id = "myTab" class="nav nav-tabs">
-	       				<li class="active">
-	       					<a href="#pictrue" data-toggle="tab"><spring:message code="seller_pictrue_Preview" /></a>
-	       				</li>
-	       				<li class>
-	       					<a href="#movie" data-toggle="tab"><spring:message code="seller_movie_Preview" /></a>
-	       				</li>
-	       			</ul>
-	       			<div class="tab-content" id = "myTabContent">
-	       				<div class="tab-pane fade action in" id = "pictrue"  style="text-align: center;">
-	       					<img id="pictureid" style="max-width: 44%">
-	       				</div>
-       					<div class="tab-pane fade" style="text-align: center;" id = "movie">
-							<div id="movieCover" style="width:80%;height:426px;position:fixed;margin-left:auto;margin-right:auto;background-color:#eee;z-index:10001;">
-								<i id="play" class="icon-play-circle icon-5x" style="background-image: none;margin-top: 200px;cursor:pointer;"></i>
-							</div>
-							<video id="video" width=798px height=426px controls="controls">
-	       				</div>
-	       			</div>
-	       		</div>
-	       	</div>
-	       	<div class="modal-footer">
-	       		<input type="button" id= "closeId" onclick="closeModel()" value=" <spring:message code="common_close" />">
-			</div>
+        <!-- BEGIN FOOTER -->
+        <%@ include file="../shared/pageFooter.jsp"%>
+        
+        <div class="modal hide fade" id="myModal">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="bs-docs-example">
+                    <ul id = "myTab" class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#pictrue" data-toggle="tab"><spring:message code="seller_pictrue_Preview" /></a>
+                        </li>
+                        <li class>
+                            <a href="#movie" data-toggle="tab"><spring:message code="seller_movie_Preview" /></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id = "myTabContent">
+                        <div class="tab-pane fade action in" id = "pictrue"  style="text-align: center;">
+                            <img id="pictureid" style="max-width: 44%">
+                        </div>
+                        <div class="tab-pane fade" style="text-align: center;" id = "movie">
+                            <div id="movieCover" style="width:80%;height:426px;position:fixed;margin-left:auto;margin-right:auto;background-color:#eee;z-index:10001;">
+                                <i id="play" class="icon-play-circle icon-5x" style="background-image: none;margin-top: 200px;cursor:pointer;"></i>
+                            </div>
+                            <video id="video" width=798px height=426px controls="controls">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="button" id= "closeId" onclick="closeModel()" value=" <spring:message code="common_close" />">
+            </div>
 
-       	</div>
-       	<div class="modal hide fade" id="myModal1">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"
-					aria-hidden="true">&times;</button>
-				<div style="padding-top: 20px;">
-					<spring:message code="map_choose_posistion" />
-					<button type="button" class="btn btn-small clearPaper"
-						style="float: right; margin-right: 40px;"><spring:message code="common_clear" /></button>
-				</div>
-			</div>
-			<div class="modal-body">
-				<div id="alertBoxScale" class="hide">
-					<div class="alert fade in">
-						<div id="infoScale"></div>
-					</div>
-				</div>
-				<div id="divCon" style="text-align: center; height: 500px;">
-					<div id="preview" class="demo-wrapper"
-						style="outline: 1px solid #B3B1B1;"></div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" id="Ok" class="btn"><spring:message code="common_confirm" /></button>
-			</div>
-		</div>
-	    <div class="modal hide fade" data-backdrop=true   id="myTicketModel">
-             <form class="demoform" onkeydown= "if(event.keyCode==13)return false;" action="/sva/message/api/saveTicket" enctype="multipart/form-data" method="post" >		
-	            <div class="modal-body">
-	                <button type="button" class="close" data-dismiss="modal" onclick="closeTicket()" aria-hidden="true">&times;</button>
-	                <div class="control-group" style="float: left">
-	                     <label class="control-label" style="float: left;margin-top: 9px;" for="pictrueId2"><spring:message code="seller_choose_tikect" /><i class="icon-question-sign tip" data-toggle="tooltip" title="<spring:message code="map_map_info" />"></i></label>
-	                       <div class="controls" style="width: 200px;float: left;">
-	                         <input style="width: 40%;margin-top: 5px" type='text' name='textfield3' errormsg='<spring:message code="map_format" />' nullmsg='<spring:message code="seller_choose_tikect" />' datatype="ticketjp"  id='textfield3' disabled="disabled"   style="width:24%;margin: auto;" /> 
-	                         <span class="btn-upload form-group">
-	                          <input type='button' style="margin-top: 0px" class="btn" value='<spring:message code="seller_choose_tikect" />'  style="width: 101%; margin-left: -1%;margin-top: 2px;" />
-	                          <input id="fileField3"  type="file" style="height: 30px;" multiple name="fileTicket" class="input-file-1">
-	                         </span>                          
-	                       </div>
-	                </div>
+        </div>
+        <div class="modal hide fade" id="myModal1">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-hidden="true">&times;</button>
+                <div style="padding-top: 20px;">
+                    <spring:message code="map_choose_posistion" />
+                    <button type="button" class="btn btn-small clearPaper"
+                        style="float: right; margin-right: 40px;"><spring:message code="common_clear" /></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="alertBoxScale" class="hide">
+                    <div class="alert fade in">
+                        <div id="infoScale"></div>
+                    </div>
+                </div>
+                <div id="divCon" style="text-align: center; height: 500px;">
+                    <div id="preview" class="demo-wrapper"
+                        style="outline: 1px solid #B3B1B1;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="Ok" class="btn"><spring:message code="common_confirm" /></button>
+            </div>
+        </div>
+        <div class="modal hide fade" data-backdrop=true   id="myTicketModel">
+             <form class="demoform" onkeydown= "if(event.keyCode==13)return false;" action="/sva/message/api/saveTicket" enctype="multipart/form-data" method="post" >      
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" onclick="closeTicket()" aria-hidden="true">&times;</button>
+                    <div class="control-group" style="float: left">
+                         <label class="control-label" style="float: left;margin-top: 9px;" for="pictrueId2"><spring:message code="seller_choose_tikect" /><i class="icon-question-sign tip" data-toggle="tooltip" title="<spring:message code="map_map_info" />"></i></label>
+                           <div class="controls" style="width: 200px;float: left;">
+                             <input style="width: 40%;margin-top: 5px" type='text' name='textfield3' errormsg='<spring:message code="map_format" />' nullmsg='<spring:message code="seller_choose_tikect" />' datatype="ticketjp"  id='textfield3' disabled="disabled"   style="width:24%;margin: auto;" /> 
+                             <span class="btn-upload form-group">
+                              <input type='button' style="margin-top: 0px" class="btn" value='<spring:message code="seller_choose_tikect" />'  style="width: 101%; margin-left: -1%;margin-top: 2px;" />
+                              <input id="fileField3"  type="file" style="height: 30px;" multiple name="fileTicket" class="input-file-1">
+                             </span>                          
+                           </div>
+                    </div>
                     <div class="control-group" style="float: left">
                      <select name="ticketType" style="height: 32px;">
                      <option value="北京鸟巢">北京鸟巢</option>
@@ -365,72 +365,72 @@
                      <option value="首都机场">首都机场</option>
                      <option value="Dubai Mall">Dubai Mall</option>                                                                                    
                      </select>
-                    </div>	                
-	                <div class="control-group" style="float: left">
-	                     <label class="control-label" style="float: left;margin-top: 10px" for=""><spring:message code="msg_gailv" /></label>
-	                       <div class="controls">
-	                            <input type="text" style="margin-left: 2px; width: 55%;height: 15%; margin-top: 7px;" maxlength="300" datatype="ticketYanzhen" errormsg='<spring:message code="msg_error" />'  nullmsg='<spring:message code="msg_qingshu" />' style="width: 62%;height: 15%;" class="input-xlarge" name="chances" id="chancesId" placeholder="<spring:message code="msg_gailv" />"
-	                            >
-	                       </div>
-	                </div>
-	                <div><button id="ticketAdd" style="height: 30px;margin-top: 4px;" type="submit" class="btn btn-primary" ><spring:message code="common_add" /></button></div>                
-	                <div class="hide">
-	                <input class="" type="text" name="msg.id" id ="msgIdId"></input>                 
-	                <input class="" type="text" name="ticketId" id = "ticketId"></input>                 
-	                <input class="" type="text" name="ticketPath" id ="ticketPathId"></input>
-                    <input class="" type="text" name="id" id ="tickeidid"></input>	                
-	                </div>                 
-	            </div>
-	          </form>    
-	            <table id="tableTicket" class="table table-bordered">
-	                  <thead>
-	                        <tr>
-	                            <th style=""><spring:message code="message_table_title_shopName" /></th>
-	                            <th style=""><spring:message code="msg_gailv" /></th>
-	                            <th style=""><spring:message code="msg_jiangquan" /></th>
-	                            <th style="width:278px"><spring:message code="message_table_title_operation" /></th>
-	                        </tr>
-	                 </thead>           
-	            </table>            
-	            <div class="modal-footer">
-	                <input type="button" id= "closeTicketId" onclick="closeTicket()" value=" <spring:message code="common_close" />">
-	            </div>
-	
-	      </div>
-	      	
-   		<!-- END FOOTER -->
+                    </div>                  
+                    <div class="control-group" style="float: left">
+                         <label class="control-label" style="float: left;margin-top: 10px" for=""><spring:message code="msg_gailv" /></label>
+                           <div class="controls">
+                                <input type="text" style="margin-left: 2px; width: 55%;height: 15%; margin-top: 7px;" maxlength="300" datatype="ticketYanzhen" errormsg='<spring:message code="msg_error" />'  nullmsg='<spring:message code="msg_qingshu" />' style="width: 62%;height: 15%;" class="input-xlarge" name="chances" id="chancesId" placeholder="<spring:message code="msg_gailv" />"
+                                >
+                           </div>
+                    </div>
+                    <div><button id="ticketAdd" style="height: 30px;margin-top: 4px;" type="submit" class="btn btn-primary" ><spring:message code="common_add" /></button></div>                
+                    <div class="hide">
+                    <input class="" type="text" name="msg.id" id ="msgIdId"></input>                 
+                    <input class="" type="text" name="ticketId" id = "ticketId"></input>                 
+                    <input class="" type="text" name="ticketPath" id ="ticketPathId"></input>
+                    <input class="" type="text" name="id" id ="tickeidid"></input>                  
+                    </div>                 
+                </div>
+              </form>    
+                <table id="tableTicket" class="table table-bordered">
+                      <thead>
+                            <tr>
+                                <th style=""><spring:message code="message_table_title_shopName" /></th>
+                                <th style=""><spring:message code="msg_gailv" /></th>
+                                <th style=""><spring:message code="msg_jiangquan" /></th>
+                                <th style="width:278px"><spring:message code="message_table_title_operation" /></th>
+                            </tr>
+                     </thead>           
+                </table>            
+                <div class="modal-footer">
+                    <input type="button" id= "closeTicketId" onclick="closeTicket()" value=" <spring:message code="common_close" />">
+                </div>
+    
+          </div>
+            
+        <!-- END FOOTER -->
    
-		<%@ include file="../shared/importJs.jsp"%>
-		<!-- BEGIN PAGE LEVEL SCRIPTS -->
-		<script src="<c:url value='/plugins/data-tables/media/js/jquery.dataTables.js'/>"type="text/javascript"></script> 
-		<script src="<c:url value='/plugins/raphael-min.js'/>"
-		type="text/javascript"></script>
-		<script src="<c:url value='/js/mapEdit.js'/>" type="text/javascript"></script>
-		<script src="<c:url value='/plugins/heatmap.min.js'/>" type="text/javascript"></script>
-		<script src="<c:url value='/js/app.js'/>" type="text/javascript"></script>
-		<script src="<c:url value='/js/msgMng.js'/>" type="text/javascript"></script>
-		<!-- END PAGE LEVEL SCRIPTS -->  
+        <%@ include file="../shared/importJs.jsp"%>
+        <!-- BEGIN PAGE LEVEL SCRIPTS -->
+        <script src="<c:url value='/plugins/data-tables/media/js/jquery.dataTables.js'/>"type="text/javascript"></script> 
+        <script src="<c:url value='/plugins/raphael-min.js'/>"
+        type="text/javascript"></script>
+        <script src="<c:url value='/js/mapEdit.js'/>" type="text/javascript"></script>
+        <script src="<c:url value='/plugins/heatmap.min.js'/>" type="text/javascript"></script>
+        <script src="<c:url value='/js/app.js'/>" type="text/javascript"></script>
+        <script src="<c:url value='/js/msgMng.js'/>" type="text/javascript"></script>
+        <!-- END PAGE LEVEL SCRIPTS -->  
 
-		<script type="text/javascript">
+        <script type="text/javascript">
    var oTable;
    var rect = {};
    var i18n_format = '<spring:message code="map_format" />';
    var i18n_movie = '<spring:message code="message_movie_format" />';
    var i18n_delete = '<spring:message code="common_delete" />',
-   		i18n_edit = '<spring:message code="common_edit" />',
-   	    i18n_info = '<spring:message code="map_info" />',
-   	    i18n_deleteInfo = '<spring:message code="map_delete" />',
-   	   	i18n_open = '<spring:message code="message_swith_open" />',
-   	   	i18n_close = '<spring:message code="message_swith_close" />',
-   	 	i18n_choose_title = '<spring:message code="map_choose_posistion_alert" />',
+        i18n_edit = '<spring:message code="common_edit" />',
+        i18n_info = '<spring:message code="map_info" />',
+        i18n_deleteInfo = '<spring:message code="map_delete" />',
+        i18n_open = '<spring:message code="message_swith_open" />',
+        i18n_close = '<spring:message code="message_swith_close" />',
+        i18n_choose_title = '<spring:message code="map_choose_posistion_alert" />',
         i18n_max = '<spring:message code="map_pictrue_max" />',
         i18n_fuzhi  = '<spring:message code="map_fuzhi" />',
         i18n_ticket  = '<spring:message code="msg_jiangquan" />',
         i18n_chance  = '<spring:message code="msg_gailv" />',
-       	i18n_Preview = '<spring:message code="seller_Preview" />';
+        i18n_Preview = '<spring:message code="seller_Preview" />';
       $(document).ready(function() { 
-    	  $(".demoform").Validform({tiptype:3,
-    		  showAllError:true,
+          $(".demoform").Validform({tiptype:3,
+              showAllError:true,
               datatype:{
                     "jp":function(gets,obj,curform,regxp){
                         var fi =gets.split(".")[gets.split(".").length-1];
@@ -439,7 +439,7 @@
                               return false;
                           }
 
-                    	},
+                        },
                     "ticketjp":function(gets,obj,curform,regxp){
                         var fi =gets.split(".")[gets.split(".").length-1];
                           if (fi!=""&&fi!="jpg"&&fi!="png"&&fi!="PNG"&&fi!="JPG")
@@ -451,7 +451,7 @@
                           return false;
                           }
 
-                    	},
+                        },
                         "mv":function(gets,obj,curform,regxp){
                             var fi =gets.split(".")[gets.split(".").length-1];
                               if (fi!=""&&fi!="mp4"&&fi!="MP4")
@@ -467,11 +467,11 @@
                                     }
                             },
                             "ticketYanzhen":function(gets,obj,curform,regxp){
-                            	var size = $("#tableTicket tbody tr").length;
-                            	var vale = 0;
-                            	for (var i = 0; i < size; i++) {
-                            	 vale = vale+parseInt($("#tableTicket tbody tr")[i].childNodes[1].innerHTML);
-								}
+                                var size = $("#tableTicket tbody tr").length;
+                                var vale = 0;
+                                for (var i = 0; i < size; i++) {
+                                 vale = vale+parseInt($("#tableTicket tbody tr")[i].childNodes[1].innerHTML);
+                                }
                                 if(gets=="")
                                     {
                                     return false;
@@ -493,13 +493,13 @@
                  $(".sameInfo").addClass("Validform_wrong");
                  $(".sameInfo").text(i18n_max);
              }
-    	 App.init();
-    	 MsgMng.initSelect();
-    	 MsgMng.initMsgTable();
-    	 MsgMng.bindClickEvent();
-    	 $('.tip').tooltip();
+         App.init();
+         MsgMng.initSelect();
+         MsgMng.initMsgTable();
+         MsgMng.bindClickEvent();
+         $('.tip').tooltip();
       });
-		</script>
+        </script>
    <!-- END JAVASCRIPTS -->
-	</body>
+    </body>
 </html>

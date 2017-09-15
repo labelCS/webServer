@@ -30,6 +30,10 @@ public class PrruSignalModel {
     private BigDecimal rsrp;
 
     private long timestamp;
+    /** 
+     * @Fields type : 执行采集任务类型 “1”：LTE;"2":wifi;"3":蓝牙
+     */ 
+    private String type;
 
     /**
      * @return the id
@@ -37,7 +41,20 @@ public class PrruSignalModel {
     public int getId() {
         return id;
     }
-
+    
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+    
+    /**
+     * @param the type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
     /**
      * @param id
      *            the id to set

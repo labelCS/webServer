@@ -22,10 +22,26 @@ public class PrruFeatureDetailModel {
 	private int featureId;
 	private String gpp;
 	private BigDecimal featureValue;
+	private String type;
 
 	// prru对应特征点（featureid）距离
 	private double distance;
 
+	/**
+	 * @return the id
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	/**
 	 * @return the id
 	 */

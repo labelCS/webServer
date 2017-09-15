@@ -75,7 +75,7 @@ public class AmqpDaoTest extends BasicDaoTest {
         String rsrp = "-1300";
         String ip = "17.0.0.1";
         long timestamp = System.currentTimeMillis();
-        int result = amqpDao.svaPrru(enbid, userId, gpp, rsrp, ip,timestamp);
+        int result = amqpDao.svaPrru(enbid, userId, gpp, rsrp, ip,timestamp,"1");
         Assert.assertEquals("结果为1",1, result);
     }
     
