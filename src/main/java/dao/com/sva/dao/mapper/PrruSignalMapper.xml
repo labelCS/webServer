@@ -46,6 +46,14 @@
             #{timestamp},
             #{type}
         )</insert>
+    
+    <insert id="saveAllPhoneSignal" useGeneratedKeys="true" parameterType="java.util.List">
+        INSERT INTO prrusignal(enbid,userId,gpp,rsrp,timestamp,type) 
+        VALUES 
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.enbid},#{item.userId},#{item.gpp},#{item.rsrp},#{item.timestamp},#{item.type})
+        </foreach>
+    </insert>
      
     <select id="getTwoSignalByUserId" resultType="PrruSignalModel">
         SELECT prruSignal.* 
@@ -55,6 +63,18 @@
                 WHERE userId = #{userId} and type = #{type}
                 ORDER BY timestamp desc 
                 LIMIT 2
+            ) a
+        WHERE prruSignal.userId = #{userId} and prruSignal.timestamp = a.timestamp;
+    </select>
+    
+    <select id="getSignalsByUserId" resultType="PrruSignalModel">
+        SELECT prruSignal.* 
+        FROM prruSignal join (
+                SELECT distinct(timestamp) 
+                FROM prruSignal 
+                WHERE userId = #{userId} and type = #{type}
+                ORDER BY timestamp desc 
+                LIMIT ${count}
             ) a
         WHERE prruSignal.userId = #{userId} and prruSignal.timestamp = a.timestamp;
     </select>

@@ -53,6 +53,14 @@ public interface PrruSignalDao {
             @Param("rsrp")String rsrp,@Param("ip")String ip,@Param("timestamp")long timestamp, @Param("type")String type);
     
     /** 
+     * @Title: saveAllPhoneSignal 
+     * @Description: 批量插入信号
+     * @param data
+     * @return 
+     */
+    public int saveAllPhoneSignal(List<PrruSignalModel> data);
+    
+    /** 
      * @Title: getOneSignalByUserIdTime 
      * @Description: 获取符合条件的一个时间戳的数据
      * @param userId
@@ -77,6 +85,8 @@ public interface PrruSignalDao {
      * @return 
      */
     public List<PrruSignalModel> getTwoSignalByUserId(@Param("userId")String userId, @Param("type")String type);
+    
+    public List<PrruSignalModel> getSignalsByUserId(@Param("userId")String userId, @Param("count")String count, @Param("type")String type);
     
     /** 
      * @Title: getRelativeFeature 

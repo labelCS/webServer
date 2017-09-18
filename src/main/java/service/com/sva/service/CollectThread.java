@@ -572,7 +572,7 @@ public class CollectThread extends Thread {
         		wifiFormatedList = wifiFormatedList.subList(0, params.getLength());
         	}
         	if(params.getSwitchWIFI()==0 && blueFormatedList.size()>params.getLength()){
-        		blueFormatedList = blueFormatedList.subList(0, params.getLength());
+        		//blueFormatedList = blueFormatedList.subList(0, params.getLength());
         	}
         }
 

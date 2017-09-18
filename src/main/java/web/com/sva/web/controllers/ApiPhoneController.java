@@ -9,6 +9,7 @@
 package com.sva.web.controllers;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import com.sva.common.ConvertUtil;
 import com.sva.common.conf.GlobalConf;
 import com.sva.service.CollectThread;
 import com.sva.service.PrruService;
@@ -70,8 +71,10 @@ public class ApiPhoneController {
     @ResponseBody
     public Map<String, Object> uploadPhoneSignal(@RequestBody PhoneSignalModel requestModel)
     {
-        LOG.debug("Upload Phone Signal");
-        return prruService.savePhoneSignal(requestModel);
+        LOG.debug("Start Upload Phone Signal" + ConvertUtil.dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        Map<String, Object> result = prruService.savePhoneSignal(requestModel);
+        LOG.debug("End Upload Phone Signal" + ConvertUtil.dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        return result;
     }
     
     /** 

@@ -96,6 +96,9 @@ public class PrruService {
     @Value("${prru.gppCount}")
     private String gppCount;
     
+    @Value("${blue.count}")
+    private String blueCount;
+    
     /** 
      * @Title: collectFeatureValue 
      * @Description: 采集特征库
@@ -187,10 +190,11 @@ public class PrruService {
             return result;
         }
         // 取出当前用户的prru信号信息 TODO:新定位算法的场合要用另一个dao方法
-        //List<PrruSignalModel> signals = prruSignalDao.getCurrentSignalByUserId(ConvertUtil.convertMacOrIp(userId));
-        List<PrruSignalModel> signals = prruSignalDao.getTwoSignalByUserId(ConvertUtil.convertMacOrIp(userId), "1");
+        //List<PrruSignalModel> signals = prruSignalDao.getCurrentSignalByUserId(ConvertUtil.convertMacOrIp(userId), "3");
+        //List<PrruSignalModel> signals = prruSignalDao.getTwoSignalByUserId(ConvertUtil.convertMacOrIp(userId), "3");
+        List<PrruSignalModel> signals = prruSignalDao.getSignalsByUserId(ConvertUtil.convertMacOrIp(userId), blueCount, "3");
         // 修改gpp的值,添加enbId
-        editGpp(signals);
+        //editGpp(signals);
         // 取出信号信息中的柜框槽号，并拼接成字符串
         List<String> gpps = new ArrayList<String>();
         for(PrruSignalModel item : signals){
@@ -207,7 +211,8 @@ public class PrruService {
         }
         
         // TODO 新定位算法的场合，去重
-        getAvgPrruSignals(signals, gpps);
+        //getAvgPrruSignals(signals, gpps);
+        getAveragePrruSignals(signals, gpps);
         LOG.debug("去重后的柜框槽号信息："+gpps.toString());
         // 获取楼层号
         if(floorNo == null || "null".equals(floorNo)){
@@ -532,7 +537,10 @@ public class PrruService {
                 String gpp = p.getGpp();
                 BigDecimal rsrp = p.getRsrp();
                 BigDecimal featureValue = getFeatureValue(gpp,featureModel,minusFeature);
-                
+                if(featureValue==null){
+                    continue;
+                }
+                LOG.debug("参与计算的gpp："+gpp);
                 dis = dis.add(rsrp.subtract(featureValue).pow(2));
             }
             LOG.debug("半径："+dis);
@@ -634,7 +642,7 @@ public class PrruService {
      */
     private BigDecimal getFeatureValue(String gpp, PrruFeatureModel model, BigDecimal defaultVal){
         // 结果
-        BigDecimal result = defaultVal;
+        BigDecimal result = null;
         // 特征值list
         List<PrruFeatureDetailModel> list = model.getFeatureValues();
         // 遍历list，取出对应gpp的特征值
@@ -777,6 +785,43 @@ public class PrruService {
             gpps.add(tempList.get(i).getGpp());
         }
         */
+        LOG.debug("final rsrp:"+signals.toString());
+    }
+    
+    private void getAveragePrruSignals(List<PrruSignalModel> signals, List<String> gpps){
+        Map<String, Integer> rsrpCount = new HashMap<String, Integer>();
+        
+        Map<String, PrruSignalModel> temp = new HashMap<String, PrruSignalModel>();
+        // 遍历
+        for(int i = 0;i<gpps.size();i++){
+            String s = gpps.get(i);
+            // gpp在map中不存在，则加入
+            if(temp.get(s) == null){
+                temp.put(s, signals.get(i));
+                rsrpCount.put(s, 1);
+                // 否则，将n个rsrp值求和
+            }else{
+                BigDecimal secondRsrp = signals.get(i).getRsrp();
+                BigDecimal firstRsrp = temp.get(s).getRsrp();
+                temp.get(s).setRsrp(firstRsrp.add(secondRsrp));
+                rsrpCount.put(s, rsrpCount.get(s)+1);
+            }
+        }
+        
+        // 对入参重新赋值
+        signals.clear();
+        gpps.clear();
+        //List<PrruSignalModel> tempList = new ArrayList<PrruSignalModel>();
+        Iterator<Entry<String, PrruSignalModel>> itModel = temp.entrySet().iterator();
+        // 取平均
+        while(itModel.hasNext()){
+            Entry<String,PrruSignalModel> entity = itModel.next();
+            //tempList.add(entity.getValue());
+            gpps.add(entity.getKey());
+            PrruSignalModel psm = entity.getValue();
+            psm.setRsrp(psm.getRsrp().divide(new BigDecimal(rsrpCount.get(entity.getKey())), 2));
+            signals.add(psm);
+        }
         LOG.debug("final rsrp:"+signals.toString());
     }
     
