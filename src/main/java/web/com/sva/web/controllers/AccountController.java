@@ -37,8 +37,6 @@ public class AccountController
 
     private static final Logger LOG = Logger.getLogger(AccountController.class);
     
-    public static final MyLog mylog = MyLog.getInstance();
-
     @RequestMapping(value = "/login", method = {RequestMethod.GET})
     public String login()
     {

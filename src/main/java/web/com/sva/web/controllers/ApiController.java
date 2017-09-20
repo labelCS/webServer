@@ -81,6 +81,7 @@ import com.sva.model.StaticAccuracyModel;
 import com.sva.model.StoreModel;
 import com.sva.model.SvaModel;
 import com.sva.model.TicketModel;
+import com.sva.service.PrruService;
 import com.sva.service.SubscriptionService;
 import com.sva.web.models.AccuracyApiModel;
 import com.sva.web.models.ApiRequestModel;
@@ -173,6 +174,9 @@ public class ApiController
 
     @Autowired
     private TicketDao ticketDao;
+    
+    @Autowired
+    private PrruService prruService;
     
     @Value("${AcquisitionPointLocation}")
     private String locationData;
@@ -2996,5 +3000,110 @@ public Map<String, Object> getDataByFloorNo(@RequestParam("floorNo") String floo
         }
         map.put("result", b);
         return map;
+    }
+    
+    /** 
+     * @Title: getLocationDataByWifi 
+     * @Description: 混合定位和GPRS
+     * @param userId 用户ID   
+     * @param switchLTE LTE开关
+     * @param switchWifi wifi开关
+     * @param switchBlue bule开关
+     * @param x 经纬
+     * @param y 维度
+     * @param floorNos 楼层号
+     * @return 
+     */
+    @RequestMapping(value = "/getLocationDataByWifi", method = {RequestMethod.POST})
+    @ResponseBody
+    public Map<String, Object> getLocationDataByWifi(String userId, String switchLTE, 
+            String switchWifi, String switchBlue,double x,double y,
+            @RequestParam(value="floorNo", required=false)String floorNos)
+    {
+//        double x = requestModel.getX();
+//        double y = requestModel.getY();
+        String ip = userId;
+        String floorNo = dao.getBigFloorNo();
+        long timestamp = System.currentTimeMillis();
+        int type = 1;
+
+        if (StringUtils.isEmpty(ip))
+        {
+            return null;
+        }
+        
+        long paramUpdate = 0;       
+        Collection<ParamModel> paramUpdates = daoParam.doquery();     
+        for (ParamModel paramModel : paramUpdates)        
+        {     
+            paramUpdate = paramModel.getUpdateTime();     
+        }
+//        List<LocationModel> resultList = dao.queryLocationByUseId(ConvertUtil.convertMacOrIp(requestModel.getIp()));
+        Map<String, Object> modelMap = new HashMap<String, Object>(2);
+        modelMap.put("paramUpdateTime", paramUpdate);
+        Map<String, Object> prruMap = prruService.getLocationMixPrru(userId,switchLTE,switchWifi,switchBlue,floorNo);
+        try {
+            LocationModel prruData = (LocationModel) prruMap.get("data");
+            if (prruData!=null) {
+                modelMap.put("data", prruData);
+                modelMap.put("mapType", type);
+            }else
+            {
+                type = 2;
+                LocationModel model = new LocationModel();
+                LOG.debug("api getLocationDataByWifi x:" +x +" y:"+ y );
+                String[] locationList = locationData.split(",");
+                String[] latitudeList = latitudeData.split(",");
+                if (locationList.length<5||latitudeList.length<5) {
+                    LOG.debug("api getLocationDataByWifi error sva.properties配置文件不对" );
+                    model.setX(new BigDecimal(0));
+                    model.setY(new BigDecimal(0));
+                    model.setZ(new BigDecimal(floorNo));
+                    model.setTimestamp(new BigDecimal(timestamp));
+                    modelMap.put("data", model);
+                    modelMap.put("mapType", type);
+                }else
+                {
+                    double x1 = Double.valueOf(latitudeList[0]);
+                    double y1 = Double.valueOf(latitudeList[1]);
+                    double x2 = Double.valueOf(latitudeList[2]);
+                    double y2 = Double.valueOf(latitudeList[3]);
+                    double x3 = Double.valueOf(latitudeList[4]);
+                    double y3 = Double.valueOf(latitudeList[5]);
+                    
+                    double gx1 = Double.valueOf(locationList[0]);
+                    double gy1 = Double.valueOf(locationList[1]);
+                    double gx2 = Double.valueOf(locationList[2]);
+                    double gy2 = Double.valueOf(locationList[3]);
+                    double gx3 = Double.valueOf(locationList[4]);
+                    double gy3 = Double.valueOf(locationList[5]);
+                    
+                    double ks = x1*y2-x2*y1+x2*y3-x3*y2+x3*y1-x1*y3;
+                    
+                    
+                    double k1 = x2*y3-x3*y2+x3*y-x*y3+x*y2-x2*y;
+        
+                    double k2 = x1*y-x*y1+x*y3-x3*y+x3*y1-x1*y3;
+        
+                    double k3 = x1*y2-x2*y1+x2*y-x*y2+x*y1-x1*y;
+        
+                    double gx = (gx1*k1+gx2*k2+gx3*k3)/ks;
+                    double gy = (gy1*k1+gy2*k2+gy3*k3)/ks;
+        
+                    LOG.debug("api getLocationDataByWifi gx:"+gx+" gy:"+gy+" ip:"+ip);            
+//                    System.out.println("gx:"+gx+" gy:"+gy);
+                    model.setX(new BigDecimal(gx));
+                    model.setY(new BigDecimal(gy));
+                    model.setZ(new BigDecimal(floorNo));
+                    model.setTimestamp(new BigDecimal(timestamp));
+                    modelMap.put("data", model);
+                    modelMap.put("mapType", type);
+                    } 
+            }
+        } catch (Exception e) {
+           LOG.debug("getLocationDataByWifi ERROR:"+e.getMessage());
+        }
+            
+        return modelMap;
     }
 }

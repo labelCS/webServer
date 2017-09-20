@@ -56,7 +56,7 @@ public class PrruService {
      */
     private static final Logger LOG = Logger.getLogger(PrruService.class);
     
-    private static final MyLog mylog = AccountController.mylog;
+//    private static final MyLog mylog = AccountController.mylog;
     
     /** 
      * @Fields DEFAULT_VALUE : 计算特征值时的默认值

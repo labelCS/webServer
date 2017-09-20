@@ -276,9 +276,11 @@ public class ValidateSVAService extends HttpsService {
         // 当前时间戳
         long timeLocal = System.currentTimeMillis();
         long begin = timeLocal - (long) (secondBefore * 1000);
+        String locationPhone = "locationphone";
         int dataNum = dao.countLocationDataNum(tableName, begin, timeLocal, svaid);
+        int dataNum1 = dao.countLocationDataNum(locationPhone, begin, timeLocal, svaid);
         // 若location数据不存在
-        if (dataNum <= 0) {
+        if (dataNum <= 0&&dataNum1<=0) {
             LOG.error("--sav验证--：location数据未产生");
             return false;
         } else {

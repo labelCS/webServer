@@ -11,24 +11,26 @@ package com.sva.service;
 import java.io.File;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
+
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.qpid.QpidException;
 import org.apache.qpid.client.AMQAnyDestination;
 import org.apache.qpid.client.AMQConnection;
 import org.apache.qpid.url.URLSyntaxException;
+
 import com.sva.common.ConvertUtil;
 import com.sva.common.MyLog;
 import com.sva.dao.AmqpDao;
 import com.sva.model.LocationModel;
 import com.sva.model.SvaModel;
-import com.sva.web.controllers.AccountController;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -47,7 +49,7 @@ public class AmqpThread extends Thread {
      */ 
     private static final Logger LOG = Logger.getLogger(AmqpThread.class);
     
-    private static final MyLog mylog = AccountController.mylog;
+    private  static final MyLog mylog = MyLog.getInstance();
     /** 
      * @Fields sva : sva信息 
      */ 

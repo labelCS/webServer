@@ -373,6 +373,7 @@ CREATE TABLE IF NOT EXISTS `locationphone` (
   `x` decimal(10,0) DEFAULT NULL,
   `y` decimal(10,0) DEFAULT NULL,
   `z` decimal(10,0) DEFAULT NULL,
+  `svaid` decimal(10,0) DEFAULT NULL,
   `userID` varchar(50) NOT NULL,
   PRIMARY KEY (`userID`)
 ) DEFAULT CHARSET=latin1;
