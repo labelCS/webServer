@@ -36,6 +36,20 @@
             )
     </select>
     
+	<select id="getCurrentSignalsByUserIdTime" resultType="PrruSignalModel">
+        SELECT * FROM prruSignal 
+        WHERE 
+            userId = #{userId} 
+            and type = #{type}
+            and timestamp = (
+                SELECT timestamp 
+                FROM prruSignal 
+                WHERE timestamp &gt; #{timestamp} and userId = #{userId}
+                ORDER BY timestamp desc 
+				LIMIT 1		
+            )
+    </select>    
+    
     <insert id="savePhoneSignal">INSERT INTO prrusignal
             (enbid,userId,gpp,rsrp,timestamp,type)
         VALUES (
@@ -46,7 +60,7 @@
             #{timestamp},
             #{type}
         )</insert>
-    
+     
     <insert id="saveAllPhoneSignal" useGeneratedKeys="true" parameterType="java.util.List">
         INSERT INTO prrusignal(enbid,userId,gpp,rsrp,timestamp,type) 
         VALUES 
@@ -54,7 +68,7 @@
             (#{item.enbid},#{item.userId},#{item.gpp},#{item.rsrp},#{item.timestamp},#{item.type})
         </foreach>
     </insert>
-     
+    
     <select id="getTwoSignalByUserId" resultType="PrruSignalModel">
         SELECT prruSignal.* 
         FROM prruSignal join (
@@ -93,6 +107,19 @@
         WHERE a.floorNo = #{floorNo};
     </select>
     
+	<select id="getRelativeFeatureWithoutFloorNo" resultType="PrruFeatureModel">
+        SELECT a.*,b.gpp,b.featureValue 
+        FROM prruFeature a join (
+                SELECT * 
+                FROM prruFeatureDetail 
+                WHERE gpp in
+                <foreach item="item" index="index" collection="gpps"
+                    open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            ) b on a.id = b.featureId
+    </select>
+        
     <delete id="deleteSignal">
         DELETE FROM prrusignal
     </delete>

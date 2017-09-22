@@ -38,4 +38,6 @@ public interface PrruDao {
     public List<PrruModel> getPrruInfoByfloorNo(@Param("floorNo")String floorNo, @Param("eNodeBid")String eNodeBid, @Param("cellId")String cellId);
     
     public List<PrruModel> getPrruInfo(@Param("floorNo")String floorNo, @Param("eNodeBid")String eNodeBid);
+    
+    public int deletePrruFeature(@Param("floorNo")String floorNo);
 }

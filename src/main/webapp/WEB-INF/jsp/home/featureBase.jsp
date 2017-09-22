@@ -85,7 +85,7 @@
                     <input type="button" class="btn btn-primary" value="<spring:message code="common_confirm" />" id="confirm" style="vertical-align: top;">
                 </div>
                 <div class="span1" id="msgdemo2"></div>             
-                <div class = "span6" style="text-align: right;">
+                <div class="span4" style="text-align: right;">
                     <div class="btn-group">
                         <button class="btn btn-primary btn-lg dropdown-toggle" type="button" data-toggle="dropdown">
                             <spring:message code="sva_daochu" /><span class="caret"></span>
@@ -95,6 +95,9 @@
                             <li><a href="#" id="exportTxt">Txt</a></li>
                         </ul>
                     </div>
+                </div>
+                <div class="span2" style="text-align: right;">
+                	<input type="button" class="btn btn-primary" value="删除" id="delte" style="vertical-align: top;">
                 </div>              
             </form>
 

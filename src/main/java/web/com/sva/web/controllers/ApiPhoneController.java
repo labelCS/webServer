@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,9 @@ import com.sva.web.models.PrruFeatureApiModel;
 @RequestMapping(value = "/api/app")
 public class ApiPhoneController {
     private static final Logger LOG = Logger.getLogger(ApiPhoneController.class);
+    
+    @Value("${blue.locationType}")
+    private String locationType;
     
     /** 
      * @Fields prruService : 处理prru特征定位的相关服务
@@ -169,14 +173,35 @@ public class ApiPhoneController {
             @RequestParam(value="y1", required=false)String y1,
             @RequestParam(value="floorNo", required=false)String floorNo)
     {
-        x = new BigDecimal(x).divide(new BigDecimal(10)).toString();
-        y = new BigDecimal(y).divide(new BigDecimal(10)).toString();
-        if(x1 != null && y1 != null){
-            x1 = new BigDecimal(x1).divide(new BigDecimal(10)).toString();
-            y1 = new BigDecimal(y1).divide(new BigDecimal(10)).toString();
+        if("1".equals(locationType)){
+            x = new BigDecimal(x).divide(new BigDecimal(10)).toString();
+            y = new BigDecimal(y).divide(new BigDecimal(10)).toString();
+            if(x1 != null && y1 != null){
+                x1 = new BigDecimal(x1).divide(new BigDecimal(10)).toString();
+                y1 = new BigDecimal(y1).divide(new BigDecimal(10)).toString();
+            }
+            LOG.debug("ID:" + userId+",x:"+x+",y:"+y+",x1:"+x1+",y1:"+y1+",floorNo:"+floorNo);
+            return prruService.getLocationPrru(userId,x,y,x1,y1,floorNo);
+        }else{
+            return prruService.getLocationMixPrru(userId,"0","0","1",floorNo);
         }
-        LOG.debug("ID:" + userId+",x:"+x+",y:"+y+",x1:"+x1+",y1:"+y1+",floorNo:"+floorNo);
-        return prruService.getLocationPrru(userId,x,y,x1,y1,floorNo);
+    }
+    
+    /** 
+     * @Title: getMixData 
+     * @Description: 混合特征库定位接口
+     * @param userId
+     * @return 
+     */
+    @RequestMapping(value = "/getMixData", method = {RequestMethod.POST})
+    @ResponseBody
+    public Map<String, Object> getMixData(String userId, String switchLTE, 
+    		String switchWifi, String switchBlue,
+    		@RequestParam(value="floorNo", required=false)String floorNo)
+    {
+
+        LOG.debug("ID:" + userId+",switchLTE:"+switchLTE+",switchWifi:"+switchWifi+",switchBlue:"+switchBlue+",floorNo:"+floorNo);
+        return prruService.getLocationMixPrru(userId,switchLTE,switchWifi,switchBlue,floorNo);
     }
     
     /** 

@@ -407,4 +407,13 @@ public class PrruController {
 			}
 		}
 	}
+	
+	@RequestMapping(value = "/api/delPrruFeature", method = { RequestMethod.GET })
+	@ResponseBody
+	public void delPrruFeature(@RequestParam("placeId") String placeId) {
+		List<MapsModel> mapsModelList = mapDao.getFloors(placeId);
+		for(MapsModel mapsModel : mapsModelList){
+			dao.deletePrruFeature(mapsModel.getFloorNo().toString());
+		}
+	}
 }
