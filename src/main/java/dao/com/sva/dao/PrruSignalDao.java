@@ -186,7 +186,7 @@ public interface PrruSignalDao {
     public int delSimulateDataByFloorNo(@Param("floorNo")String floorNo,@Param("eNodeBid")String eNodeBid);
 
     public List<PrruSignalModel> getSignalsByUserId(@Param("userId")String userId, @Param("count")String count, @Param("type")String type);
-    
+    public List<PrruSignalModel> getAverageSignalsByUserId(@Param("userId")String userId, @Param("count")String count, @Param("type")String type);
     /** 
      * @Title: saveAllPhoneSignal 
      * @Description: 批量插入信号

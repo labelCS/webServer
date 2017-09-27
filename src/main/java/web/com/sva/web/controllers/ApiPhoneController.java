@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.sva.common.ConvertUtil;
 import com.sva.common.conf.GlobalConf;
+import com.sva.model.LocationModel;
 import com.sva.service.CollectThread;
+import com.sva.service.CosineBleAlgorithmService;
 import com.sva.service.PrruService;
+import com.sva.web.models.BleUserModel;
 import com.sva.web.models.PhoneSignalModel;
 import com.sva.web.models.PrruFeatureApiModel;
 
@@ -50,6 +53,12 @@ public class ApiPhoneController {
      */ 
     @Autowired
     PrruService prruService;
+    
+    /** 
+     * @Fields BleService : 蓝牙余弦相似度定位服务
+     */ 
+    @Autowired
+    CosineBleAlgorithmService bleService;
     
     /** 
      * @Title: getStartCollectPrru 
@@ -173,6 +182,8 @@ public class ApiPhoneController {
             @RequestParam(value="y1", required=false)String y1,
             @RequestParam(value="floorNo", required=false)String floorNo)
     {
+        // 返回值
+        Map<String, Object> returnVal = new HashMap<String, Object>();
         if("1".equals(locationType)){
             x = new BigDecimal(x).divide(new BigDecimal(10)).toString();
             y = new BigDecimal(y).divide(new BigDecimal(10)).toString();
@@ -181,10 +192,18 @@ public class ApiPhoneController {
                 y1 = new BigDecimal(y1).divide(new BigDecimal(10)).toString();
             }
             LOG.debug("ID:" + userId+",x:"+x+",y:"+y+",x1:"+x1+",y1:"+y1+",floorNo:"+floorNo);
-            return prruService.getLocationPrru(userId,x,y,x1,y1,floorNo);
-        }else{
-            return prruService.getLocationMixPrru(userId,"0","0","1",floorNo);
+            returnVal = prruService.getLocationPrru(userId,x,y,x1,y1,floorNo);
+        }else if("2".equals(locationType)){
+            returnVal = prruService.getLocationMixPrru(userId,"0","0","1",floorNo);
         }
+
+        BleUserModel model = new BleUserModel();
+        model.setFloorNo(floorNo);
+        model.setUserId(userId);
+        LocationModel result = bleService.getLocation(model);
+        LOG.debug("余弦算法结果："+result.getX()+","+result.getY());
+        returnVal.put("data", result);
+        return returnVal;
     }
     
     /** 

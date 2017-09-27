@@ -1142,7 +1142,10 @@ public class PrruService {
                 String gpp = p.getGpp();
                 BigDecimal rsrp = p.getRsrp();
                 BigDecimal featureValue = getFeatureValue(gpp,featureModel,minusFeature);
-                
+                if(featureValue==null){
+                    continue;
+                }
+                LOG.debug("参与计算的gpp："+gpp);
                 dis = dis.add(rsrp.subtract(featureValue).pow(2));
             }
             LOG.debug("半径："+dis);
@@ -1244,7 +1247,7 @@ public class PrruService {
      */
     private BigDecimal getFeatureValue(String gpp, PrruFeatureModel model, BigDecimal defaultVal){
         // 结果
-        BigDecimal result = defaultVal;
+        BigDecimal result = null;
         // 特征值list
         List<PrruFeatureDetailModel> list = model.getFeatureValues();
         // 遍历list，取出对应gpp的特征值

@@ -93,6 +93,19 @@
         WHERE prruSignal.userId = #{userId} and prruSignal.timestamp = a.timestamp;
     </select>
     
+    <select id="getAverageSignalsByUserId" resultType="PrruSignalModel">
+        SELECT prruSignal.gpp, avg(prruSignal.rsrp) rsrp, prruSignal.timestamp, prruSignal.userId
+        FROM prruSignal join (
+                SELECT distinct(timestamp) 
+                FROM prruSignal 
+                WHERE userId = #{userId} and type = #{type}
+                ORDER BY timestamp desc 
+                LIMIT ${count}
+            ) a
+        WHERE prruSignal.userId = #{userId} and prruSignal.timestamp = a.timestamp
+        group by prruSignal.gpp
+    </select>
+    
     <select id="getRelativeFeature" resultType="PrruFeatureModel">
         SELECT a.*,b.gpp,b.featureValue 
         FROM prruFeature a join (
