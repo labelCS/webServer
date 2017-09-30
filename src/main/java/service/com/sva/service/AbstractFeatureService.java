@@ -8,13 +8,10 @@
  */
 package com.sva.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import com.sva.common.ConvertUtil;
 import com.sva.dao.PrruSignalDao;
 import com.sva.model.PrruFeatureDetailModel;
@@ -39,13 +36,25 @@ public abstract class AbstractFeatureService
     
     /** 
      * @Title: getBlueSignals 
-     * @Description: 获取用户当前的蓝牙信号
+     * @Description: 获取去重后的用户当前的蓝牙信号
      * @param userId
      * @param blueCount
      * @return 
      */
     protected List<PrruSignalModel> getBlueSignals(String userId, String blueCount){
         List<PrruSignalModel> signals = getDao().getAverageSignalsByUserId(ConvertUtil.convertMacOrIp(userId), blueCount, "3");
+        return signals;
+    }
+    
+    /** 
+     * @Title: getBlueSignalsList 
+     * @Description: 获取指定用户最近count次的信号数据
+     * @param userId
+     * @param blueCount
+     * @return 
+     */
+    protected List<PrruSignalModel> getBlueSignalsList(String userId, String blueCount){
+        List<PrruSignalModel> signals = getDao().getSignalsByUserId(ConvertUtil.convertMacOrIp(userId), blueCount, "3");
         return signals;
     }
     

@@ -59,6 +59,18 @@ public class CosineBleAlgorithmService extends AbstractFeatureService implements
      */ 
     @Value("${blue.count}")
     private String blueCount;
+    
+    /** 
+     * @Fields Q : 预测方差
+     */ 
+    @Value("${blue.Q}")
+    private String strQ;
+    
+    /** 
+     * @Fields R : 测量方差
+     */ 
+    @Value("${blue.R}")
+    private String strR;
 
     /* (非 Javadoc) 
      * <p>Title: getDao</p> 
@@ -84,6 +96,7 @@ public class CosineBleAlgorithmService extends AbstractFeatureService implements
     {
         LocationModel result = new LocationModel();
         // 第一步，获取用户信号数据
+        //List<PrruSignalModel> signals = getBlueSignalsList(model.getUserId(), blueCount);
         List<PrruSignalModel> signals = getBlueSignals(model.getUserId(), blueCount);
         // 如果未找到信号数据，返回错误信息
         if(signals.isEmpty()){
@@ -91,11 +104,14 @@ public class CosineBleAlgorithmService extends AbstractFeatureService implements
             return result;
         }
         
-        // 第二步，获取蓝牙id列表
+        // 第二步，对用户信号进行滤波（卡尔曼或均值）
+        //kalmanFilter(signals);
+        
+        // 第三步，获取蓝牙id列表
         List<String> gpps = getGpps(signals);
         LOG.debug("用户["+model.getUserId()+"]的信号信息："+gpps.toString());
         
-        // 第三步，获取相关的特征点信息
+        // 第四步，获取相关的特征点信息
         Map<Integer,PrruFeatureModel> formatedFeatures = getRelativeFeaturePoint(gpps, model.getUserId(), model.getFloorNo());
         // 如果没有匹配的特征库，返回错误信息
         if(formatedFeatures.isEmpty()){
@@ -103,7 +119,7 @@ public class CosineBleAlgorithmService extends AbstractFeatureService implements
             return result;
         }
         
-        // 第四步，计算最接近的特征点
+        // 第五步，计算最接近的特征点
         PrruFeatureModel closest = calcClosestPoint(signals,formatedFeatures);
         
         // 最后，进行数据格式转换
@@ -221,4 +237,87 @@ public class CosineBleAlgorithmService extends AbstractFeatureService implements
         return entryList.get(0).getKey();
     }
 
+    /** 
+     * @Title: kalmanFilter 
+     * @Description: 对原始信号 进行卡尔曼滤波
+     * @param data 
+     */
+    private void kalmanFilter(List<PrruSignalModel> data){
+        // 按gpp将用户信号分组
+        Map<String, List<Double>> temp = new HashMap<String, List<Double>>();
+        for(PrruSignalModel p:data){
+            String gpp = p.getGpp();
+            if(temp.containsKey(gpp)){
+                List<Double> tempList = temp.get(gpp);
+                tempList.add(p.getRsrp().doubleValue());
+            }else{
+                List<Double> tempList = new ArrayList<Double>();
+                tempList.add(p.getRsrp().doubleValue());
+                temp.put(gpp, tempList);
+            }
+        }
+        
+        data.clear();
+        // 对于每一组信号，通过卡尔曼滤波算法，获取该gpp的最终值
+        Iterator<Entry<String, List<Double>>> it = temp.entrySet().iterator();  
+        while(it.hasNext())  
+        {
+            Entry<String, List<Double>> entity = it.next();
+            String tempGpp = entity.getKey();
+            List<Double> tempSignal = entity.getValue();
+            LOG.debug("滤波前的原始信号-"+tempSignal);
+            Double finalVal = kalmanFilterCalc(tempSignal);
+            LOG.debug("滤波后的信号-"+finalVal);
+            PrruSignalModel m = new PrruSignalModel();
+            m.setEnbid(tempGpp);
+            m.setGpp(tempGpp);
+            m.setRsrp(new BigDecimal(finalVal));
+            data.add(m);
+        }
+    }
+    
+    /** 
+     * @Title: kalmanFilterCalc 
+     * @Description: 卡尔曼滤波算法实现
+     * @param arrayList
+     * @return 
+     */
+    private Double kalmanFilterCalc(List<Double> arrayList){
+        double Q = Double.valueOf(strQ);
+        double R = Double.valueOf(strR);
+        int length = arrayList.size();
+        double[] z = new double[length];
+        double[] xhat = new double[length];
+        double[] xhatminus = new double[length];
+        double[] P = new double[length];
+        double[] Pminus = new double[length];
+        double[] K = new double[length];
+        xhat[0] = 0;
+        P[0] = 1.0;
+        
+        for (int i = 0; i<length; i++) {
+            z[i] = (double)arrayList.get(i);
+        }
+        
+        if(arrayList.size()<2){
+            return arrayList.get(0);
+        }
+        for(int k = 1; k < length; k++) {
+            // X(k|k-1) = AX(k-1|k-1) + BU(k) + W(k),A=1,BU(k) = 0  
+            xhatminus[k] = xhat[k-1];
+
+            // P(k|k-1) = AP(k-1|k-1)A' + Q(k) ,A=1
+            Pminus[k] = P[k-1]+Q;
+          
+            // Kg(k)=P(k|k-1)H'/[HP(k|k-1)H' + R],H=1
+            K[k] = Pminus[k]/( Pminus[k]+R);
+            
+            // X(k|k) = X(k|k-1) + Kg(k)[Z(k) - HX(k|k-1)], H=1
+            xhat[k] = xhatminus[k]+K[k]*(z[k]-xhatminus[k]);
+            
+            //P(k|k) = (1 - Kg(k)H)P(k|k-1), H=1
+            P[k] = (1-K[k])*Pminus[k] ;
+        }
+        return xhat[length-1];
+    }
 }

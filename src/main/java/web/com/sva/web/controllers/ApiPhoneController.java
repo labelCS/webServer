@@ -85,6 +85,7 @@ public class ApiPhoneController {
     public Map<String, Object> uploadPhoneSignal(@RequestBody PhoneSignalModel requestModel)
     {
         LOG.debug("Start Upload Phone Signal" + ConvertUtil.dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        LOG.debug(requestModel.getSignalBlue());
         Map<String, Object> result = prruService.savePhoneSignal(requestModel);
         LOG.debug("End Upload Phone Signal" + ConvertUtil.dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss.SSS"));
         return result;
@@ -201,7 +202,8 @@ public class ApiPhoneController {
         model.setFloorNo(floorNo);
         model.setUserId(userId);
         LocationModel result = bleService.getLocation(model);
-        LOG.debug("余弦算法结果："+result.getX()+","+result.getY());
+        LocationModel resultSimple = (LocationModel)returnVal.get("data");
+        LOG.debug(userId+"余弦算法结果："+result.getX().divide(new BigDecimal(10),3,6)+","+result.getY().divide(new BigDecimal(10),3,6)+"。普通定位结果："+resultSimple.getX().divide(new BigDecimal(10),3,6)+","+resultSimple.getY().divide(new BigDecimal(10),3,6));
         returnVal.put("data", result);
         return returnVal;
     }
