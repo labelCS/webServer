@@ -205,7 +205,6 @@ public class ApiController
             modelMap.put("error", null);
             modelMap.put("data", loc);
             modelMap.put("message", messgeLis);
-
         }
         else
         {
@@ -2504,4 +2503,6 @@ public Map<String, Object> getDataByFloorNo(@RequestParam("floorNo") String floo
         return map;
         
     }
+    
+    
 }
