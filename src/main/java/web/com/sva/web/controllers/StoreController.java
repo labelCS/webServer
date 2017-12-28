@@ -2,17 +2,18 @@ package com.sva.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
+import javax.validation.Valid;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,8 @@ import com.sva.common.Util;
 import com.sva.dao.RoleDao;
 import com.sva.dao.StoreDao;
 import com.sva.model.StoreModel;
+import com.sva.web.models.StoreMngModel;
+import com.sva.web.models.extension.StoreMngModelExtension;
 
 @Controller
 @RequestMapping(value = "/store")
@@ -125,52 +128,39 @@ public class StoreController
 
     @RequestMapping(value = "/api/saveData", method = {RequestMethod.POST})
     @ResponseBody
-    public Map<String, Object> saveData(HttpServletRequest request,
-            @RequestParam(value = "id", required = false) String id,
-            @RequestParam("name") String name)
+    public Map<String, Object> saveData(HttpServletRequest request, @Valid @RequestBody StoreMngModel smm, BindingResult result)
     {
-        String ip = Util.getIpAddr(request);
-        LOG.info("StoreController:saveData:: " + id + ',' + name+" ip:"+ip);
-        Map<String, Object> modelMap = new HashMap<String, Object>(2);
+        LOG.info("StoreController:saveData:: " + smm.toString());
+        Map<String, Object> modelMap = new HashMap<String, Object>();
+        // 校验用户输入
+        if(result.hasErrors()){
+            modelMap.put("error", result.getAllErrors());
+            return modelMap;
+        }
         Object userName = request.getSession().getAttribute("username");
-        Date current = new Date();
-        StoreModel sm = new StoreModel();
-        sm.setName(name);
-        sm.setCreateTime(current);
-        sm.setUpdateTime(current);
+        StoreModel sm = StoreMngModelExtension.toStore(smm);
 
         // 保存
-        try
+        if (StringUtils.isEmpty(smm.getId()))
         {
-            if ("".equals(id))
-            {
-                String storeName = sm.getName();
-                dao.saveInfo(sm);
-                // 添加商场时自动更新到角色商场权限
-                int storeId = dao.selectStoreid(storeName);
-                String storeid = roleDao.queryStoreidFromRole(userName.toString())
-                        + ',' + storeId;
-                String stores = roleDao.queryStoreFromRole(userName.toString()) + ','
-                        + storeName;
-                int roleid = roleDao.selectRoleid(userName.toString());
-                roleDao.updateInfoStore(storeid, stores, roleid);
+            // 校验商场是否重名 TODO
+            String storeName = sm.getName();
+            dao.saveInfo(sm);
+            // 添加商场时自动更新到角色商场权限
+            int storeId = dao.selectStoreid(storeName);
+            String storeid = roleDao.queryStoreidFromRole(userName.toString())
+                    + ',' + storeId;
+            String stores = roleDao.queryStoreFromRole(userName.toString()) + ','
+                    + storeName;
+            int roleid = roleDao.selectRoleid(userName.toString());
+            roleDao.updateInfoStore(storeid, stores, roleid);
 
-            }
-            else
-            {
-                sm.setId(Integer.parseInt(id));
-                dao.updateInfo(sm);
-            }
         }
-        catch (DuplicateKeyException e)
+        else
         {
-            LOG.error(e);
-            modelMap.put("error", "sva name can not be the same");
-        }
-        catch (Exception e)
-        {
-            LOG.error(e);
-            modelMap.put("error", e);
+            // 校验商场是否重名 TODO
+            sm.setId(Integer.parseInt(smm.getId()));
+            dao.updateInfo(sm);
         }
 
         modelMap.put("data", null);

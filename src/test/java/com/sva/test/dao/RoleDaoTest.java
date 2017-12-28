@@ -1,6 +1,5 @@
 package com.sva.test.dao;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -61,11 +60,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         int id = 999;
         List<String> lis = null;
-        try {
-            lis = dao.queryMenu(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.queryMenu(id);
         Assert.assertEquals("relsut  0", 0, lis.size());
     } 
     
@@ -74,11 +69,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         int id = 999;
         List<String> lis = null;
-        try {
-            lis = dao.queryMenuEN(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.queryMenuEN(id);
         Assert.assertEquals("relsut  0", 0, lis.size());
     } 
     
@@ -87,11 +78,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String keymenu = "key_svaManage";
         List<String> lis = null;
-        try {
-            lis = dao.selmenu(keymenu);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.selmenu(keymenu);
         Assert.assertEquals("relsut 1", 1, lis.size());
     } 
     
@@ -100,11 +87,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String keymenu = "key_svaManage";
         List<String> lis = null;
-        try {
-            lis = dao.selmenuEN(keymenu);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.selmenuEN(keymenu);
         Assert.assertEquals("relsut 1", 1, lis.size());
     } 
     
@@ -113,11 +96,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         int id = 1;
         List<String> lis = null;
-        try {
-            lis = dao.queryMenuKey(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.queryMenuKey(id);
         Assert.assertNotEquals("relsut not 0 ", 0, lis.size());
     } 
     
@@ -126,11 +105,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         int id = 1;
         List<String> lis = null;
-        try {
-            lis = dao.queryMenuKeyEN(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.queryMenuKeyEN(id);
         Assert.assertNotEquals("relsut not 0 ", 0, lis.size());
     } 
     
@@ -139,11 +114,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String name = "SVA管理";
         List<String> lis = null;
-        try {
-            lis = dao.queryMenuId(name);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.queryMenuId(name);
         Assert.assertNotEquals("relsut not 0 ", 0, lis.size());
     } 
     
@@ -152,11 +123,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String name = "SVA管理";
         List<String> lis = null;
-        try {
-            lis = dao.queryMenuIdEN(name);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.queryMenuIdEN(name);
         Assert.assertEquals("relsut not 0 ", 0, lis.size());
     } 
     
@@ -165,11 +132,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String name = "123";
         List<String> lis = null;
-        try {
-            lis = dao.queryStoreId(name);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.queryStoreId(name);
         Assert.assertEquals("relsut  0 ", 0, lis.size());
     } 
     
@@ -186,11 +149,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         int id = 999;
         List<String> lis = null;
-        try {
-            lis = dao.queryStore(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        lis = dao.queryStore(id);
         Assert.assertEquals("relsut  0 ", 0, lis.size());
     }
     
@@ -200,11 +159,7 @@ public class RoleDaoTest extends BasicDaoTest{
         int id = 1;
         String name ="1";
         int reslut = 0;
-        try {
-            reslut = dao.selectRoleSame(name,id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reslut = dao.selectRoleSame(name,id);
         Assert.assertEquals("relsut  0 ", 0,reslut);
     }
     
@@ -213,11 +168,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String name ="admin";
         String reslut = null;
-        try {
-            reslut = dao.queryStoreidFromRole(name);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reslut = dao.queryStoreidFromRole(name);
         Assert.assertNotEquals("relsut  not null",null,reslut);
     }
     
@@ -226,11 +177,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String name ="admin";
         String reslut = null;
-        try {
-            reslut = dao.queryStoreFromRole(name);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reslut = dao.queryStoreFromRole(name);
         Assert.assertNotEquals("relsut  not null",null,reslut);
     }
     
@@ -239,11 +186,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String name ="admin";
         int reslut = 0;
-        try {
-            reslut = dao.selectRoleid(name);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reslut = dao.selectRoleid(name);
         Assert.assertNotEquals("relsut  not null",0,reslut);
     }
     
@@ -260,11 +203,7 @@ public class RoleDaoTest extends BasicDaoTest{
         role.setMenukey("1");
         role.setStoresid("1");
         int reslut = 0;
-        try {
-            reslut = dao.saveInfo(role);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reslut = dao.saveInfo(role);
         Assert.assertEquals("relsut  not null",1,reslut);
     }
 
@@ -282,11 +221,7 @@ public class RoleDaoTest extends BasicDaoTest{
         role.setStoresid("1");
         role.setId(1);
         int reslut = 0;
-        try {
-            reslut = dao.updateInfo(role);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reslut = dao.updateInfo(role);
         Assert.assertEquals("relsut  not null",1,reslut);
     }
     
@@ -298,11 +233,7 @@ public class RoleDaoTest extends BasicDaoTest{
         String storesid = "1";
         int id = 1;
         int reslut = 0;
-        try {
-            reslut = dao.updateInfoStore(storesid,store,id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reslut = dao.updateInfoStore(storesid,store,id);
         Assert.assertEquals("relsut  not null",1,reslut);
     }
     
@@ -311,11 +242,7 @@ public class RoleDaoTest extends BasicDaoTest{
     {
         String id = "999";
         int reslut = 0;
-        try {
-            reslut = dao.deleteById(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        reslut = dao.deleteById(id);
         Assert.assertEquals("relsut  not null",0,reslut);
     }
 }

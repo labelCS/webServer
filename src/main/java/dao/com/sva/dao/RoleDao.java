@@ -64,7 +64,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public List<String> queryMenu(int menuId) throws SQLException;
+    public List<String> queryMenu(int menuId);
 
 
     /** 
@@ -74,17 +74,17 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public List<String> queryMenuEN(int menuId) throws SQLException;
+    public List<String> queryMenuEN(int menuId);
 
-    public List<String> selmenu(String menukey) throws SQLException;
+    public List<String> selmenu(String menukey);
 
-    public List<String> selmenuEN(String menukey) throws SQLException;
-
-
-    public List<String> queryMenuKey(int menuId) throws SQLException;
+    public List<String> selmenuEN(String menukey);
 
 
-    public List<String> queryMenuKeyEN(int menuId) throws SQLException;
+    public List<String> queryMenuKey(int menuId);
+
+
+    public List<String> queryMenuKeyEN(int menuId);
 
 
     /** 
@@ -94,7 +94,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public List<String> queryMenuId(String menuName) throws SQLException;
+    public List<String> queryMenuId(String menuName);
 
 
     /** 
@@ -104,7 +104,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public List<String> queryMenuIdEN(String menuName) throws SQLException;
+    public List<String> queryMenuIdEN(String menuName);
 
 
     /** 
@@ -114,7 +114,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public List<String> queryStoreId(String storeName) throws SQLException;
+    public List<String> queryStoreId(String storeName);
 
 
     /** 
@@ -131,7 +131,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public List<String> queryStore(int storeId) throws SQLException;
+    public List<String> queryStore(int storeId);
 
     /** 
      * @Title: selectRoleSame 
@@ -141,7 +141,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public int selectRoleSame(@Param("name")String floorNo,@Param("id")int id) throws SQLException;
+    public int selectRoleSame(@Param("name")String floorNo,@Param("id")int id);
 
 
     /** 
@@ -151,7 +151,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public String queryStoreidFromRole(String username) throws SQLException;
+    public String queryStoreidFromRole(String username);
 
 
     /** 
@@ -161,7 +161,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public String queryStoreFromRole(String username) throws SQLException;
+    public String queryStoreFromRole(String username);
 
 
     /** 
@@ -171,7 +171,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public int selectRoleid(String username) throws SQLException;
+    public int selectRoleid(String username);
 
     /** 
      * @Title: saveInfo 
@@ -180,7 +180,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public int saveInfo(RoleModel sm) throws SQLException;
+    public int saveInfo(RoleModel sm);
 
 
     /** 
@@ -190,7 +190,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public int updateInfo(RoleModel sm) throws SQLException;
+    public int updateInfo(RoleModel sm);
 
 
     /** 
@@ -202,8 +202,7 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public int updateInfoStore(@Param("storesid")String storeid,@Param("stores")String stores,@Param("id")int id)
-            throws SQLException;
+    public int updateInfoStore(@Param("storesid")String storeid,@Param("stores")String stores,@Param("id")int id);
  
 
     /** 
@@ -213,6 +212,6 @@ public interface RoleDao
      * @return
      * @throws SQLException 
      */
-    public int deleteById(String id) throws SQLException;
+    public int deleteById(String id);
 
 }

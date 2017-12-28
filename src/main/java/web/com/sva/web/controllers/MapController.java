@@ -47,7 +47,6 @@ public class MapController
     @ResponseBody
     public Map<String, Object> getTableData(HttpServletRequest request)
     {
-        if(true) throw new RuntimeException("wide");
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         Collection<MapsModel> resultList = new ArrayList<MapsModel>(10);
         Collection<MapsModel> store;

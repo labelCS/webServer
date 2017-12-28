@@ -146,7 +146,9 @@ var Store = function () {
 		              "dataType": 'json', 
 		              "type": "POST", 
 		              "url": "/sva/store/api/saveData", 
-		              "data": param, 
+		              "data": JSON.stringify(param), 
+		              "contentType":'application/json',
+		              "dataType":"json",
 		              "success": function(data){
 		            	  if(data.error){
 		            		  $(".Validform_checktip").removeClass("Validform_right");

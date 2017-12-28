@@ -43,7 +43,6 @@ public class HomeController
     @RequestMapping(value = "/showStoreMng", method = {RequestMethod.GET})
     public String showSvaMng(Model model)
     {
-        if(true) throw new RuntimeException("wrong");
         model.addAttribute("infoMng", true);
         model.addAttribute("storeMng", true);
         return "home/storeMng";

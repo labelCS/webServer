@@ -58,25 +58,11 @@ public class RoleController
             {
                 if (Locale.CHINA.equals(myLocale))
                 {
-                    try
-                    {
-                        menu = dao.selmenu(menukey[i]);
-                    }
-                    catch (SQLException e)
-                    {
-                        LOG.error(e);
-                    }
+                    menu = dao.selmenu(menukey[i]);
                 }
                 else
                 {
-                    try
-                    {
-                        menu = dao.selmenuEN(menukey[i]);
-                    }
-                    catch (SQLException e)
-                    {
-                        LOG.error(e);
-                    }
+                    menu = dao.selmenuEN(menukey[i]);
                 }
                 if (!menu.isEmpty())
                 {

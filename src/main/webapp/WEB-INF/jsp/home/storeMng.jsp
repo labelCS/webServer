@@ -83,7 +83,7 @@
                 			<label class="control-label" for="storeName"><spring:message code="store_add_name" /></label>
                 			
                				<div class="controls">
-               					<input type="text" maxlength="50" nullmsg="<spring:message code="store_name" />"  datatype="password" errormsg="<spring:message code="store_name_length" />" class="input-xlarge" id="storeName">
+               					<input type="text" maxlength="50" nullmsg="<spring:message code="NotEmpty.storeMngModel.name" />"  datatype="password" errormsg="<spring:message code="store_name_length" />" class="input-xlarge" id="storeName">
                					<span class="Validform_checktip"></span>
                				</div>
                				 
@@ -141,7 +141,7 @@
    		i18n_deleteInfo = '<spring:message code="map_delete" />',
    		i18n_inputInfo = '<spring:message code="message_util_inputinfo" />';
    		i18n_storeSame = '<spring:message code="message_util_storeSame" />',
-   		i18n_storeinput = '<spring:message code="store_name" />';
+   		i18n_storeinput = '<spring:message code="NotEmpty.storeMngModel.name" />';
    		var pa = '<spring:message code="common_pass" />';
 	$(document).ready(function() {  
 		App.init();
