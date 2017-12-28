@@ -555,6 +555,5 @@ public class HomeController
         String info = "未知错误: " + ex.getMessage();
         model.addAttribute("info", info);
         return "error";
-
     }
 }
