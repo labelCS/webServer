@@ -21,7 +21,7 @@ public class StoreMngModel
 {
     private String id;
 
-    @NotEmpty
+    @NotEmpty(message="{NotEmpty.storeMngModel.name}")
     private String name;
 
     /**

@@ -12,7 +12,7 @@
     http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 
     <!-- 默认的注解映射的支持 -->
-    <mvc:annotation-driven />
+    <mvc:annotation-driven validator="validator" />
 
     <!-- 静态资源映射 -->
     <mvc:resources mapping="/js/**" location="/WEB-INF/js/" />
@@ -38,7 +38,7 @@
         <!-- 国际化信息所在的文件名 -->
         <property name="basename" value="messages" />
         <!-- 如果在国际化资源文件中找不到对应代码的信息，就用这个代码作为名称 -->
-        <property name="useCodeAsDefaultMessage" value="true" />
+        <property name="useCodeAsDefaultMessage" value="false" />
     </bean>
     <bean
         class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -80,5 +80,10 @@
         
     </mvc:interceptors>
 
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">  
+        <property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>  
+        <!--指定国际化配置文件 不设置则默认为classpath下的 ValidationMessages.properties -->  
+        <property name="validationMessageSource" ref="messageSource"/>  
+    </bean> 
 
 </beans>
